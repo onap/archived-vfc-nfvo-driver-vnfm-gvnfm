@@ -1,0 +1,14 @@
+{
+    "service":{                                    
+        "name":"juju-vnfmadapterservice",
+        "url": ["/aaa/v1/user","/aaa/v1/roles", "/aaa/v1/auth", "/aaa/v1/tickets", "aaa/v1/servicetickets", "aaa/v1/value"], 
+        "instance":
+        [
+            {                       
+                "name":"juju-vnfmadapterservice-0-0",
+                "ip":"127.0.0.1",          
+                "port": 9094            
+            }
+        ]
+    }
+}

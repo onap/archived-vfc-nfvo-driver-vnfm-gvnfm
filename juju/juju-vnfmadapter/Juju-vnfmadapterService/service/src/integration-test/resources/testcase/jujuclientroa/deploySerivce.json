@@ -1,0 +1,16 @@
+{
+    "request": {
+        "uri": "/juju-vnfmadapter-service/rest/openoapi/juju/v1/vnfms/deploy",
+        "method": "post",
+        "headers": {
+            "Content-Type": "application/json;charset=UTF-8"
+        },
+        "json": {"appName":"testApp"}
+    },
+    "response": {
+        "status": 200,
+        "json": {
+        	"debugModel":false
+        }
+    }
+}

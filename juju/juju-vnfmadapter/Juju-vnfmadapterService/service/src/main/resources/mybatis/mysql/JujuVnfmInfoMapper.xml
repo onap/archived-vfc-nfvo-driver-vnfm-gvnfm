@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+    Copyright 2016 Huawei Technologies Co., Ltd.
+   
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+   
+        http://www.apache.org/licenses/LICENSE-2.0
+   
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+ -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper
+    namespace="org.openo.nfvo.jujuvnfmadapter.service.mapper.JujuVnfmInfoMapper">
+    <resultMap id="BaseResultMap"
+        type="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfo">
+        <id column="ID" property="id" jdbcType="VARCHAR" />
+        <result column="VNFM_ID" property="vnfmId" jdbcType="VARCHAR" />
+        <result column="VNF_ID" property="vnfId" jdbcType="VARCHAR" />
+        <result column="APP_NAME" property="appName" jdbcType="VARCHAR" />
+        <result column="JOB_ID" property="jobId" jdbcType="VARCHAR" />
+        <result column="STATUS" property="status" jdbcType="INTEGER" />
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
+        <result column="DELETE_TIME" property="deleteTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs"
+        type="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfo"
+        extends="BaseResultMap">
+        <result column="EXTEND" property="extend" jdbcType="LONGVARCHAR" />
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and
+                                    #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem"
+                                        open="(" close=")" separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria"
+                separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and
+                                    #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem"
+                                        open="(" close=")" separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+        ID, VNFM_ID, VNF_ID, APP_NAME, JOB_ID, STATUS, CREATE_TIME, MODIFY_TIME,
+        DELETE_TIME
+    </sql>
+    <sql id="Blob_Column_List">
+        EXTEND
+    </sql>
+    <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs"
+        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfoExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List" />
+        ,
+        <include refid="Blob_Column_List" />
+        from jujuvnfm
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByExample" resultMap="BaseResultMap"
+        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfoExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List" />
+        from jujuvnfm
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+        <if test="limitStart >= 0">
+            limit ${limitStart} , ${limitEnd}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs"
+        parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List" />
+        ,
+        <include refid="Blob_Column_List" />
+        from jujuvnfm
+        where ID = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete from jujuvnfm
+        where ID = #{id,jdbcType=VARCHAR}
+    </delete>
+    <delete id="deleteByExample"
+        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfoExample">
+        delete from jujuvnfm
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+    <insert id="insert"
+        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfo">
+        insert into jujuvnfm (ID, VNFM_ID, VNF_ID,
+        APP_NAME, JOB_ID, STATUS,
+        CREATE_TIME, MODIFY_TIME, DELETE_TIME,
+        EXTEND)
+        values (#{id,jdbcType=VARCHAR}, #{vnfmId,jdbcType=VARCHAR},
+        #{vnfId,jdbcType=VARCHAR},
+        #{appName,jdbcType=VARCHAR}, #{jobId,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER},
+        #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP},
+        #{deleteTime,jdbcType=TIMESTAMP},
+        #{extend,jdbcType=LONGVARCHAR})
+    </insert>
+    <insert id="insertSelective"
+        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfo">
+        insert into jujuvnfm
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="vnfmId != null">
+                VNFM_ID,
+            </if>
+            <if test="vnfId != null">
+                VNF_ID,
+            </if>
+            <if test="appName != null">
+                APP_NAME,
+            </if>
+            <if test="jobId != null">
+                JOB_ID,
+            </if>
+            <if test="status != null">
+                STATUS,
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME,
+            </if>
+            <if test="modifyTime != null">
+                MODIFY_TIME,
+            </if>
+            <if test="deleteTime != null">
+                DELETE_TIME,
+            </if>
+            <if test="extend != null">
+                EXTEND,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="vnfmId != null">
+                #{vnfmId,jdbcType=VARCHAR},
+            </if>
+            <if test="vnfId != null">
+                #{vnfId,jdbcType=VARCHAR},
+            </if>
+            <if test="appName != null">
+                #{appName,jdbcType=VARCHAR},
+            </if>
+            <if test="jobId != null">
+                #{jobId,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleteTime != null">
+                #{deleteTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="extend != null">
+                #{extend,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample"
+        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfoExample"
+        resultType="java.lang.Integer">
+        select count(*) from jujuvnfm
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update jujuvnfm
+        <set>
+            <if test="record.id != null">
+                ID = #{record.id,jdbcType=VARCHAR},
+            </if>
+            <if test="record.vnfmId != null">
+                VNFM_ID = #{record.vnfmId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.vnfId != null">
+                VNF_ID = #{record.vnfId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.appName != null">
+                APP_NAME = #{record.appName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.jobId != null">
+                JOB_ID = #{record.jobId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.status != null">
+                STATUS = #{record.status,jdbcType=INTEGER},
+            </if>
+            <if test="record.createTime != null">
+                CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.modifyTime != null">
+                MODIFY_TIME = #{record.modifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.deleteTime != null">
+                DELETE_TIME = #{record.deleteTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.extend != null">
+                EXTEND = #{record.extend,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+    <update id="updateByExampleWithBLOBs" parameterType="map">
+        update jujuvnfm
+        set ID = #{record.id,jdbcType=VARCHAR},
+        VNFM_ID = #{record.vnfmId,jdbcType=VARCHAR},
+        VNF_ID = #{record.vnfId,jdbcType=VARCHAR},
+        APP_NAME = #{record.appName,jdbcType=VARCHAR},
+        JOB_ID = #{record.jobId,jdbcType=VARCHAR},
+        STATUS = #{record.status,jdbcType=INTEGER},
+        CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+        MODIFY_TIME = #{record.modifyTime,jdbcType=TIMESTAMP},
+        DELETE_TIME = #{record.deleteTime,jdbcType=TIMESTAMP},
+        EXTEND = #{record.extend,jdbcType=LONGVARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update jujuvnfm
+        set ID = #{record.id,jdbcType=VARCHAR},
+        VNFM_ID = #{record.vnfmId,jdbcType=VARCHAR},
+        VNF_ID = #{record.vnfId,jdbcType=VARCHAR},
+        APP_NAME = #{record.appName,jdbcType=VARCHAR},
+        JOB_ID = #{record.jobId,jdbcType=VARCHAR},
+        STATUS = #{record.status,jdbcType=INTEGER},
+        CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
+        MODIFY_TIME = #{record.modifyTime,jdbcType=TIMESTAMP},
+        DELETE_TIME = #{record.deleteTime,jdbcType=TIMESTAMP}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective"
+        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfo">
+        update jujuvnfm
+        <set>
+            <if test="vnfmId != null">
+                VNFM_ID = #{vnfmId,jdbcType=VARCHAR},
+            </if>
+            <if test="vnfId != null">
+                VNF_ID = #{vnfId,jdbcType=VARCHAR},
+            </if>
+            <if test="appName != null">
+                APP_NAME = #{appName,jdbcType=VARCHAR},
+            </if>
+            <if test="jobId != null">
+                JOB_ID = #{jobId,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                STATUS = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleteTime != null">
+                DELETE_TIME = #{deleteTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="extend != null">
+                EXTEND = #{extend,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs"
+        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfo">
+        update jujuvnfm
+        set VNFM_ID = #{vnfmId,jdbcType=VARCHAR},
+        VNF_ID = #{vnfId,jdbcType=VARCHAR},
+        APP_NAME = #{appName,jdbcType=VARCHAR},
+        JOB_ID = #{jobId,jdbcType=VARCHAR},
+        STATUS = #{status,jdbcType=INTEGER},
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+        MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP},
+        DELETE_TIME = #{deleteTime,jdbcType=TIMESTAMP},
+        EXTEND = #{extend,jdbcType=LONGVARCHAR}
+        where ID = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey"
+        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfo">
+        update jujuvnfm
+        set VNFM_ID = #{vnfmId,jdbcType=VARCHAR},
+        VNF_ID = #{vnfId,jdbcType=VARCHAR},
+        APP_NAME = #{appName,jdbcType=VARCHAR},
+        JOB_ID = #{jobId,jdbcType=VARCHAR},
+        STATUS = #{status,jdbcType=INTEGER},
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+        MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP},
+        DELETE_TIME = #{deleteTime,jdbcType=TIMESTAMP}
+        where ID = #{id,jdbcType=VARCHAR}
+    </update>
+</mapper>

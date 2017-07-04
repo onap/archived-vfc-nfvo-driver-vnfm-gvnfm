@@ -1,0 +1,28 @@
+{
+  "driverInfo": {
+    "driverName": "jujuvnfm",
+    "instanceID": "jujuvnfm",
+    "ip": "127.0.0.1",
+    "port": "8483",
+    "protocol": "http",
+    "services": [{
+      "service_url": "/openoapi/jujuvnfm/v1",
+      "support_sys": [{
+        "type": "vnfm",
+        "version": "V1"
+      }, {
+        "type": "vnfm",
+        "version": "V1"
+      }
+      ]
+    }, {
+      "service_url": "/openoapi/jujuvnfm/v1",
+      "support_sys": [{
+        "type": "vnfm",
+        "version": "V1"
+      }
+      ]
+    }
+    ]
+  }
+}

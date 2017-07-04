@@ -1,0 +1,6 @@
+{
+  "image-metadata-url": "http://192.168.20.106/images",
+  "network": "demo-net",
+  "use-floating-ip": "True",
+  "use-default-secgroup": "True"
+}

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright 2016 Huawei Technologies Co., Ltd.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+ -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
+    xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
+    xmlns:ctx="http://www.springframework.org/schema/context" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+    xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/osgi
+    http://www.springframework.org/schema/osgi/spring-osgi.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/osgi-compendium
+    http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
+    http://cxf.apache.org/jaxrs
+    http://cxf.apache.org/schemas/jaxrs.xsd
+    http://cxf.apache.org/transports/http/configuration
+    http://cxf.apache.org/schemas/configuration/http-conf.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+    http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+    <context:annotation-config
+        proxy-target-class="true" />
+    <context:component-scan base-package="org.openo.nfvo.jujuvnfmadapter" />
+
+    <!-- these are included in the dependency jar -->
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+    <bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" />
+
+    <bean id="db" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:db.properties"/>
+    </bean>
+
+    <bean id="source"
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driverClassName}" />
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+    </bean>
+
+    <bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="source" />
+        <property name="mapperLocations" value="classpath*:mybatis/mysql/*.xml" />
+    </bean>
+
+    <bean id="session" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sessionFactory" />
+    </bean>
+
+
+    <bean id="transactionManager"
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="source" />
+    </bean>
+    <bean id="jujuVnfmInfoMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface"
+            value="org.openo.nfvo.jujuvnfmadapter.service.mapper.JujuVnfmInfoMapper"/>
+        <property name="sqlSessionFactory" ref="sessionFactory"/>
+    </bean>
+
+
+    <bean id="vnfMgr" class="org.openo.nfvo.jujuvnfmadapter.service.process.VnfMgr">
+        <property name="jujuVnfmInfoMapper" ref="jujuVnfmInfoMapper"/>
+        <property name="resourceManager" ref="resourceManager"/>
+    </bean>
+    <bean id="vnfResourceMgr" class="org.openo.nfvo.jujuvnfmadapter.service.process.VnfResourceMgr">
+        <property name="jujuVnfmInfoMapper" ref="jujuVnfmInfoMapper"/>
+
+    </bean>
+    <bean id="jujuClientManager"
+        class="org.openo.nfvo.jujuvnfmadapter.service.adapter.impl.JujuClientManager"/>
+    <bean id="resourceManager"
+          class="org.openo.nfvo.jujuvnfmadapter.service.adapter.impl.AdapterResourceManager"/>
+
+    <!-- -->
+    <bean id="jujuClientRoa"
+        class="org.openo.nfvo.jujuvnfmadapter.service.rest.JujuClientRoa">
+        <property name="jujuClientManager" ref="jujuClientManager"/>
+        <property name="vnfMgr" ref="vnfMgr"/>
+    </bean>
+    <bean id="vnfRoa" class="org.openo.nfvo.jujuvnfmadapter.service.rest.VnfRoa">
+        <property name="vnfMgr" ref="vnfMgr"/>
+    </bean>
+    <bean id="configRoa" class="org.openo.nfvo.jujuvnfmadapter.service.rest.ConfigRoa"/>
+
+    <bean id="SwaggerRoa" class="org.openo.nfvo.jujuvnfmadapter.service.rest.SwaggerRoa"/>
+    <bean id="vnfResourceRoa" class="org.openo.nfvo.jujuvnfmadapter.service.rest.VnfResourceRoa">
+    	<property name="vnfResourceMgr" ref="vnfResourceMgr"/>
+    </bean>
+
+    <jaxrs:server id="restContainer" address="/">
+        <jaxrs:serviceBeans>
+            <ref bean="jujuClientRoa" />
+            <ref bean="vnfRoa" />
+            <ref bean="configRoa" />
+            <ref bean="SwaggerRoa" />
+            <ref bean="vnfResourceRoa"/>
+        </jaxrs:serviceBeans>
+        <jaxrs:providers>
+            <ref bean="jsonProvider" />
+        </jaxrs:providers>
+    </jaxrs:server>
+</beans>
