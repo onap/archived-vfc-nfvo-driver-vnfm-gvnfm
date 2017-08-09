@@ -16,5 +16,5 @@ from django.conf.urls import url
 from driver.swagger import views
 
 urlpatterns = [
-    url(r'^openoapi/gvnfmdriver/v1/swagger.json$', views.SwaggerView.as_view()), 
+    url(r'^api/gvnfmdriver/v1/swagger.json$', views.SwaggerView.as_view()),
 ]

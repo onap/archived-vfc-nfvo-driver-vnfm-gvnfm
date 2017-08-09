@@ -72,7 +72,7 @@ class InterfacesTest(TestCase):
                 'inputs':{}
             }
         }
-        response = self.client.post("/openoapi/ztevnfm/v1/1/vnfs",
+        response = self.client.post("/api/ztevnfm/v1/1/vnfs",
                                     data=json.dumps(req_data), content_type="application/json")
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         print job_info
@@ -102,7 +102,7 @@ class InterfacesTest(TestCase):
         r2 = [0, json.JSONEncoder().encode(job_info), "200"]
         job_ret = [0,  json.JSONEncoder().encode(job_status_info), "200"]
         mock_call_req.side_effect = [r1, r2, r1, job_ret, r1, r2]
-        response = self.client.post("/openoapi/ztevnfm/v1/ztevnfmid/vnfs/2/terminate")
+        response = self.client.post("/api/ztevnfm/v1/ztevnfmid/vnfs/2/terminate")
         self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
         self.assertEqual(job_info, response.data)
 
@@ -127,7 +127,7 @@ class InterfacesTest(TestCase):
         r1 = [0, json.JSONEncoder().encode(vnfm_info), "200"]
         r2 = [0, json.JSONEncoder().encode(job_info), "200"]
         mock_call_req.side_effect = [r1, r2]
-        response = self.client.get("/openoapi/ztevnfm/v1/19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee/vnfs/88")
+        response = self.client.get("/api/ztevnfm/v1/19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee/vnfs/88")
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         expect_resp_data = {"vnfInfo": {"vnfInstanceId": "88", "vnfStatus": "ACTIVE","version":"v1.2.3"}}
         self.assertEqual(expect_resp_data, response.data)
@@ -189,7 +189,7 @@ class InterfacesTest(TestCase):
         r1 = [0, json.JSONEncoder().encode(vnfm_info), '200']
         r2 = [0, json.JSONEncoder().encode(resp_body), '200']
         mock_call_req.side_effect = [r1, r2]
-        response = self.client.get("/openoapi/gvnfmadapter/v1/{vnfmid}/jobs/{jobid}?responseId={responseId}".
+        response = self.client.get("/api/gvnfmadapter/v1/{vnfmid}/jobs/{jobid}?responseId={responseId}".
             format(vnfmid=vnfm_info["vnfmId"],jobid=resp_body["ResponseInfo"]["vnfLcOpId"],
                    responseId=resp_body["ResponseInfo"]["responseDescriptor"]["responseId"]))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
@@ -219,7 +219,7 @@ class InterfacesTest(TestCase):
             ]
         }
         mock_call_req.return_value = [0, json.JSONEncoder().encode(vim_info), '201']
-        response = self.client.put("/openoapi/gvnfmadapter/v1/resource/grant",
+        response = self.client.put("/api/gvnfmadapter/v1/resource/grant",
                                    data=json.dumps(req_data), content_type='application/json')
         self.assertEqual(str(status.HTTP_201_CREATED), response.status_code)
         expect_resp_data = {"vimid": "516cee95-e8ca-4d26-9268-38e343c2e31e", "tenant": "admin"}
@@ -279,7 +279,7 @@ class InterfacesTest(TestCase):
                         "vmidlist ": ["vmuuid"]}
                 ]
         }
-        response = self.client.post("/openoapi/gvnfmadapter/v1/vnfs/lifecyclechangesnotification",
+        response = self.client.post("/api/gvnfmadapter/v1/vnfs/lifecyclechangesnotification",
                                     data=json.dumps(req_data), content_type='application/json')
         self.assertEqual(str(status.HTTP_200_OK), response.status_code)
         expect_resp_data = None
@@ -293,7 +293,7 @@ class InterfacesTest(TestCase):
                 "vnfdId": "2"
             }]
         }), '200']
-        resp = self.client.get("/openoapi/gvnfmadapter/v1/vnfpackages")
+        resp = self.client.get("/api/gvnfmadapter/v1/vnfpackages")
         self.assertEqual(status.HTTP_200_OK, resp.status_code)
         self.assertEqual(1, len(resp.data["csars"]))
         self.assertEqual("1", resp.data["csars"][0]["csarId"])

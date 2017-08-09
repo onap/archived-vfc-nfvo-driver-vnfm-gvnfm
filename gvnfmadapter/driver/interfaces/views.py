@@ -25,15 +25,15 @@ from driver.pub.utils.restcall import req_by_msb
 from rest_framework import status
 
 # ==================================================
-vnf_create_url = "openoapi/vnflcm/v1/vnf_instances"
-vnf_inst_url = "openoapi/vnflcm/v1/vnf_instances/%s/instantiate"
-vnf_delete_url = "openoapi/vnflcm/v1/vnf_instances/%s"
-vnf_terminate_url = "openoapi/vnflcm/v1/vnf_instances/%s/terminate"
-operation_status_url = "openoapi/vnflcm/v1/vnf_lc_ops/%s?responseId=%s"
-vnf_detail_url = "openoapi/vnflcm/v1/vnf_instances/%s"
-EXTSYS_GET_VNFM = "openoapi/extsys/v1/vnfms/%s"
-vnf_query_url = "openoapi/vnflcm/v1/vnf_instances/%s"
-notify_url = 'openoapi/nslcm/v1/vnfs/{vnfInstanceId}/Notify'
+vnf_create_url = "api/vnflcm/v1/vnf_instances"
+vnf_inst_url = "api/vnflcm/v1/vnf_instances/%s/instantiate"
+vnf_delete_url = "api/vnflcm/v1/vnf_instances/%s"
+vnf_terminate_url = "api/vnflcm/v1/vnf_instances/%s/terminate"
+operation_status_url = "api/vnflcm/v1/vnf_lc_ops/%s?responseId=%s"
+vnf_detail_url = "api/vnflcm/v1/vnf_instances/%s"
+EXTSYS_GET_VNFM = "api/extsys/v1/vnfms/%s"
+vnf_query_url = "api/vnflcm/v1/vnf_instances/%s"
+notify_url = 'api/nslcm/v1/vnfs/{vnfInstanceId}/Notify'
 
 query_vnf_resp_mapping = {
         "vnfInstanceId": "",
@@ -391,7 +391,7 @@ def operation_status(request, *args, **kwargs):
 
 
 # ==================================================
-grant_vnf_url = 'openoapi/nslcm/v1/grantvnf'
+grant_vnf_url = 'api/nslcm/v1/grantvnf'
 
 @api_view(http_method_names=['PUT'])
 def grantvnf(request, *args, **kwargs):
@@ -434,7 +434,7 @@ def notify(request, *args, **kwargs):
 @api_view(http_method_names=['GET'])
 def get_vnfpkgs(request, *args, **kwargs):
     logger.info("Enter %s", fun_name())
-    ret = req_by_msb("openoapi/nslcm/v1/vnfpackage", "GET")
+    ret = req_by_msb("api/nslcm/v1/vnfpackage", "GET")
     if ret[0] != 0:
         return Response(data={'error': ret[1]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     resp = json.JSONDecoder().decode(ret[1])
