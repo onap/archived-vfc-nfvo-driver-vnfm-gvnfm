@@ -12,17 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-
 import inspect
 import json
 import logging
 import time
+
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
 from driver.pub.utils import restcall
 from driver.pub.utils.restcall import req_by_msb
-from rest_framework import status
 
 # ==================================================
 vnf_create_url = "api/vnflcm/v1/vnf_instances"
@@ -31,7 +31,7 @@ vnf_delete_url = "api/vnflcm/v1/vnf_instances/%s"
 vnf_terminate_url = "api/vnflcm/v1/vnf_instances/%s/terminate"
 operation_status_url = "api/vnflcm/v1/vnf_lc_ops/%s?responseId=%s"
 vnf_detail_url = "api/vnflcm/v1/vnf_instances/%s"
-EXTSYS_GET_VNFM = "api/extsys/v1/vnfms/%s"
+EXTSYS_GET_VNFM = "api/aai-esr-server/v1/vnfms/%s"
 vnf_query_url = "api/vnflcm/v1/vnf_instances/%s"
 notify_url = 'api/nslcm/v1/vnfs/{vnfInstanceId}/Notify'
 
