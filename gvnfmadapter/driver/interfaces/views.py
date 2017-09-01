@@ -22,7 +22,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from driver.pub.utils import restcall
-from driver.pub.utils.restcall import req_by_msb
+from driver.pub.utils.restcall import req_by_msb, call_aai
 
 # ==================================================
 vnf_create_url = "api/vnflcm/v1/vnf_instances"
@@ -110,7 +110,7 @@ def get_inst_levelId(vnfdId):
     return inst_levelId
 
 def get_vnfm_info(vnfm_id):
-    ret = req_by_msb((EXTSYS_GET_VNFM) % vnfm_id, "GET")
+    ret = call_aai((EXTSYS_GET_VNFM) % vnfm_id, "GET")
     if ret[0] != 0:
         return 255, Response(data={'error': ret[1]}, status=ret[2])
     vnfm_info = json.JSONDecoder().decode(ret[1])

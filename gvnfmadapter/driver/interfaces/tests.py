@@ -27,8 +27,9 @@ class InterfacesTest(TestCase):
     def tearDown(self):
         pass
 
+    @mock.patch.object(restcall, 'call_req_aai')
     @mock.patch.object(restcall, 'call_req')
-    def test_instantiate_vnf(self, mock_call_req):
+    def test_instantiate_vnf(self, mock_call_req, mock_call_req_aai):
         vnfm_info = {
             'userName': 'admin',
              'vendor': 'ZTE',
@@ -55,7 +56,8 @@ class InterfacesTest(TestCase):
         r1 = [0, json.JSONEncoder().encode(vnfm_info), "200"]
         ret = [0, json.JSONEncoder().encode(job_info), '200']
         ret2 = [0, json.JSONEncoder().encode(vnflcm_info), '200']
-        mock_call_req.side_effect = [r1, ret, r1, ret2]
+        mock_call_req_aai.side_effect = [r1, r1]
+        mock_call_req.side_effect = [ret, ret2]
         req_data = {
             'vnfInstanceName': 'VFW_f88c0cb7-512a-44c4-bd09-891663f19367',
             'vnfPackageId': 'd852e1be-0aac-48f1-b1a4-cd825f6cdf9a',
@@ -80,8 +82,9 @@ class InterfacesTest(TestCase):
         self.assertEqual(job_info, response.data)
 
 
+    @mock.patch.object(restcall, 'call_req_aai')
     @mock.patch.object(restcall, 'call_req')
-    def test_terminate_vnf(self, mock_call_req):
+    def test_terminate_vnf(self, mock_call_req, mock_call_req_aai):
         vnfm_info = {
             "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
             "name": "g_vnfm",
@@ -101,14 +104,16 @@ class InterfacesTest(TestCase):
         r1 = [0, json.JSONEncoder().encode(vnfm_info), "200"]
         r2 = [0, json.JSONEncoder().encode(job_info), "200"]
         job_ret = [0,  json.JSONEncoder().encode(job_status_info), "200"]
-        mock_call_req.side_effect = [r1, r2, r1, job_ret, r1, r2]
+        mock_call_req_aai.side_effect = [r1, r1, r1]
+        mock_call_req.side_effect = [r2, job_ret, r2]
         response = self.client.post("/api/gvnfmdriver/v1/ztevnfmid/vnfs/2/terminate")
         self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
         self.assertEqual(job_info, response.data)
 
 
+    @mock.patch.object(restcall, 'call_req_aai')
     @mock.patch.object(restcall, 'call_req')
-    def test_query_vnf(self, mock_call_req):
+    def test_query_vnf(self, mock_call_req, mock_call_req_aai):
         vnfm_info = {
             "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
             "name": "g_vnfm",
@@ -126,15 +131,17 @@ class InterfacesTest(TestCase):
         job_info = {"ResponseInfo": {"vnfInstanceId":"88","instantiationState":"INSTANTIATED","vnfSoftwareVersion":"v1.2.3"}}
         r1 = [0, json.JSONEncoder().encode(vnfm_info), "200"]
         r2 = [0, json.JSONEncoder().encode(job_info), "200"]
-        mock_call_req.side_effect = [r1, r2]
+        mock_call_req_aai.side_effect = [r1]
+        mock_call_req.side_effect = [r2]
         response = self.client.get("/api/gvnfmdriver/v1/19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee/vnfs/88")
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         expect_resp_data = {"vnfInfo": {"vnfInstanceId": "88", "vnfStatus": "ACTIVE","version":"v1.2.3"}}
         self.assertEqual(expect_resp_data, response.data)
-        
-        
+
+
+    @mock.patch.object(restcall, 'call_req_aai')
     @mock.patch.object(restcall, 'call_req')
-    def test_operation_status(self, mock_call_req):
+    def test_operation_status(self, mock_call_req, mock_call_req_aai):
         vnfm_info = {
             'userName': 'admin',
              'vendor': 'ZTE',
@@ -188,7 +195,8 @@ class InterfacesTest(TestCase):
         }
         r1 = [0, json.JSONEncoder().encode(vnfm_info), '200']
         r2 = [0, json.JSONEncoder().encode(resp_body), '200']
-        mock_call_req.side_effect = [r1, r2]
+        mock_call_req_aai.side_effect = [r1]
+        mock_call_req.side_effect = [r2]
         response = self.client.get("/api/gvnfmdriver/v1/{vnfmid}/jobs/{jobid}?responseId={responseId}".
             format(vnfmid=vnfm_info["vnfmId"],jobid=resp_body["ResponseInfo"]["vnfLcOpId"],
                    responseId=resp_body["ResponseInfo"]["responseDescriptor"]["responseId"]))
@@ -284,7 +292,7 @@ class InterfacesTest(TestCase):
         self.assertEqual(str(status.HTTP_200_OK), response.status_code)
         expect_resp_data = None
         self.assertEqual(expect_resp_data, response.data)
-        
+
     @mock.patch.object(restcall, 'call_req')
     def test_get_vnfpkgs(self, mock_call_req):
         mock_call_req.return_value = [0, json.JSONEncoder().encode({
