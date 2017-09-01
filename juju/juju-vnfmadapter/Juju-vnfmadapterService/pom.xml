@@ -17,13 +17,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>juju-vnfmadapter</artifactId>
-        <groupId>org.openo.nfvo</groupId>
-        <version>1.1.0-SNAPSHOT</version>
+		<groupId>org.onap.vfc.nfvo.driver.vnfm.gvnfm</groupId>
+		<artifactId>juju-vnfmadapter</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>juju-vnfmadapter-service-root</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
-    <name>nfvo/drivers/vnfm/gvnfm/juju/juju-vnfmadapter/Juju-vnfmadapterService</name>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>vfc/nfvo/driver/vnfm/gvnfm/juju/juju-vnfmadapter/Juju-vnfmadapterService</name>
     <packaging>pom</packaging>
 
     <properties>
