@@ -131,8 +131,8 @@ class InterfacesTest(TestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         expect_resp_data = {"vnfInfo": {"vnfInstanceId": "88", "vnfStatus": "ACTIVE","version":"v1.2.3"}}
         self.assertEqual(expect_resp_data, response.data)
-        
-        
+
+
     @mock.patch.object(restcall, 'call_req')
     def test_operation_status(self, mock_call_req):
         vnfm_info = {
