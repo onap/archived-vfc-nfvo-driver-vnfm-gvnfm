@@ -29,6 +29,5 @@
     <description>vfc nfvo drivers-vnfm-gvnfm</description>
     <modules>
         <module>gvnfmadapter</module>
-        <module>juju</module>
     </modules>
 </project>
