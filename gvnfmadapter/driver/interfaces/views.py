@@ -391,7 +391,7 @@ def operation_status(request, *args, **kwargs):
 
 
 # ==================================================
-grant_vnf_url = 'api/nslcm/v1/grantvnf'
+grant_vnf_url = 'api/nslcm/v1/ns/grantvnf'
 
 @api_view(http_method_names=['PUT'])
 def grantvnf(request, *args, **kwargs):
