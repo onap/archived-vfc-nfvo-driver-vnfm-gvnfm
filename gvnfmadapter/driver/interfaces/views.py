@@ -109,6 +109,16 @@ def get_inst_levelId(vnfdId):
 
     return inst_levelId
 
+# Query vnfm info from nslcm
+def get_vnfminfo_from_nslcm(vnfm_id):
+    ret = req_by_msb((EXTSYS_GET_VNFM) % vnfm_id, "GET")
+    if ret[0] != 0:
+        return 255, Response(data={'error': ret[1]}, status=ret[2])
+    vnfm_info = json.JSONDecoder().decode(ret[1])
+    logger.debug("[%s] vnfm_info=%s", fun_name(), vnfm_info)
+    return 0, vnfm_info
+
+# Query vnfm info from esr
 def get_vnfm_info(vnfm_id):
     ret = call_aai((EXTSYS_GET_VNFM) % vnfm_id, "GET")
     if ret[0] != 0:
@@ -116,6 +126,8 @@ def get_vnfm_info(vnfm_id):
     vnfm_info = json.JSONDecoder().decode(ret[1])
     logger.debug("[%s] vnfm_info=%s", fun_name(), vnfm_info)
     return 0, vnfm_info
+
+
 
 def call_vnfm_rest(vnfm_info, input_data, res_url, call_method = "post"):
     ret = restcall.call_req(
@@ -151,7 +163,7 @@ def wait4job(vnfm_id,jobId,gracefulTerminationTimeout):
 
     begin_time = time.time()
     try:
-        ret, vnfm_info = get_vnfm_info(vnfm_id)
+        ret, vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
         if ret != 0:
             return 255, Response(data={"error":"Fail to get VNFM!"}, status=status.HTTP_412_PRECONDITION_FAILED)
 
@@ -180,7 +192,7 @@ def do_createvnf(request, data, vnfm_id):
     logger.debug("[%s] request.data=%s", fun_name(), request.data)
 
     try:
-        ret, vnfm_info = get_vnfm_info(vnfm_id)
+        ret, vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
         if ret != 0:
             return ret, vnfm_info
 
@@ -199,7 +211,7 @@ def do_instvnf(vnfInstanceId, request, data, vnfm_id):
     logger.debug("[%s] request.data=%s", fun_name(), request.data)
 
     try:
-        ret, vnfm_info = get_vnfm_info(vnfm_id)
+        ret, vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
         if ret != 0:
             return ret, vnfm_info
 
@@ -217,7 +229,7 @@ def do_instvnf(vnfInstanceId, request, data, vnfm_id):
 def do_terminatevnf(request, data, vnfm_id, vnfInstanceId):
     logger.debug("[%s] request.data=%s", fun_name(), request.data)
     try:
-        ret, vnfm_info = get_vnfm_info(vnfm_id)
+        ret, vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
         if ret != 0:
             return ret,vnfm_info
 
@@ -236,7 +248,7 @@ def do_deletevnf(request, vnfm_id, vnfInstanceId):
     logger.debug("[%s] request.data=%s", fun_name(), request.data)
     input_data = set_deletevnf_params(request.data)
     try:
-        ret, vnfm_info = get_vnfm_info(vnfm_id)
+        ret, vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
         if ret != 0:
             return ret, vnfm_info
 
@@ -254,7 +266,7 @@ def do_deletevnf(request, vnfm_id, vnfInstanceId):
 def do_queryvnf(request, vnfm_id, vnfInstanceId):
     logger.debug("[%s] request.data=%s", fun_name(), request.data)
     try:
-        ret, vnfm_info = get_vnfm_info(vnfm_id)
+        ret, vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
         if ret != 0:
             return ret, vnfm_info
 
@@ -362,7 +374,7 @@ def operation_status(request, *args, **kwargs):
         jobId = ignorcase_get(kwargs, "jobId")
         responseId = ignorcase_get(kwargs, "responseId")
 
-        ret, vnfm_info = get_vnfm_info(vnfm_id)
+        ret, vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
         if ret != 0:
             return Response(data={'error': ret[1]}, status=ret[2])
         logger.debug("[%s] vnfm_info=%s", fun_name(), vnfm_info)
@@ -391,7 +403,7 @@ def operation_status(request, *args, **kwargs):
 
 
 # ==================================================
-grant_vnf_url = 'api/nslcm/v1/ns/grantvnf'
+grant_vnf_url = 'api/nslcm/v1/grantvnf'
 
 @api_view(http_method_names=['PUT'])
 def grantvnf(request, *args, **kwargs):
