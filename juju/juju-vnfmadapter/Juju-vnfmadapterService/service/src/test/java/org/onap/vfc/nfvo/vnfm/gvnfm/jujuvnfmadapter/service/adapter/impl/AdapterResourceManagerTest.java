@@ -24,10 +24,10 @@ import java.util.Map;
 import org.junit.Test;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.adapter.impl.AdapterResourceManager;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.constant.Constant;
-import org.openo.baseservice.remoteservice.exception.ServiceException;
-import org.openo.baseservice.roa.util.restclient.HttpRest;
-import org.openo.baseservice.roa.util.restclient.RestfulParametes;
-import org.openo.baseservice.roa.util.restclient.RestfulResponse;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.ServiceException;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.HttpRest;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.RestfulParametes;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.RestfulResponse;
 
 import mockit.Mock;
 import mockit.MockUp;

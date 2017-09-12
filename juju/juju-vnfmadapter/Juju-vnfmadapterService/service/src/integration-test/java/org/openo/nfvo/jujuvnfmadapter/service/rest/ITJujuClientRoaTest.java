@@ -20,7 +20,7 @@ import java.io.File;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openo.baseservice.remoteservice.exception.ServiceException;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.ServiceException;
 import org.openo.nfvo.jujuvnfmadapter.common.EntityUtils;
 import org.openo.sdno.testframework.checker.IChecker;
 import org.openo.sdno.testframework.http.model.HttpResponse;

@@ -16,8 +16,8 @@
 
 package org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common;
 
-import org.openo.baseservice.roa.util.restclient.RestfulAsyncCallback;
-import org.openo.baseservice.roa.util.restclient.RestfulResponse;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.RestfulAsyncCallback;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.RestfulResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

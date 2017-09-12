@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.StringUtil;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.process.VnfResourceMgr;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.rest.VnfResourceRoa;
-import org.openo.baseservice.remoteservice.exception.ServiceException;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.ServiceException;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import mockit.Mock;

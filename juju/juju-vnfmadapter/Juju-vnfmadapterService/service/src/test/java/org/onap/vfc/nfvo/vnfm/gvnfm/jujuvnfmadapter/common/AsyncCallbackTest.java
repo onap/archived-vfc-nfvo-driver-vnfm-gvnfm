@@ -20,7 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.AsyncCallback;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.rest.fullstack.JujuClientRoaTest;
-import org.openo.baseservice.roa.util.restclient.RestfulResponse;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.RestfulResponse;
 
 public class AsyncCallbackTest {
     Logger logger = Logger.getLogger(JujuClientRoaTest.class);

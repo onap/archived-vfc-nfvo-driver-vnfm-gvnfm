@@ -21,7 +21,7 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.YamlUtil;
-import org.openo.baseservice.remoteservice.exception.ServiceException;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.ServiceException;
 import org.yaml.snakeyaml.Yaml;
 
 import net.sf.json.JSON;

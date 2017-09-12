@@ -32,7 +32,7 @@ import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.entity.JujuVnfmInfoE
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.entity.JujuVnfmInfoExample.Criterion;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.mapper.JujuVnfmInfoMapper;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.process.VnfResourceMgr;
-import org.openo.baseservice.remoteservice.exception.ServiceException;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.ServiceException;
 
 import mockit.Expectations;
 import mockit.Mock;

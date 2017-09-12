@@ -24,7 +24,7 @@ import java.lang.reflect.Modifier;
 
 import org.junit.Test;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.servicetoken.HttpRestHelp;
-import org.openo.baseservice.roa.util.restclient.Restful;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.Restful;
 
 /**
  * <br/>

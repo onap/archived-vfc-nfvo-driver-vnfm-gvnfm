@@ -19,8 +19,8 @@ package org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.servicetoken;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openo.baseservice.roa.util.restclient.HttpRest;
-import org.openo.baseservice.roa.util.restclient.Restful;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.HttpRest;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.Restful;
 
 /**
  * 
@@ -29,41 +29,41 @@ import org.openo.baseservice.roa.util.restclient.Restful;
  * </p>
  * 
  * @author
- * @version     NFVO 0.5  Sep 12, 2016
+ * @version NFVO 0.5 Sep 12, 2016
  */
 public class HttpRestfulHelp {
 
-    public static final String PROTO_HTTPS = "https";
+	public static final String PROTO_HTTPS = "https";
 
-    public static final String PROTO_HTTP = "http";
+	public static final String PROTO_HTTP = "http";
 
-    private static final Map<String, Restful> INSTANCES = new HashMap<>(2);
+	private static final Map<String, Restful> INSTANCES = new HashMap<>(2);
 
-    private HttpRestfulHelp() {
-        // constructor
-    }
+	private HttpRestfulHelp() {
+		// constructor
+	}
 
-    /**
-     * 
-     * Get rest instance.<br>
-     * 
-     * @param ssloptionfile
-     * @param restoptionfile
-     * @return
-     * @since  NFVO 0.5
-     */
-    public static synchronized Restful getRestInstance(String ssloptionfile, String restoptionfile) {
-        Restful rest = INSTANCES.get(PROTO_HTTP);
-        if(rest != null) {
-            return rest;
-        }
-        rest = createHttpsRest(ssloptionfile, restoptionfile);
-        INSTANCES.put(PROTO_HTTP, rest);
-        return rest;
-    }
+	/**
+	 * 
+	 * Get rest instance.<br>
+	 * 
+	 * @param ssloptionfile
+	 * @param restoptionfile
+	 * @return
+	 * @since NFVO 0.5
+	 */
+	public static synchronized Restful getRestInstance(String ssloptionfile, String restoptionfile) {
+		Restful rest = INSTANCES.get(PROTO_HTTP);
+		if (rest != null) {
+			return rest;
+		}
+		rest = createHttpsRest(ssloptionfile, restoptionfile);
+		INSTANCES.put(PROTO_HTTP, rest);
+		return rest;
+	}
 
-    private static Restful createHttpsRest(String ssloptionfile, String restoptionfile) {
-        return new HttpRest();
-    }
+	private static Restful createHttpsRest(String ssloptionfile, String restoptionfile) {
+		return new HttpRest();
+	}
 
 }

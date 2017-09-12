@@ -30,7 +30,7 @@ import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.adapter.inf.IJujuAda
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.api.internalsvc.inf.IJujuAdapterMgrService;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.constant.Constant;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.constant.UrlConstant;
-import org.openo.baseservice.util.impl.SystemEnvVariablesFactory;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.SystemEnvVariablesFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
