@@ -108,13 +108,12 @@ def terminate_vnf(request, *args, **kwargs):
 
 @api_view(http_method_names=['GET'])
 def query_vnf(request, *args, **kwargs):
+    logger.debug("query_vnf--post::> %s" % request.data)
     vnfm_id = ignorcase_get(kwargs, "vnfmid")
     vnfInstanceId = ignorcase_get(kwargs, "vnfInstanceId")
     try:
         logger.debug("[%s] request.data=%s", fun_name(), request.data)
-        ret, resp = do_queryvnf(request, vnfm_id, vnfInstanceId)
-        if ret != 0:
-            return resp
+        resp = do_queryvnf(request, vnfm_id, vnfInstanceId)
         query_vnf_resp_mapping = {
             "vnfInstanceId": "",
             "vnfInstanceName": "",
@@ -137,43 +136,48 @@ def query_vnf(request, *args, **kwargs):
         if ignorcase_get(ignorcase_get(resp, "ResponseInfo"), "vnfInstanceId"):
             resp_data["vnfInfo"]["vnfInstanceId"] = ignorcase_get(ignorcase_get(resp, "ResponseInfo"), "vnfInstanceId")
         logger.debug("[%s]resp_data=%s", fun_name(), resp_data)
-    except Exception as e:
-        logger.error("Error occurred when querying VNF information.")
-        raise e
-    return Response(data=resp_data, status=status.HTTP_200_OK)
+        return Response(data=resp_data, status=status.HTTP_200_OK)
+    except GvnfmDriverException as e:
+        logger.error('Query vnf failed, detail message: %s' % e.message)
+        return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except:
+        logger.error(traceback.format_exc())
+        return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(http_method_names=['GET'])
 def operation_status(request, *args, **kwargs):
-    data = {}
+    logger.debug("operation_status--post::> %s" % request.data)
     try:
         logger.debug("[%s] request.data=%s", fun_name(), request.data)
         vnfm_id = ignorcase_get(kwargs, "vnfmid")
         jobId = ignorcase_get(kwargs, "jobId")
         responseId = ignorcase_get(kwargs, "responseId")
-        ret, vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
-        if ret != 0:
-            return Response(data={'error': ret[1]}, status=ret[2])
-        logger.debug("[%s] vnfm_info=%s", fun_name(), vnfm_info)
+        logger.debug("[operation_status] vnfm_id=%s", vnfm_id)
+        vnfm_info = get_vnfminfo_from_nslcm( vnfm_id )
+        logger.debug("[operation_status] vnfm_info=[%s]", vnfm_info)
+
         ret = call_vnfm("api/vnflcm/v1/vnf_lc_ops/%s?responseId=%s" % (jobId, responseId), "GET", vnfm_info)
         if ret[0] != 0:
-            return Response(data={'error': ret[1]}, status=ret[2])
+            logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
+            raise GvnfmDriverException('Failed to query vnf operation status.')
         resp_data = json.JSONDecoder().decode(ret[1])
         logger.info("[%s]resp_data=%s", fun_name(), resp_data)
         ResponseInfo = ignorcase_get(resp_data, "ResponseInfo")
+        responseDescriptor = ignorcase_get(ResponseInfo, "responseDescriptor")
         operation_data = {}
         operation_data["jobId"] = ignorcase_get(ResponseInfo, "vnfLcOpId")
-        operation_data["responseDescriptor"] = {}
-        operation_data["responseDescriptor"]["status"] = ignorcase_get(ignorcase_get(ResponseInfo, "responseDescriptor"),"lcmOperationStatus")
-        operation_data["responseDescriptor"]["progress"] = ignorcase_get(ignorcase_get(ResponseInfo, "responseDescriptor"),"progress")
-        operation_data["responseDescriptor"]["statusDescription"] = ignorcase_get(ignorcase_get(ResponseInfo, "responseDescriptor"),"statusDescription")
-        operation_data["responseDescriptor"]["errorCode"] = ignorcase_get(ignorcase_get(ResponseInfo, "responseDescriptor"),"errorCode")
-        operation_data["responseDescriptor"]["responseId"] = ignorcase_get(ignorcase_get(ResponseInfo, "responseDescriptor"),"responseId")
-        operation_data["responseDescriptor"]["responseHistoryList"] = ignorcase_get(ignorcase_get(ResponseInfo, "responseDescriptor"),"responseHistoryList")
-    except Exception as e:
-        logger.error("Error occurred when getting operation status information.")
-        raise e
-    return Response(data=operation_data, status=status.HTTP_200_OK)
+        status_tmp = ignorcase_get(responseDescriptor,"lcmOperationStatus")
+        del responseDescriptor["lcmOperationStatus"]
+        responseDescriptor["status"] = status_tmp
+        operation_data["responseDescriptor"] = responseDescriptor
+        return Response(data=operation_data, status=status.HTTP_200_OK)
+    except GvnfmDriverException as e:
+        logger.error('Query vnf failed, detail message: %s' % e.message)
+        return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except:
+        logger.error(traceback.format_exc())
+        return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(http_method_names=['PUT'])
@@ -386,18 +390,12 @@ def do_deletevnf(vnfm_id, vnfInstanceId, data):
     return json.JSONDecoder().decode(ret[1])
 
 
-def do_queryvnf(request, vnfm_id, vnfInstanceId):
-    logger.debug("[%s] request.data=%s", fun_name(), request.data)
-    try:
-        ret, vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
-        if ret != 0:
-            return ret, vnfm_info
-        ret = call_vnfm("api/vnflcm/v1/vnf_instances/%s" % vnfInstanceId, "GET", vnfm_info)
-        if ret[0] != 0:
-            return 255, Response(data={'error': ret[1]}, status=ret[2])
-        resp_data = json.JSONDecoder().decode(ret[1])
-        logger.debug("[%s]resp_data=%s", fun_name(), resp_data)
-    except Exception as e:
-        logger.error("Error occurred when do_query vnf")
-        raise e
-    return 0, resp_data
+def do_queryvnf(data, vnfm_id, vnfInstanceId):
+    logger.debug("[%s] request.data=%s", fun_name(), data)
+    vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
+    logger.debug("[do_deletevnf] vnfm_info=[%s]", vnfm_info)
+    ret = call_vnfm("api/vnflcm/v1/vnf_instances/%s" % vnfInstanceId, "GET", vnfm_info)
+    if ret[0] != 0:
+        logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
+        raise GvnfmDriverException('Failed to query vnf.')
+    return json.JSONDecoder().decode(ret[1])

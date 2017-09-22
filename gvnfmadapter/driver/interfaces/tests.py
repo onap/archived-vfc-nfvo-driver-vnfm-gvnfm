@@ -126,92 +126,92 @@ class InterfacesTest(TestCase):
         self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
         self.assertEqual(job_info, response.data)
 
-    # @mock.patch.object(restcall, 'call_req')
-    # def test_query_vnf(self, mock_call_req):
-    #     vnfm_info = {
-    #         "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
-    #         "name": "g_vnfm",
-    #         "type": "vnfm",
-    #         "vimId": "",
-    #         "vendor": "ZTE",
-    #         "version": "v1.0",
-    #         "description": "vnfm",
-    #         "certificateUrl": "",
-    #         "url": "http://10.74.44.11",
-    #         "userName": "admin",
-    #         "password": "admin",
-    #         "createTime": "2016-07-06 15:33:18"
-    #     }
-    #     job_info = {"ResponseInfo": {"vnfInstanceId":"88","instantiationState":"INSTANTIATED","vnfSoftwareVersion":"v1.2.3"}}
-    #     r1 = [0, json.JSONEncoder().encode(vnfm_info), "200"]
-    #     r2 = [0, json.JSONEncoder().encode(job_info), "200"]
-    #     mock_call_req.side_effect = [r1, r2]
-    #     response = self.client.get("/api/gvnfmdriver/v1/19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee/vnfs/88")
-    #     self.assertEqual(status.HTTP_200_OK, response.status_code)
-    #     expect_resp_data = {"vnfInfo": {"vnfInstanceId": "88", "vnfStatus": "ACTIVE","version":"v1.2.3"}}
-    #     self.assertEqual(expect_resp_data, response.data)
+    @mock.patch.object(restcall, 'call_req')
+    def test_query_vnf(self, mock_call_req):
+        vnfm_info = {
+            "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
+            "name": "g_vnfm",
+            "type": "vnfm",
+            "vimId": "",
+            "vendor": "ZTE",
+            "version": "v1.0",
+            "description": "vnfm",
+            "certificateUrl": "",
+            "url": "http://10.74.44.11",
+            "userName": "admin",
+            "password": "admin",
+            "createTime": "2016-07-06 15:33:18"
+        }
+        job_info = {"ResponseInfo": {"vnfInstanceId":"88","instantiationState":"INSTANTIATED","vnfSoftwareVersion":"v1.2.3"}}
+        r1 = [0, json.JSONEncoder().encode(vnfm_info), "200"]
+        r2 = [0, json.JSONEncoder().encode(job_info), "200"]
+        mock_call_req.side_effect = [r1, r2]
+        response = self.client.get("/api/gvnfmdriver/v1/19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee/vnfs/88")
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        expect_resp_data = {"vnfInfo": {"vnfInstanceId": "88", "vnfStatus": "ACTIVE","version":"v1.2.3"}}
+        self.assertEqual(expect_resp_data, response.data)
 
-    # @mock.patch.object(restcall, 'call_req')
-    # def test_operation_status(self, mock_call_req):
-    #     vnfm_info = {
-    #         'userName': 'admin',
-    #          'vendor': 'ZTE',
-    #          'name': 'ZTE_VNFM_237_62',
-    #          'vimId': '516cee95-e8ca-4d26-9268-38e343c2e31e',
-    #          'url': 'http://192.168.237.165:2324',
-    #          'certificateUrl': '',
-    #          'version': 'V1.0',
-    #          'vnfmId': 'b0797c9b-3da9-459c-b25c-3813e9d8fd70',
-    #          'password': 'admin',
-    #          'type': 'ztevmanagerdriver',
-    #          'createTime': '2016-10-31 11:08:39',
-    #          'description': ''
-    #     }
-    #     expected_body = {
-    #         "jobId": "NF-CREATE-11-ec6c2f2a-9f48-11e6-9405-fa163e91c2f9",
-    #         "responseDescriptor":{
-    #             "responseId": 3,
-    #             "progress": 40,
-    #             "status": "PROCESSING",
-    #             "statusDescription": "OMC VMs are decommissioned in VIM",
-    #             "errorCode": "null",
-    #             "responseHistoryList": [
-    #                  {
-    #                      "status": "error",
-    #                       "progress": 255,
-    #                       "errorcode": "",
-    #                       "responseid": 20,
-    #                       "statusdescription": "'JsonParser' object has no attribute 'parser_info'"
-    #                  }
-    #             ]
-    #         }
-    #     }
-    #     resp_body = {
-    #         "ResponseInfo": {
-    #             "vnfLcOpId":"NF-CREATE-11-ec6c2f2a-9f48-11e6-9405-fa163e91c2f9",
-    #             "responseDescriptor":{
-    #                 "responseId": 3,
-    #                 "progress": 40,
-    #                 "lcmOperationStatus": "PROCESSING",
-    #                 "statusDescription": "OMC VMs are decommissioned in VIM",
-    #                 "errorCode": "null",
-    #                 "responseHistoryList": [
-    #                          {"status": "error",
-    #                           "progress": 255,
-    #                           "errorcode": "",
-    #                           "responseid": 20,
-    #                           "statusdescription": "'JsonParser' object has no attribute 'parser_info'"}]
-    #             }
-    #         }
-    #     }
-    #     r1 = [0, json.JSONEncoder().encode(vnfm_info), '200']
-    #     r2 = [0, json.JSONEncoder().encode(resp_body), '200']
-    #     mock_call_req.side_effect = [r1, r2]
-    #     response = self.client.get("/api/gvnfmdriver/v1/{vnfmid}/jobs/{jobid}?responseId={responseId}".
-    #         format(vnfmid=vnfm_info["vnfmId"],jobid=resp_body["ResponseInfo"]["vnfLcOpId"],
-    #                responseId=resp_body["ResponseInfo"]["responseDescriptor"]["responseId"]))
-    #     self.assertEqual(status.HTTP_200_OK, response.status_code)
-    #     self.assertDictEqual(expected_body, response.data)
+    @mock.patch.object(restcall, 'call_req')
+    def test_operation_status(self, mock_call_req):
+        vnfm_info = {
+            'userName': 'admin',
+             'vendor': 'ZTE',
+             'name': 'ZTE_VNFM_237_62',
+             'vimId': '516cee95-e8ca-4d26-9268-38e343c2e31e',
+             'url': 'http://192.168.237.165:2324',
+             'certificateUrl': '',
+             'version': 'V1.0',
+             'vnfmId': 'b0797c9b-3da9-459c-b25c-3813e9d8fd70',
+             'password': 'admin',
+             'type': 'ztevmanagerdriver',
+             'createTime': '2016-10-31 11:08:39',
+             'description': ''
+        }
+        expected_body = {
+            "jobId": "NF-CREATE-11-ec6c2f2a-9f48-11e6-9405-fa163e91c2f9",
+            "responseDescriptor":{
+                "responseId": 3,
+                "progress": 40,
+                "status": "PROCESSING",
+                "statusDescription": "OMC VMs are decommissioned in VIM",
+                "errorCode": "null",
+                "responseHistoryList": [
+                     {
+                         "status": "error",
+                          "progress": 255,
+                          "errorcode": "",
+                          "responseid": 20,
+                          "statusdescription": "'JsonParser' object has no attribute 'parser_info'"
+                     }
+                ]
+            }
+        }
+        resp_body = {
+            "ResponseInfo": {
+                "vnfLcOpId":"NF-CREATE-11-ec6c2f2a-9f48-11e6-9405-fa163e91c2f9",
+                "responseDescriptor":{
+                    "responseId": 3,
+                    "progress": 40,
+                    "lcmOperationStatus": "PROCESSING",
+                    "statusDescription": "OMC VMs are decommissioned in VIM",
+                    "errorCode": "null",
+                    "responseHistoryList": [
+                             {"status": "error",
+                              "progress": 255,
+                              "errorcode": "",
+                              "responseid": 20,
+                              "statusdescription": "'JsonParser' object has no attribute 'parser_info'"}]
+                }
+            }
+        }
+        r1 = [0, json.JSONEncoder().encode(vnfm_info), '200']
+        r2 = [0, json.JSONEncoder().encode(resp_body), '200']
+        mock_call_req.side_effect = [r1, r2]
+        response = self.client.get("/api/gvnfmdriver/v1/{vnfmid}/jobs/{jobid}?responseId={responseId}".
+            format(vnfmid=vnfm_info["vnfmId"],jobid=resp_body["ResponseInfo"]["vnfLcOpId"],
+                   responseId=resp_body["ResponseInfo"]["responseDescriptor"]["responseId"]))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertDictEqual(expected_body, response.data)
 
     @mock.patch.object(restcall, 'call_req')
     def test_grantvnf(self, mock_call_req):
