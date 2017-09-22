@@ -22,9 +22,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from driver.pub.utils import restcall
-from driver.pub.utils.restcall import req_by_msb, call_aai
+from driver.pub.utils.restcall import req_by_msb
 
-# ==================================================
 vnf_create_url = "api/vnflcm/v1/vnf_instances"
 vnf_inst_url = "api/vnflcm/v1/vnf_instances/%s/instantiate"
 vnf_delete_url = "api/vnflcm/v1/vnf_instances/%s"
@@ -97,11 +96,6 @@ def set_terminatevnf_params(data):
     input_data["gracefulTerminationTimeout"] = ignorcase_get(data,"gracefulTerminationTimeout")
     return input_data
 
-def get_inst_levelId(vnfdId):
-    inst_levelId = 0
-    return inst_levelId
-
-# Query vnfm info from nslcm
 def get_vnfminfo_from_nslcm(vnfm_id):
     ret = req_by_msb((EXTSYS_GET_VNFM) % vnfm_id, "GET")
     if ret[0] != 0:
@@ -110,43 +104,34 @@ def get_vnfminfo_from_nslcm(vnfm_id):
     logger.debug("[%s] vnfm_info=%s", fun_name(), vnfm_info)
     return 0, vnfm_info
 
-# Query vnfm info from esr
-def get_vnfm_info(vnfm_id):
-    ret = call_aai((EXTSYS_GET_VNFM) % vnfm_id, "GET")
-    if ret[0] != 0:
-        return 255, Response(data={'error': ret[1]}, status=ret[2])
-    vnfm_info = json.JSONDecoder().decode(ret[1])
-    logger.debug("[%s] vnfm_info=%s", fun_name(), vnfm_info)
-    return 0, vnfm_info
-
-def call_vnfm_rest(vnfm_info, input_data, res_url, call_method = "post"):
+def call_vnfm(resource, method, vnfm_info, data):
     ret = restcall.call_req(
         base_url=ignorcase_get(vnfm_info, "url"),
         user=ignorcase_get(vnfm_info, "userName"),
         passwd=ignorcase_get(vnfm_info, "password"),
         auth_type=restcall.rest_no_auth,
-        resource=res_url,
-        method=call_method,
-        content=json.JSONEncoder().encode(input_data))
+        resource=resource,
+        method=method,
+        content=json.JSONEncoder().encode(data))
     return ret
 
-def call_vnfm_createvnf(vnfm_info, input_data):
-    return call_vnfm_rest(vnfm_info, input_data, vnf_create_url)
+# def call_vnfm_createvnf(vnfm_info, input_data):
+#     return call_vnfm(vnfm_info, input_data, vnf_create_url)
 
 def call_vnfm_instvnf(vnfm_info, input_data, vnfInstanceId):
-    return call_vnfm_rest(vnfm_info, input_data, vnf_inst_url % vnfInstanceId, "post")
+    return call_vnfm(vnfm_info, input_data, vnf_inst_url % vnfInstanceId, "post")
 
 def call_vnfm_terminatevnf(vnfm_info, input_data, vnfInstanceId):
-    return call_vnfm_rest(vnfm_info, input_data, vnf_terminate_url % vnfInstanceId, "post")
+    return call_vnfm(vnfm_info, input_data, vnf_terminate_url % vnfInstanceId, "post")
 
 def call_vnfm_deletevnf(vnfm_info, vnfInstanceId):
-    return call_vnfm_rest(vnfm_info, None, vnf_delete_url % vnfInstanceId, "delete")
+    return call_vnfm(vnfm_info, None, vnf_delete_url % vnfInstanceId, "delete")
 
 def call_vnfm_queryvnf(vnfm_info,vnfInstanceId):
-    return call_vnfm_rest(vnfm_info, None, vnf_query_url % vnfInstanceId, "get")
+    return call_vnfm(vnfm_info, None, vnf_query_url % vnfInstanceId, "get")
 
 def call_vnfm_operation_status(vnfm_info, jobId, responseId = None):
-    return call_vnfm_rest(vnfm_info, None, operation_status_url % (jobId, responseId), "get")
+    return call_vnfm(vnfm_info, None, operation_status_url % (jobId, responseId), "get")
 
 def wait4job(vnfm_id,jobId,gracefulTerminationTimeout):
     begin_time = time.time()
@@ -182,7 +167,8 @@ def do_createvnf(request, data, vnfm_id):
         if ret != 0:
             return ret, vnfm_info
 
-        ret = call_vnfm_createvnf(vnfm_info, data)
+        # ret = call_vnfm_createvnf(vnfm_info, data)
+        ret = call_vnfm("api/vnflcm/v1/vnf_instances", "POST", vnfm_info, data)
         logger.debug("[%s] call_req ret=%s", fun_name(), ret)
         if ret[0] != 0:
             return 255, Response(data={'error': ret[1]}, status=ret[2])
@@ -199,7 +185,8 @@ def do_instvnf(vnfInstanceId, request, data, vnfm_id):
         if ret != 0:
             return ret, vnfm_info
 
-        ret = call_vnfm_instvnf(vnfm_info,data, vnfInstanceId)
+        # ret = call_vnfm_instvnf(vnfm_info,data, vnfInstanceId)
+        ret = call_vnfm("api/vnflcm/v1/vnf_instances/%s/instantiate" % vnfInstanceId, "POST", vnfm_info, data)
         logger.debug("[%s] call_req ret=%s", fun_name(), ret)
         if ret[0] != 0:
             return 255, Response(data={'error': ret[1]}, status=ret[2])
