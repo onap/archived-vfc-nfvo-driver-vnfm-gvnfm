@@ -184,20 +184,25 @@ def operation_status(request, *args, **kwargs):
 def grantvnf(request, *args, **kwargs):
     logger.info("=====grantvnf=====")
     try:
-        resp_data = {}
         logger.info("req_data = %s", request.data)
         ret = req_by_msb('api/nslcm/v1/grantvnf', "POST", content=json.JSONEncoder().encode(request.data))
         logger.info("ret = %s", ret)
         if ret[0] != 0:
-            return Response(data={'error': ret[1]}, status=ret[2])
+            logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
+            raise GvnfmDriverException('Failed to grant vnf.')
         resp = json.JSONDecoder().decode(ret[1])
-        resp_data['vimid'] = ignorcase_get(resp['vim'], 'vimid')
-        resp_data['tenant'] = ignorcase_get(ignorcase_get(resp['vim'], 'accessinfo'), 'tenant')
+        resp_data = {
+            'vimid': ignorcase_get(resp['vim'], 'vimid'),
+            'tenant': ignorcase_get(ignorcase_get(resp['vim'], 'accessinfo'), 'tenant')
+        }
         logger.info("[%s]resp_data=%s", fun_name(), resp_data)
-    except Exception as e:
-        logger.error("Error occurred in Grant VNF.")
-        raise e
-    return Response(data=resp_data, status=ret[2])
+        return Response(data=resp_data, status=ret[2])
+    except GvnfmDriverException as e:
+        logger.error('Grant vnf failed, detail message: %s' % e.message)
+        return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except:
+        logger.error(traceback.format_exc())
+        return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(http_method_names=['POST'])
@@ -208,21 +213,33 @@ def notify(request, *args, **kwargs):
         ret = req_by_msb("api/nslcm/v1/vnfs/%s/Notify" % vnfinstanceid, "POST", json.JSONEncoder().encode(request.data))
         logger.info("[%s]data = %s", fun_name(), ret)
         if ret[0] != 0:
-            return Response(data={'error': ret[1]}, status=ret[2])
-    except Exception as e:
-        logger.error("Error occurred in LCM notification.")
-        raise e
-    return Response(data=None, status=ret[2])
+            logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
+            raise GvnfmDriverException('Failed to notify vnf.')
+        return Response(data=None, status=ret[2])
+    except GvnfmDriverException as e:
+        logger.error('Grant vnf failed, detail message: %s' % e.message)
+        return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except:
+        logger.error(traceback.format_exc())
+        return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(http_method_names=['GET'])
 def get_vnfpkgs(request, *args, **kwargs):
-    logger.info("Enter %s", fun_name())
-    ret = req_by_msb("api/nslcm/v1/vnfpackage", "GET")
-    if ret[0] != 0:
-        return Response(data={'error': ret[1]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    resp = json.JSONDecoder().decode(ret[1])
-    return Response(data=resp, status=status.HTTP_200_OK)
+    try:
+        logger.info("Enter %s", fun_name())
+        ret = req_by_msb("api/nslcm/v1/vnfpackage", "GET")
+        if ret[0] != 0:
+            logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
+            raise GvnfmDriverException('Failed to get vnfpkgs.')
+        resp = json.JSONDecoder().decode(ret[1])
+        return Response(data=resp, status=status.HTTP_200_OK)
+    except GvnfmDriverException as e:
+        logger.error('Get vnfpkgs failed, detail message: %s' % e.message)
+        return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except:
+        logger.error(traceback.format_exc())
+        return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def call_vnfm(resource, method, vnfm_info, data=""):
@@ -273,37 +290,6 @@ def get_vnfminfo_from_nslcm(vnfm_id):
     return json.JSONDecoder().decode(ret[1])
 
 
-# def wait4job(vnfm_id, jobId, gracefulTerminationTimeout):
-#     begin_time = time.time()
-#     try:
-#         logger.debug("[wait4job] vnfm_id=[%s],jobId=[%s],gracefulTerminationTimeout=[%s]",
-#                      vnfm_id, jobId, gracefulTerminationTimeout)
-#         vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
-#         logger.debug("[do_terminatevnf] vnfm_info=[%s]", vnfm_info)
-#
-#         ret, vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
-#         if ret != 0:
-#             return 255, Response(data={"error":"Fail to get VNFM!"}, status=status.HTTP_412_PRECONDITION_FAILED)
-#
-#         responseId = None
-#         while ret == 0:
-#             cur_time = time.time()
-#             if gracefulTerminationTimeout and (cur_time - begin_time > gracefulTerminationTimeout):
-#                 return 255, Response(data={"error":"Fail to terminate VNF!"}, status=status.HTTP_408_REQUEST_TIMEOUT)
-#             ret = call_vnfm("api/vnflcm/v1/vnf_lc_ops/%s?responseId=%s" % (jobId, responseId), "GET", vnfm_info)
-#             if ret[0] != 0:
-#                 return 255, Response(data={"error":"Fail to get job status!"}, status=status.HTTP_412_PRECONDITION_FAILED)
-#             if json.JSONDecoder().decode(ret[2]) != 200:
-#                 return 255, Response(data={"error":"Fail to get job status!"}, status=status.HTTP_412_PRECONDITION_FAILED)
-#             job_info = json.JSONDecoder().decode(ret[1])
-#             responseId = ignorcase_get(ignorcase_get(job_info, "VnfLcOpResponseDescriptor"), "responseId")
-#             progress = ignorcase_get(ignorcase_get(job_info, "VnfLcOpResponseDescriptor"), "progress")
-#             if progress == "100":
-#                 return 0, Response(data={"success":"success"}, status=status.HTTP_204_NO_CONTENT)
-#     except Exception as e:
-#         logger.error("Error occurred when do_createvnf")
-#         return 255, Response(data={"error":"Exception caught! Fail to get job status!"}, status=status.HTTP_412_PRECONDITION_FAILED)
-
 def wait4job(vnfm_id, job_id, gracefulTerminationTimeout=1200, retry_count=60, interval_second=3):
     logger.debug("[wait4job] vnfm_id=[%s],jobId=[%s],gracefulTerminationTimeout=[%s]",
                  vnfm_id, job_id, gracefulTerminationTimeout)
@@ -312,7 +298,6 @@ def wait4job(vnfm_id, job_id, gracefulTerminationTimeout=1200, retry_count=60, i
     job_end_normal, job_timeout = False, True
     vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
     logger.debug("[do_terminatevnf] vnfm_info=[%s]", vnfm_info)
-
     while count < retry_count:
         count = count + 1
         time.sleep(interval_second)

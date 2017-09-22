@@ -31,27 +31,26 @@ class InterfacesTest(TestCase):
     def test_instantiate_vnf(self, mock_call_req):
         vnfm_info = {
             'userName': 'admin',
-             'vendor': 'ZTE',
-             'name': 'ZTE_VNFM_237_62',
-             'vimId': '516cee95-e8ca-4d26-9268-38e343c2e31e',
-             'url': 'http://192.168.237.165:2324',
-             'certificateUrl': '',
-             'version': 'V1.0',
-             'vnfmId': 'b0797c9b-3da9-459c-b25c-3813e9d8fd70',
-             'password': 'admin',
-             'type': 'ztevmanagerdriver',
-             'createTime': '2016-10-31 11:08:39',
-             'description': ''
+            'vendor': 'ZTE',
+            'name': 'ZTE_VNFM_237_62',
+            'vimId': '516cee95-e8ca-4d26-9268-38e343c2e31e',
+            'url': 'http: //192.168.237.165: 2324',
+            'certificateUrl': '',
+            'version': 'V1.0',
+            'vnfmId': 'b0797c9b-3da9-459c-b25c-3813e9d8fd70',
+            'password': 'admin',
+            'type': 'ztevmanagerdriver',
+            'createTime': '2016-10-3111: 08: 39',
+            'description': ''
         }
         job_info = {
-            "vnfInstanceId":"8",
-            "jobId":"NF-CREATE-8-b384535c-9f45-11e6-8749-fa163e91c2f9"
+            "vnfInstanceId": "8",
+            "jobId": "NF-CREATE-8-b384535c-9f45-11e6-8749-fa163e91c2f9"
         }
         vnflcm_info = {
-            "vnfInstanceId":"8",
-            "vnfLcOpId":"NF-INST-8-6ffa8083-6705-49b3-ae54-cbd6265fbe7a"
+            "vnfInstanceId": "8",
+            "vnfLcOpId": "NF-INST-8-6ffa8083-6705-49b3-ae54-cbd6265fbe7a"
         }
-
         r1 = [0, json.JSONEncoder().encode(vnfm_info), "200"]
         ret = [0, json.JSONEncoder().encode(job_info), '200']
         ret2 = [0, json.JSONEncoder().encode(vnflcm_info), '200']
@@ -69,7 +68,7 @@ class InterfacesTest(TestCase):
                 'externalManageNetworkName': 'mng_net_2017',
                 'sfc_data_network': 'sfc_data_net_2016',
                 'externalDataNetworkName': 'Flow_out_net',
-                'inputs':{}
+                'inputs': {}
             }
         }
         response = self.client.post("/api/gvnfmdriver/v1/1/vnfs",
@@ -98,7 +97,6 @@ class InterfacesTest(TestCase):
             "createTime": "2016-07-06 15:33:18"
         }
         job_info = {"vnfInstanceId": "1", "vnfLcOpId": "1"}
-        # job_status_info = {"responseDescriptor":{"progress":"100"}}
         job_status_info = {
             "jobId": "1",
             "responseDescriptor": {
@@ -142,47 +140,59 @@ class InterfacesTest(TestCase):
             "password": "admin",
             "createTime": "2016-07-06 15:33:18"
         }
-        job_info = {"ResponseInfo": {"vnfInstanceId":"88","instantiationState":"INSTANTIATED","vnfSoftwareVersion":"v1.2.3"}}
+        job_info = {
+            "ResponseInfo": {
+                "vnfInstanceId": "88",
+                "instantiationState": "INSTANTIATED",
+                "vnfSoftwareVersion": "v1.2.3"
+            }
+        }
         r1 = [0, json.JSONEncoder().encode(vnfm_info), "200"]
         r2 = [0, json.JSONEncoder().encode(job_info), "200"]
         mock_call_req.side_effect = [r1, r2]
         response = self.client.get("/api/gvnfmdriver/v1/19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee/vnfs/88")
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        expect_resp_data = {"vnfInfo": {"vnfInstanceId": "88", "vnfStatus": "ACTIVE","version":"v1.2.3"}}
+        expect_resp_data = {
+            "vnfInfo": {
+                "vnfInstanceId": "88",
+                "vnfStatus": "ACTIVE",
+                "version": "v1.2.3"
+            }
+        }
         self.assertEqual(expect_resp_data, response.data)
 
     @mock.patch.object(restcall, 'call_req')
     def test_operation_status(self, mock_call_req):
         vnfm_info = {
             'userName': 'admin',
-             'vendor': 'ZTE',
-             'name': 'ZTE_VNFM_237_62',
-             'vimId': '516cee95-e8ca-4d26-9268-38e343c2e31e',
-             'url': 'http://192.168.237.165:2324',
-             'certificateUrl': '',
-             'version': 'V1.0',
-             'vnfmId': 'b0797c9b-3da9-459c-b25c-3813e9d8fd70',
-             'password': 'admin',
-             'type': 'ztevmanagerdriver',
-             'createTime': '2016-10-31 11:08:39',
-             'description': ''
+            'vendor': 'ZTE',
+            'name': 'ZTE_VNFM_237_62',
+            'vimId': '516cee95-e8ca-4d26-9268-38e343c2e31e',
+            'url': 'http: //192.168.237.165: 2324',
+            'certificateUrl': '',
+            'version': 'V1.0',
+            'vnfmId': 'b0797c9b-3da9-459c-b25c-3813e9d8fd70',
+            'password': 'admin',
+            'type': 'ztevmanagerdriver',
+            'createTime': '2016-10-3111: 08: 39',
+            'description': ''
         }
         expected_body = {
             "jobId": "NF-CREATE-11-ec6c2f2a-9f48-11e6-9405-fa163e91c2f9",
-            "responseDescriptor":{
+            "responseDescriptor": {
                 "responseId": 3,
                 "progress": 40,
                 "status": "PROCESSING",
                 "statusDescription": "OMC VMs are decommissioned in VIM",
                 "errorCode": "null",
                 "responseHistoryList": [
-                     {
-                         "status": "error",
-                          "progress": 255,
-                          "errorcode": "",
-                          "responseid": 20,
-                          "statusdescription": "'JsonParser' object has no attribute 'parser_info'"
-                     }
+                    {
+                        "status": "error",
+                        "progress": 255,
+                        "errorcode": "",
+                        "responseid": 20,
+                        "statusdescription": "'JsonParser' object has no attribute 'parser_info'"
+                    }
                 ]
             }
         }
@@ -207,9 +217,8 @@ class InterfacesTest(TestCase):
         r1 = [0, json.JSONEncoder().encode(vnfm_info), '200']
         r2 = [0, json.JSONEncoder().encode(resp_body), '200']
         mock_call_req.side_effect = [r1, r2]
-        response = self.client.get("/api/gvnfmdriver/v1/{vnfmid}/jobs/{jobid}?responseId={responseId}".
-            format(vnfmid=vnfm_info["vnfmId"],jobid=resp_body["ResponseInfo"]["vnfLcOpId"],
-                   responseId=resp_body["ResponseInfo"]["responseDescriptor"]["responseId"]))
+        response = self.client.get("/api/gvnfmdriver/v1/%s/jobs/%s?responseId=0"
+                                   %(vnfm_info["vnfmId"], expected_body["jobId"]))
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertDictEqual(expected_body, response.data)
 
@@ -243,7 +252,7 @@ class InterfacesTest(TestCase):
     @mock.patch.object(restcall, 'call_req')
     def test_notify(self, mock_call_req):
         vim_info = {
-            "vim":{
+            "vim": {
                 "vimInfoId": "111111",
                 "vimId": "12345678",
                 "interfaceInfo": {
@@ -295,7 +304,8 @@ class InterfacesTest(TestCase):
                 ]
         }
         response = self.client.post("/api/gvnfmdriver/v1/vnfs/lifecyclechangesnotification",
-                                    data=json.dumps(req_data), content_type='application/json')
+                                    data=json.dumps(req_data),
+                                    content_type='application/json')
         self.assertEqual(str(status.HTTP_200_OK), response.status_code)
         expect_resp_data = None
         self.assertEqual(expect_resp_data, response.data)
