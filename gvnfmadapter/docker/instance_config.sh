@@ -13,8 +13,6 @@ fi
 
 if [ $SERVICE_IP ]; then
     sed -i "s|\"ip\": \".*\"|\"ip\": \"$SERVICE_IP\"|" vfc/nfvo/driver/vnfm/gvnfm/gvnfmadapter/driver/pub/config/config.py
-    sed -i "s|127\.0\.0\.1|$SERVICE_IP|" vfc/nfvo/driver/vnfm/gvnfm/gvnfmadapter/run.sh
-    sed -i "s|127\.0\.0\.1|$SERVICE_IP|" vfc/nfvo/driver/vnfm/gvnfm/gvnfmadapter/stop.sh
 fi
 
 cat vfc/nfvo/driver/vnfm/gvnfm/gvnfmadapter/driver/pub/config/config.py
