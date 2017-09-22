@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'driver.pub.database',
     'driver.interfaces'
  ]
 
@@ -66,20 +65,9 @@ REST_FRAMEWORK = {
 
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.MultiPartParser',
-        'rest_framework.parsers.JSONParser')}
-"""
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'vmanager',
-        'HOST': 'localhost',
-        'USER': 'root',
-        'PASSWORD':'password',
-    },
+        'rest_framework.parsers.JSONParser')
 }
 
-redis_client = redis.StrictRedis(host='127.0.0.1', port=6379, password='', db=1)
-"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import os
 import json
 from rest_framework.views import APIView
@@ -18,9 +19,6 @@ from rest_framework.response import Response
 
 
 class SwaggerView(APIView):
-    """
-    Show rest api swagger.
-    """
     def get(self, request, format=None):
         json_file = os.path.join(os.path.dirname(__file__), 'swagger.json')
         f = open(json_file)

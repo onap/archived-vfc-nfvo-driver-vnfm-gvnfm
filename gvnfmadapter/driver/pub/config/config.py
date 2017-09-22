@@ -13,14 +13,9 @@
 # limitations under the License.
 
 # [AAI]
-AAI_SERVICE_IP = '127.0.0.1'
-AAI_SERVICE_PORT = '8443'
-AAI_BASE_URL = "https://%s:%s/aai/v11" % (AAI_SERVICE_IP, AAI_SERVICE_PORT)
+AAI_BASE_URL = "https://127.0.0.1:8443/aai/v11"
 AAI_USER = "AAI"
 AAI_PASSWORD = "AAI"
-CLOUD_OWNER = ""
-CLOUD_REGION_ID = ""
-TENANT_ID = ""
 
 # [MSB]
 MSB_SERVICE_IP = '127.0.0.1'

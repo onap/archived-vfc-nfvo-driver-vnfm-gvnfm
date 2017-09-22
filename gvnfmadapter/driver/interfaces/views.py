@@ -81,7 +81,6 @@ def set_createvnf_params(data):
     input_data["vnfdId"] = ignorcase_get(data,"vnfDescriptorId")
     input_data["vnfInstanceName"] = ignorcase_get(data, "vnfInstanceName")
     input_data["vnfInstanceDescription"] = ignorcase_get(data, "vnfInstanceDescription")
-
     return input_data
 
 def set_instantvnf_params(data):
@@ -90,23 +89,16 @@ def set_instantvnf_params(data):
     input_data["extVirtualLinks"] = ignorcase_get(data, "extVirtualLink")
     input_data["additionalParams"] = ignorcase_get(data,"additionalParams")
     input_data["flavourId"] = ignorcase_get(data,"flavourId")
-
     return input_data
 
 def set_terminatevnf_params(data):
     input_data = {}
     input_data["terminationType"] = ignorcase_get(data,"terminationType")
     input_data["gracefulTerminationTimeout"] = ignorcase_get(data,"gracefulTerminationTimeout")
-
     return input_data
-
-def set_deletevnf_params(data):
-    pass
-
 
 def get_inst_levelId(vnfdId):
     inst_levelId = 0
-
     return inst_levelId
 
 # Query vnfm info from nslcm
@@ -127,8 +119,6 @@ def get_vnfm_info(vnfm_id):
     logger.debug("[%s] vnfm_info=%s", fun_name(), vnfm_info)
     return 0, vnfm_info
 
-
-
 def call_vnfm_rest(vnfm_info, input_data, res_url, call_method = "post"):
     ret = restcall.call_req(
         base_url=ignorcase_get(vnfm_info, "url"),
@@ -138,7 +128,6 @@ def call_vnfm_rest(vnfm_info, input_data, res_url, call_method = "post"):
         resource=res_url,
         method=call_method,
         content=json.JSONEncoder().encode(input_data))
-
     return ret
 
 def call_vnfm_createvnf(vnfm_info, input_data):
@@ -160,7 +149,6 @@ def call_vnfm_operation_status(vnfm_info, jobId, responseId = None):
     return call_vnfm_rest(vnfm_info, None, operation_status_url % (jobId, responseId), "get")
 
 def wait4job(vnfm_id,jobId,gracefulTerminationTimeout):
-
     begin_time = time.time()
     try:
         ret, vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
@@ -187,10 +175,8 @@ def wait4job(vnfm_id,jobId,gracefulTerminationTimeout):
         logger.error("Error occurred when do_createvnf")
         return 255, Response(data={"error":"Exception caught! Fail to get job status!"}, status=status.HTTP_412_PRECONDITION_FAILED)
 
-
 def do_createvnf(request, data, vnfm_id):
     logger.debug("[%s] request.data=%s", fun_name(), request.data)
-
     try:
         ret, vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
         if ret != 0:
@@ -204,12 +190,10 @@ def do_createvnf(request, data, vnfm_id):
     except Exception as e:
         logger.error("Error occurred when do_createvnf")
         raise e
-
     return 0, resp
 
 def do_instvnf(vnfInstanceId, request, data, vnfm_id):
     logger.debug("[%s] request.data=%s", fun_name(), request.data)
-
     try:
         ret, vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
         if ret != 0:
@@ -223,7 +207,6 @@ def do_instvnf(vnfInstanceId, request, data, vnfm_id):
     except Exception as e:
         logger.error("Error occurred when do_instvnf")
         raise e
-
     return 0, resp
 
 def do_terminatevnf(request, data, vnfm_id, vnfInstanceId):
@@ -232,7 +215,6 @@ def do_terminatevnf(request, data, vnfm_id, vnfInstanceId):
         ret, vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
         if ret != 0:
             return ret,vnfm_info
-
         ret = call_vnfm_terminatevnf(vnfm_info, data, vnfInstanceId)
         if ret[0] != 0:
             return 255, Response(data={'error': ret[1]}, status=ret[2])
@@ -241,19 +223,15 @@ def do_terminatevnf(request, data, vnfm_id, vnfInstanceId):
     except Exception as e:
         logger.error("Error occurred when do_terminatevnf")
         raise e
-
     return 0, resp_data
 
 def do_deletevnf(request, vnfm_id, vnfInstanceId):
     logger.debug("[%s] request.data=%s", fun_name(), request.data)
-    input_data = set_deletevnf_params(request.data)
     try:
         ret, vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
         if ret != 0:
             return ret, vnfm_info
-
         ret = call_vnfm_deletevnf(vnfm_info, vnfInstanceId)
-
         if ret[0] != 0:
             return 255, Response(data={'error': ret[1]}, status=ret[2])
         resp_data = json.JSONDecoder().decode(ret[1])
@@ -269,9 +247,7 @@ def do_queryvnf(request, vnfm_id, vnfInstanceId):
         ret, vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
         if ret != 0:
             return ret, vnfm_info
-
         ret = call_vnfm_queryvnf(vnfm_info, vnfInstanceId)
-
         if ret[0] != 0:
             return 255, Response(data={'error': ret[1]}, status=ret[2])
         resp_data = json.JSONDecoder().decode(ret[1])
@@ -289,25 +265,20 @@ def instantiate_vnf(request, *args, **kwargs):
         ret, resp = do_createvnf(request, input_data, vnfm_id)
         if ret != 0:
             return resp
-
         logger.info("[%s]resp_data=%s", fun_name(), resp)
         vnfInstanceId = resp["vnfInstanceId"]
         logger.info("[%s]vnfInstanceId=%s", fun_name(), vnfInstanceId)
-
         input_data = set_instantvnf_params(request.data)
         ret, resp = do_instvnf(vnfInstanceId, request, input_data, vnfm_id)
         if ret != 0:
             return resp
-
         resp_data = {"jobId":"", "vnfInstanceId":""}
         resp_data["vnfInstanceId"] = vnfInstanceId
         resp_data["jobId"] = resp["vnfLcOpId"]
     except Exception as e:
         logger.error("Error occurred when instantiating VNF")
         raise e
-
     return Response(data=resp_data, status=status.HTTP_201_CREATED)
-
 
 @api_view(http_method_names=['POST'])
 def terminate_vnf(request, *args, **kwargs):
@@ -318,21 +289,17 @@ def terminate_vnf(request, *args, **kwargs):
         ret, resp = do_terminatevnf(request, input_data, vnfm_id, vnfInstanceId)
         if ret != 0:
             return resp
-
         jobId = ignorcase_get(resp, "vnfLcOpId")
         gracefulTerminationTimeout = ignorcase_get(request.data, "gracefulTerminationTimeout")
         ret, response = wait4job(vnfm_id,jobId,gracefulTerminationTimeout)
         if ret != 0:
             return response
-
         ret, resp = do_deletevnf(request, vnfm_id, vnfInstanceId)
         if ret != 0:
             return resp
-
     except Exception as e:
         logger.error("Error occurred when terminating VNF")
         raise e
-
     return Response(data=resp, status=status.HTTP_204_NO_CONTENT)
 
 @api_view(http_method_names=['GET'])
@@ -344,7 +311,6 @@ def query_vnf(request, *args, **kwargs):
         ret, resp = do_queryvnf(request, vnfm_id, vnfInstanceId)
         if ret != 0:
             return resp
-
         resp_response_data = mapping_conv(query_vnf_resp_mapping, ignorcase_get(resp, "ResponseInfo"))
         resp_data = {
             "vnfInfo":resp_response_data
@@ -362,9 +328,6 @@ def query_vnf(request, *args, **kwargs):
         raise e
     return Response(data=resp_data, status=status.HTTP_200_OK)
 
-# ==================================================
-
-
 @api_view(http_method_names=['GET'])
 def operation_status(request, *args, **kwargs):
     data = {}
@@ -373,14 +336,11 @@ def operation_status(request, *args, **kwargs):
         vnfm_id = ignorcase_get(kwargs, "vnfmid")
         jobId = ignorcase_get(kwargs, "jobId")
         responseId = ignorcase_get(kwargs, "responseId")
-
         ret, vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
         if ret != 0:
             return Response(data={'error': ret[1]}, status=ret[2])
         logger.debug("[%s] vnfm_info=%s", fun_name(), vnfm_info)
-
         ret = call_vnfm_operation_status(vnfm_info, jobId, responseId)
-
         if ret[0] != 0:
             return Response(data={'error': ret[1]}, status=ret[2])
         resp_data = json.JSONDecoder().decode(ret[1])
@@ -395,15 +355,10 @@ def operation_status(request, *args, **kwargs):
         operation_data["responseDescriptor"]["errorCode"] = ignorcase_get(ignorcase_get(ResponseInfo, "responseDescriptor"),"errorCode")
         operation_data["responseDescriptor"]["responseId"] = ignorcase_get(ignorcase_get(ResponseInfo, "responseDescriptor"),"responseId")
         operation_data["responseDescriptor"]["responseHistoryList"] = ignorcase_get(ignorcase_get(ResponseInfo, "responseDescriptor"),"responseHistoryList")
-
     except Exception as e:
         logger.error("Error occurred when getting operation status information.")
         raise e
     return Response(data=operation_data, status=status.HTTP_200_OK)
-
-
-# ==================================================
-grant_vnf_url = 'api/nslcm/v1/grantvnf'
 
 @api_view(http_method_names=['PUT'])
 def grantvnf(request, *args, **kwargs):
@@ -411,7 +366,7 @@ def grantvnf(request, *args, **kwargs):
     try:
         resp_data = {}
         logger.info("req_data = %s", request.data)
-        ret = req_by_msb(grant_vnf_url, "POST", content=json.JSONEncoder().encode(request.data))
+        ret = req_by_msb('api/nslcm/v1/grantvnf', "POST", content=json.JSONEncoder().encode(request.data))
         logger.info("ret = %s", ret)
         if ret[0] != 0:
             return Response(data={'error': ret[1]}, status=ret[2])
@@ -423,10 +378,6 @@ def grantvnf(request, *args, **kwargs):
         logger.error("Error occurred in Grant VNF.")
         raise e
     return Response(data=resp_data, status=ret[2])
-
-
-# ==================================================
-
 
 @api_view(http_method_names=['POST'])
 def notify(request, *args, **kwargs):

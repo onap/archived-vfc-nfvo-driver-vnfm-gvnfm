@@ -26,4 +26,5 @@ urlpatterns = [
         views.operation_status, name='operation_status'),
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/vnfpackages$', views.get_vnfpkgs, name='get_vnfpkgs'),
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/resource/grant$', views.grantvnf, name='grantvnf'),
-    url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/vnfs/lifecyclechangesnotification$', views.notify, name='notify'),]
+    url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/vnfs/lifecyclechangesnotification$', views.notify, name='notify')
+]
