@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 def instantiate_vnf(request, *args, **kwargs):
     try:
         logger.debug("instantiate_vnf--post::> %s" % request.data)
-        logger.info("Create vnf begin!")
+        logger.debug("Create vnf begin!")
         input_data = {
             "vnfdId": ignorcase_get(request.data, "vnfDescriptorId"),
             "vnfInstanceName": ignorcase_get(request.data, "vnfInstanceName"),
@@ -73,7 +73,7 @@ def instantiate_vnf(request, *args, **kwargs):
 @api_view(http_method_names=['POST'])
 def terminate_vnf(request, *args, **kwargs):
     logger.debug("terminate_vnf--post::> %s" % request.data)
-    logger.info("Terminate vnf begin!")
+    logger.debug("Terminate vnf begin!")
     vnfm_id = ignorcase_get(kwargs, "vnfmid")
     vnfInstanceId = ignorcase_get(kwargs, "vnfInstanceId")
     try:
@@ -91,7 +91,7 @@ def terminate_vnf(request, *args, **kwargs):
         logger.debug("wait4job: vnfm_id=[%s],jobId=[%s],gracefulTerminationTimeout=[%s]",
                      vnfm_id, jobId, gracefulTerminationTimeout)
         resp = wait4job(vnfm_id, jobId, gracefulTerminationTimeout)
-        logger.info("[wait4job] response=[%s]", resp)
+        logger.debug("[wait4job] response=[%s]", resp)
 
         logger.debug("Delete vnf start!")
         logger.debug("do_deletevnf: vnfm_id=[%s],vnfInstanceId=[%s],request data=[%s]",
@@ -164,15 +164,16 @@ def operation_status(request, *args, **kwargs):
             logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
             raise GvnfmDriverException('Failed to query vnf operation status.')
         resp_data = json.JSONDecoder().decode(ret[1])
-        logger.info("[%s]resp_data=%s", fun_name(), resp_data)
+        logger.debug("[%s]resp_data=%s", fun_name(), resp_data)
         ResponseInfo = ignorcase_get(resp_data, "ResponseInfo")
         responseDescriptor = ignorcase_get(ResponseInfo, "responseDescriptor")
-        operation_data = {}
-        operation_data["jobId"] = ignorcase_get(ResponseInfo, "vnfLcOpId")
         status_tmp = ignorcase_get(responseDescriptor,"lcmOperationStatus")
         del responseDescriptor["lcmOperationStatus"]
         responseDescriptor["status"] = status_tmp
-        operation_data["responseDescriptor"] = responseDescriptor
+        operation_data = {
+            "jobId": ignorcase_get(ResponseInfo, "vnfLcOpId"),
+            "responseDescriptor": responseDescriptor
+        }
         return Response(data=operation_data, status=status.HTTP_200_OK)
     except GvnfmDriverException as e:
         logger.error('Query vnf failed, detail message: %s' % e.message)
@@ -184,20 +185,21 @@ def operation_status(request, *args, **kwargs):
 
 @api_view(http_method_names=['PUT'])
 def grantvnf(request, *args, **kwargs):
-    logger.info("=====grantvnf=====")
     try:
-        logger.info("req_data = %s", request.data)
+        logger.debug("[grantvnf] req_data = %s", request.data)
         ret = req_by_msb('api/nslcm/v1/grantvnf', "POST", content=json.JSONEncoder().encode(request.data))
-        logger.info("ret = %s", ret)
+        logger.debug("ret = %s", ret)
         if ret[0] != 0:
             logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
             raise GvnfmDriverException('Failed to grant vnf.')
         resp = json.JSONDecoder().decode(ret[1])
+        vim_info = resp['vim']
+        accessinfo = ignorcase_get(resp['vim'], 'accessinfo')
         resp_data = {
-            'vimid': ignorcase_get(resp['vim'], 'vimid'),
-            'tenant': ignorcase_get(ignorcase_get(resp['vim'], 'accessinfo'), 'tenant')
+            'vimid': ignorcase_get(vim_info, 'vimid'),
+            'tenant': ignorcase_get(accessinfo, 'tenant')
         }
-        logger.info("[%s]resp_data=%s", fun_name(), resp_data)
+        logger.debug("[%s]resp_data=%s", fun_name(), resp_data)
         return Response(data=resp_data, status=ret[2])
     except GvnfmDriverException as e:
         logger.error('Grant vnf failed, detail message: %s' % e.message)
@@ -210,10 +212,10 @@ def grantvnf(request, *args, **kwargs):
 @api_view(http_method_names=['POST'])
 def notify(request, *args, **kwargs):
     try:
-        logger.info("[%s]req_data = %s", fun_name(), request.data)
+        logger.debug("[%s]req_data = %s", fun_name(), request.data)
         vnfinstanceid = ignorcase_get(request.data, 'vnfinstanceid')
         ret = req_by_msb("api/nslcm/v1/vnfs/%s/Notify" % vnfinstanceid, "POST", json.JSONEncoder().encode(request.data))
-        logger.info("[%s]data = %s", fun_name(), ret)
+        logger.debug("[%s]data = %s", fun_name(), ret)
         if ret[0] != 0:
             logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
             raise GvnfmDriverException('Failed to notify vnf.')
@@ -229,7 +231,7 @@ def notify(request, *args, **kwargs):
 @api_view(http_method_names=['GET'])
 def get_vnfpkgs(request, *args, **kwargs):
     try:
-        logger.info("Enter %s", fun_name())
+        logger.debug("Enter %s", fun_name())
         ret = req_by_msb("api/nslcm/v1/vnfpackage", "GET")
         if ret[0] != 0:
             logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
@@ -324,7 +326,7 @@ def wait4job(vnfm_id, job_id, gracefulTerminationTimeout=1200, retry_count=60, i
             break
         elif progress == 100:
             job_end_normal, job_timeout = True, False
-            logger.info("Job(%s) ended normally", job_id)
+            logger.debug("Job(%s) ended normally", job_id)
             return {"success": "success"}
     if job_timeout:
         logger.error("Job(%s) timeout", job_id)
