@@ -287,7 +287,9 @@ def ignorcase_get(args, key):
 
 
 def get_vnfminfo_from_nslcm(vnfm_id):
+    logger.debug("[get_vnfminfo_from_nslcm] vnfm_id=[%s]", vnfm_id)
     ret = req_by_msb("api/aai-esr-server/v1/vnfms/%s" % vnfm_id, "GET")
+    logger.debug("[get_vnfminfo_from_nslcm] response=%s", ret)
     if ret[0] != 0:
         logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
         raise GvnfmDriverException("Failed to query vnfm(%s) from nslcm." % vnfm_id)

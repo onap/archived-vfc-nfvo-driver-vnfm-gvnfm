@@ -39,7 +39,7 @@ class InterfacesTest(TestCase):
             'version': 'V1.0',
             'vnfmId': 'b0797c9b-3da9-459c-b25c-3813e9d8fd70',
             'password': 'admin',
-            'type': 'ztevmanagerdriver',
+            'type': 'gvnfmdriver',
             'createTime': '2016-10-3111: 08: 39',
             'description': ''
         }
@@ -85,7 +85,7 @@ class InterfacesTest(TestCase):
         vnfm_info = {
             "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
             "name": "g_vnfm",
-            "type": "vnfm",
+            "type": "gvnfmdriver",
             "vimId": "",
             "vendor": "ZTE",
             "version": "v1.0",
@@ -129,7 +129,7 @@ class InterfacesTest(TestCase):
         vnfm_info = {
             "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
             "name": "g_vnfm",
-            "type": "vnfm",
+            "type": "gvnfmdriver",
             "vimId": "",
             "vendor": "ZTE",
             "version": "v1.0",
@@ -173,7 +173,7 @@ class InterfacesTest(TestCase):
             'version': 'V1.0',
             'vnfmId': 'b0797c9b-3da9-459c-b25c-3813e9d8fd70',
             'password': 'admin',
-            'type': 'ztevmanagerdriver',
+            'type': 'gvnfmdriver',
             'createTime': '2016-10-3111: 08: 39',
             'description': ''
         }
@@ -238,7 +238,7 @@ class InterfacesTest(TestCase):
             "vimid": "12345678",
             "exvimidlist ": "exvimid",
             "tenant": " tenant1",
-            "vnfistanceid": "1234",
+            "vnfinstanceid": "1234",
             "operationright": "0",
             "vmlist": [
                 {
