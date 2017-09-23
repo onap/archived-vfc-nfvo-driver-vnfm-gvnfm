@@ -224,29 +224,41 @@ class InterfacesTest(TestCase):
 
     @mock.patch.object(restcall, 'call_req')
     def test_grantvnf(self, mock_call_req):
-        vim_info = {"vim":{"accessinfo":{"tenant":"admin"},"vimid":"516cee95-e8ca-4d26-9268-38e343c2e31e"}}
+        vim_info = {
+            "vim": {
+                "accessinfo": {
+                    "tenant": "admin"
+                },
+                "vimid": "516cee95-e8ca-4d26-9268-38e343c2e31e"
+            }
+        }
         req_data = {
             "vnfmid": "13232222",
             "nfvoid": "03212234",
             "vimid": "12345678",
-            "exvimidlist ":["exvimid"],
+            "exvimidlist ": "exvimid",
             "tenant": " tenant1",
             "vnfistanceid": "1234",
             "operationright": "0",
             "vmlist": [
                 {
                     "vmflavor": "SMP",
-                    "vmnumber": "3"},
+                    "vmnumber": "3"
+                },
                 {
                     "vmflavor": "CMP",
-                    "vmnumber": "3"}
+                    "vmnumber": "3"
+                }
             ]
         }
         mock_call_req.return_value = [0, json.JSONEncoder().encode(vim_info), '201']
         response = self.client.put("/api/gvnfmdriver/v1/resource/grant",
                                    data=json.dumps(req_data), content_type='application/json')
         self.assertEqual(str(status.HTTP_201_CREATED), response.status_code)
-        expect_resp_data = {"vimid": "516cee95-e8ca-4d26-9268-38e343c2e31e", "tenant": "admin"}
+        expect_resp_data = {
+            "vimid": "516cee95-e8ca-4d26-9268-38e343c2e31e",
+            "tenant": "admin"
+        }
         self.assertDictEqual(expect_resp_data, response.data)
 
     @mock.patch.object(restcall, 'call_req')
