@@ -270,28 +270,34 @@ class InterfacesTest(TestCase):
                 "interfaceInfo": {
                     "vimType": "vnf",
                     "apiVersion": "v1",
-                    "protocolType": "None"},
+                    "protocolType": "None"
+                },
                 "accessInfo": {
                     "tenant": "tenant1",
                     "username": "admin",
-                    "password": "password"},
+                    "password": "password"
+                },
                 "interfaceEndpoint": "http://127.0.0.1/api/v1"
             },
             "zone": "",
             "addResource": {
                 "resourceDefinitionId": "xxxxx",
                 "vimId": "12345678",
-                "zoneId": "000"},
+                "zoneId": "000"
+            },
             "removeResource": "",
             "vimAssets": {
                 "computeResourceFlavour": {
                     "vimId": "12345678",
                     "vduId": "sdfasdf",
-                    "vimFlavourId": "12"},
+                    "vimFlavourId": "12"
+                },
                 "softwareImage": {
                     "vimId": "12345678",
                     "imageName": "AAA",
-                    "vimImageId": ""}},
+                    "vimImageId": ""
+                }
+            },
             "additionalParam": ""
         }
         r2 = [0, json.JSONEncoder().encode(vim_info), "200"]
@@ -303,17 +309,22 @@ class InterfacesTest(TestCase):
             "timestamp": "1234567890",
             "vnfinstanceid": "1",
             "eventtype": "0",
-            "vmlist":
-                [
-                    {
-                        "vmflavor": "SMP",
-                        "vmnumber": "3",
-                        "vmidlist ": ["vmuuid"]},
-                    {
-                        "vmflavor": "CMP",
-                        "vmnumber": "3",
-                        "vmidlist ": ["vmuuid"]}
-                ]
+            "vmlist": [
+                {
+                    "vmflavor": "SMP",
+                    "vmnumber": "3",
+                    "vmidlist ": [
+                        "vmuuid"
+                    ]
+                },
+                {
+                    "vmflavor": "CMP",
+                    "vmnumber": "3",
+                    "vmidlist ": [
+                        "vmuuid"
+                    ]
+                }
+            ]
         }
         response = self.client.post("/api/gvnfmdriver/v1/vnfs/lifecyclechangesnotification",
                                     data=json.dumps(req_data),
@@ -324,12 +335,13 @@ class InterfacesTest(TestCase):
 
     @mock.patch.object(restcall, 'call_req')
     def test_get_vnfpkgs(self, mock_call_req):
-        mock_call_req.return_value = [0, json.JSONEncoder().encode({
+        vnfpkgs_info = {
             "csars": [{
                 "csarId": "1",
                 "vnfdId": "2"
             }]
-        }), '200']
+        }
+        mock_call_req.return_value = [0, json.JSONEncoder().encode(vnfpkgs_info), '200']
         resp = self.client.get("/api/gvnfmdriver/v1/vnfpackages")
         self.assertEqual(status.HTTP_200_OK, resp.status_code)
         self.assertEqual(1, len(resp.data["csars"]))
