@@ -34,10 +34,11 @@ def instantiate_vnf(request, *args, **kwargs):
     try:
         logger.debug("instantiate_vnf--post::> %s" % request.data)
         logger.info("Create vnf begin!")
-        input_data = {}
-        input_data["vnfdId"] = ignorcase_get(request.data, "vnfDescriptorId")
-        input_data["vnfInstanceName"] = ignorcase_get(request.data, "vnfInstanceName")
-        input_data["vnfInstanceDescription"] = ignorcase_get(request.data, "vnfInstanceDescription")
+        input_data = {
+            "vnfdId": ignorcase_get(request.data, "vnfDescriptorId"),
+            "vnfInstanceName": ignorcase_get(request.data, "vnfInstanceName"),
+            "vnfInstanceDescription": ignorcase_get(request.data, "vnfInstanceDescription")
+        }
         vnfm_id = ignorcase_get(kwargs, "vnfmid")
         logger.debug("do_createvnf: request data=[%s],input_data=[%s],vnfm_id=[%s]", request.data, input_data, vnfm_id)
         resp = do_createvnf(vnfm_id, input_data)
@@ -46,10 +47,11 @@ def instantiate_vnf(request, *args, **kwargs):
 
         logger.debug("Instantiate vnf start!")
         vnfInstanceId = resp["vnfInstanceId"]
-        input_data = {}
-        input_data["flavourId"] = ignorcase_get(request.data, "flavourId")
-        input_data["extVirtualLinks"] = ignorcase_get(request.data, "extVirtualLink")
-        input_data["additionalParams"] = ignorcase_get(request.data, "additionalParam")
+        input_data = {
+            "flavourId": ignorcase_get(request.data, "flavourId"),
+            "extVirtualLinks": ignorcase_get(request.data, "extVirtualLink"),
+            "additionalParams": ignorcase_get(request.data, "additionalParam")
+        }
         logger.debug("do_instvnf: vnfInstanceId=[%s],request data=[%s],input_data=[%s],vnfm_id=[%s]",
                      vnfInstanceId, request.data, input_data, vnfm_id)
         resp = do_instvnf(vnfInstanceId, vnfm_id, input_data)
