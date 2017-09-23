@@ -77,9 +77,10 @@ def terminate_vnf(request, *args, **kwargs):
     vnfm_id = ignorcase_get(kwargs, "vnfmid")
     vnfInstanceId = ignorcase_get(kwargs, "vnfInstanceId")
     try:
-        input_data = {}
-        input_data["terminationType"] = ignorcase_get(request.data, "terminationType")
-        input_data["gracefulTerminationTimeout"] = ignorcase_get(request.data, "gracefulTerminationTimeout")
+        input_data = {
+            "terminationType": ignorcase_get(request.data, "terminationType"),
+            "gracefulTerminationTimeout": ignorcase_get(request.data, "gracefulTerminationTimeout")
+        }
         logger.debug("do_terminatevnf: vnfm_id=[%s],vnfInstanceId=[%s],input_data=[%s]",
                      vnfm_id, vnfInstanceId, input_data)
         resp = do_terminatevnf(vnfm_id, vnfInstanceId, input_data)
@@ -131,12 +132,11 @@ def query_vnf(request, *args, **kwargs):
         resp_data = {
             "vnfInfo":resp_response_data
         }
-        resp_data["vnfInfo"]["version"] = ignorcase_get(ignorcase_get(resp, "ResponseInfo"), "vnfSoftwareVersion")
-        if ignorcase_get(ignorcase_get(resp, "ResponseInfo"), "instantiationState"):
-            if ignorcase_get(ignorcase_get(resp, "ResponseInfo"), "instantiationState") == "INSTANTIATED":
-                resp_data["vnfInfo"]["vnfStatus"] = "ACTIVE"
-        if ignorcase_get(ignorcase_get(resp, "ResponseInfo"), "vnfInstanceId"):
-            resp_data["vnfInfo"]["vnfInstanceId"] = ignorcase_get(ignorcase_get(resp, "ResponseInfo"), "vnfInstanceId")
+        ResponseInfo = ignorcase_get(resp, "ResponseInfo")
+        resp_data["vnfInfo"]["version"] = ignorcase_get(ResponseInfo, "vnfSoftwareVersion")
+        if ignorcase_get(ResponseInfo, "instantiationState") == "INSTANTIATED":
+            resp_data["vnfInfo"]["vnfStatus"] = "ACTIVE"
+        resp_data["vnfInfo"]["vnfInstanceId"] = ignorcase_get(ResponseInfo, "vnfInstanceId")
         logger.debug("[%s]resp_data=%s", fun_name(), resp_data)
         return Response(data=resp_data, status=status.HTTP_200_OK)
     except GvnfmDriverException as e:
