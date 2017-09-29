@@ -130,7 +130,7 @@ def query_vnf(request, *args, **kwargs):
         }
         resp_response_data = mapping_conv(query_vnf_resp_mapping, ignorcase_get(resp, "ResponseInfo"))
         resp_data = {
-            "vnfInfo":resp_response_data
+            "vnfInfo": resp_response_data
         }
         ResponseInfo = ignorcase_get(resp, "ResponseInfo")
         resp_data["vnfInfo"]["version"] = ignorcase_get(ResponseInfo, "vnfSoftwareVersion")
@@ -156,7 +156,7 @@ def operation_status(request, *args, **kwargs):
         jobId = ignorcase_get(kwargs, "jobId")
         responseId = ignorcase_get(kwargs, "responseId")
         logger.debug("[operation_status] vnfm_id=%s", vnfm_id)
-        vnfm_info = get_vnfminfo_from_nslcm( vnfm_id )
+        vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
         logger.debug("[operation_status] vnfm_info=[%s]", vnfm_info)
 
         ret = call_vnfm("api/vnflcm/v1/vnf_lc_ops/%s?responseId=%s" % (jobId, responseId), "GET", vnfm_info)
@@ -167,7 +167,7 @@ def operation_status(request, *args, **kwargs):
         logger.debug("[%s]resp_data=%s", fun_name(), resp_data)
         ResponseInfo = ignorcase_get(resp_data, "ResponseInfo")
         responseDescriptor = ignorcase_get(ResponseInfo, "responseDescriptor")
-        status_tmp = ignorcase_get(responseDescriptor,"lcmOperationStatus")
+        status_tmp = ignorcase_get(responseDescriptor, "lcmOperationStatus")
         del responseDescriptor["lcmOperationStatus"]
         responseDescriptor["status"] = status_tmp
         operation_data = {
@@ -328,7 +328,8 @@ def wait4job(vnfm_id, job_id, gracefulTerminationTimeout=1200, retry_count=60, i
             break
         elif progress == 100:
             job_end_normal, job_timeout = True, False
-            logger.debug("Job(%s) ended normally", job_id)
+            logger.debug("Job(%s) ended normally,job_end_normal=[%s],job_timeout=[%s]",
+                         job_id, job_end_normal, job_timeout)
             return {"success": "success"}
     if job_timeout:
         logger.error("Job(%s) timeout", job_id)
@@ -363,7 +364,7 @@ def do_terminatevnf(vnfm_id, vnfInstanceId, data):
     logger.debug("[%s] request.data=%s", fun_name(), data)
     vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
     logger.debug("[do_terminatevnf] vnfm_info=[%s]", vnfm_info)
-    ret = call_vnfm("api/vnflcm/v1/vnf_instances/%s/terminate"% vnfInstanceId,"POST", vnfm_info, data)
+    ret = call_vnfm("api/vnflcm/v1/vnf_instances/%s/terminate" % vnfInstanceId, "POST", vnfm_info, data)
     if ret[0] != 0:
         logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
         raise GvnfmDriverException('Failed to terminate vnf.')

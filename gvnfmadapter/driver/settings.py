@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'driver.interfaces'
- ]
+]
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -52,7 +52,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
- ]
+]
 
 ROOT_URLCONF = 'driver.urls'
 
@@ -105,7 +105,7 @@ LOGGING = {
 if 'test' in sys.argv:
     from driver.pub.config import config
     config.REG_TO_MSB_WHEN_START = False
-	
+
     import platform
     if platform.system() == 'Linux':
         TEST_RUNNER = 'xmlrunner.extra.djangotestrunner.XMLTestRunner'

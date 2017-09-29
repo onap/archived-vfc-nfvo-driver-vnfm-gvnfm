@@ -19,9 +19,9 @@ urlpatterns = [
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/vnfs$', views.instantiate_vnf,
         name='instantiate_vnf'),
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/vnfs/(?P<vnfInstanceId>'
-        r'[0-9a-zA-Z\-\_]+)/terminate$',views.terminate_vnf, name='terminate_vnf'),
+        r'[0-9a-zA-Z\-\_]+)/terminate$', views.terminate_vnf, name='terminate_vnf'),
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/vnfs/(?P<vnfInstanceId>'
-        r'[0-9a-zA-Z\-\_]+)$',views.query_vnf, name='query_vnf'),
+        r'[0-9a-zA-Z\-\_]+)$', views.query_vnf, name='query_vnf'),
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/jobs/(?P<jobid>[0-9a-zA-Z\-\_]+)$',
         views.operation_status, name='operation_status'),
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/vnfpackages$', views.get_vnfpkgs, name='get_vnfpkgs'),
