@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-    Copyright 2016 Huawei Technologies Co., Ltd.
+    Copyright 2016-2017 Huawei Technologies Co., Ltd.
    
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper
-    namespace="org.openo.nfvo.jujuvnfmadapter.service.mapper.JujuVnfmInfoMapper">
+    namespace="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.mapper.JujuVnfmInfoMapper">
     <resultMap id="BaseResultMap"
-        type="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfo">
+        type="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.entity.JujuVnfmInfo">
         <id column="ID" property="id" jdbcType="VARCHAR" />
         <result column="VNFM_ID" property="vnfmId" jdbcType="VARCHAR" />
         <result column="VNF_ID" property="vnfId" jdbcType="VARCHAR" />
@@ -31,7 +31,7 @@
         <result column="DELETE_TIME" property="deleteTime" jdbcType="TIMESTAMP" />
     </resultMap>
     <resultMap id="ResultMapWithBLOBs"
-        type="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfo"
+        type="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.entity.JujuVnfmInfo"
         extends="BaseResultMap">
         <result column="EXTEND" property="extend" jdbcType="LONGVARCHAR" />
     </resultMap>
@@ -106,7 +106,7 @@
         EXTEND
     </sql>
     <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs"
-        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfoExample">
+        parameterType="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.entity.JujuVnfmInfoExample">
         select
         <if test="distinct">
             distinct
@@ -123,7 +123,7 @@
         </if>
     </select>
     <select id="selectByExample" resultMap="BaseResultMap"
-        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfoExample">
+        parameterType="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.entity.JujuVnfmInfoExample">
         select
         <if test="distinct">
             distinct
@@ -154,14 +154,14 @@
         where ID = #{id,jdbcType=VARCHAR}
     </delete>
     <delete id="deleteByExample"
-        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfoExample">
+        parameterType="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.entity.JujuVnfmInfoExample">
         delete from jujuvnfm
         <if test="_parameter != null">
             <include refid="Example_Where_Clause" />
         </if>
     </delete>
     <insert id="insert"
-        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfo">
+        parameterType="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.entity.JujuVnfmInfo">
         insert into jujuvnfm (ID, VNFM_ID, VNF_ID,
         APP_NAME, JOB_ID, STATUS,
         CREATE_TIME, MODIFY_TIME, DELETE_TIME,
@@ -174,7 +174,7 @@
         #{extend,jdbcType=LONGVARCHAR})
     </insert>
     <insert id="insertSelective"
-        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfo">
+        parameterType="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.entity.JujuVnfmInfo">
         insert into jujuvnfm
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -242,7 +242,7 @@
         </trim>
     </insert>
     <select id="countByExample"
-        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfoExample"
+        parameterType="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.entity.JujuVnfmInfoExample"
         resultType="java.lang.Integer">
         select count(*) from jujuvnfm
         <if test="_parameter != null">
@@ -319,7 +319,7 @@
         </if>
     </update>
     <update id="updateByPrimaryKeySelective"
-        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfo">
+        parameterType="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.entity.JujuVnfmInfo">
         update jujuvnfm
         <set>
             <if test="vnfmId != null">
@@ -353,7 +353,7 @@
         where ID = #{id,jdbcType=VARCHAR}
     </update>
     <update id="updateByPrimaryKeyWithBLOBs"
-        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfo">
+        parameterType="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.entity.JujuVnfmInfo">
         update jujuvnfm
         set VNFM_ID = #{vnfmId,jdbcType=VARCHAR},
         VNF_ID = #{vnfId,jdbcType=VARCHAR},
@@ -367,7 +367,7 @@
         where ID = #{id,jdbcType=VARCHAR}
     </update>
     <update id="updateByPrimaryKey"
-        parameterType="org.openo.nfvo.jujuvnfmadapter.service.entity.JujuVnfmInfo">
+        parameterType="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.entity.JujuVnfmInfo">
         update jujuvnfm
         set VNFM_ID = #{vnfmId,jdbcType=VARCHAR},
         VNF_ID = #{vnfId,jdbcType=VARCHAR},
