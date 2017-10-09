@@ -1,7 +1,6 @@
 #!/bin/bash
 
 cd /service/vfc/nfvo/driver/vnfm/gvnfm/gvnfmadapter
-chmod +x run.sh
 ./run.sh
 
 while [ ! -f logs/runtime_driver.log ]; do
