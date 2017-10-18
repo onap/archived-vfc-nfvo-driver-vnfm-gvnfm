@@ -26,7 +26,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>CXFServlet</servlet-name>
-        <url-pattern>/openoapi/jujuvnfm/*</url-pattern>
+        <url-pattern>/api/jujuvnfmdriver/*</url-pattern>
     </servlet-mapping>
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
