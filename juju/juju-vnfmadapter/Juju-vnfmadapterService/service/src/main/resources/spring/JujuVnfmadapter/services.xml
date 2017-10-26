@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2016 Huawei Technologies Co., Ltd.
+    Copyright 2016-2017 Huawei Technologies Co., Ltd.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@
 
     <context:annotation-config
         proxy-target-class="true" />
-    <context:component-scan base-package="org.openo.nfvo.jujuvnfmadapter" />
+    <context:component-scan base-package="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter" />
 
     <!-- these are included in the dependency jar -->
     <import resource="classpath:META-INF/cxf/cxf.xml" />
@@ -76,37 +76,37 @@
     </bean>
     <bean id="jujuVnfmInfoMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
         <property name="mapperInterface"
-            value="org.openo.nfvo.jujuvnfmadapter.service.mapper.JujuVnfmInfoMapper"/>
+            value="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.mapper.JujuVnfmInfoMapper"/>
         <property name="sqlSessionFactory" ref="sessionFactory"/>
     </bean>
 
 
-    <bean id="vnfMgr" class="org.openo.nfvo.jujuvnfmadapter.service.process.VnfMgr">
+    <bean id="vnfMgr" class="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.process.VnfMgr">
         <property name="jujuVnfmInfoMapper" ref="jujuVnfmInfoMapper"/>
         <property name="resourceManager" ref="resourceManager"/>
     </bean>
-    <bean id="vnfResourceMgr" class="org.openo.nfvo.jujuvnfmadapter.service.process.VnfResourceMgr">
+    <bean id="vnfResourceMgr" class="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.process.VnfResourceMgr">
         <property name="jujuVnfmInfoMapper" ref="jujuVnfmInfoMapper"/>
 
     </bean>
     <bean id="jujuClientManager"
-        class="org.openo.nfvo.jujuvnfmadapter.service.adapter.impl.JujuClientManager"/>
+        class="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.adapter.impl.JujuClientManager"/>
     <bean id="resourceManager"
-          class="org.openo.nfvo.jujuvnfmadapter.service.adapter.impl.AdapterResourceManager"/>
+          class="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.adapter.impl.AdapterResourceManager"/>
 
     <!-- -->
     <bean id="jujuClientRoa"
-        class="org.openo.nfvo.jujuvnfmadapter.service.rest.JujuClientRoa">
+        class="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.rest.JujuClientRoa">
         <property name="jujuClientManager" ref="jujuClientManager"/>
         <property name="vnfMgr" ref="vnfMgr"/>
     </bean>
-    <bean id="vnfRoa" class="org.openo.nfvo.jujuvnfmadapter.service.rest.VnfRoa">
+    <bean id="vnfRoa" class="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.rest.VnfRoa">
         <property name="vnfMgr" ref="vnfMgr"/>
     </bean>
-    <bean id="configRoa" class="org.openo.nfvo.jujuvnfmadapter.service.rest.ConfigRoa"/>
+    <bean id="configRoa" class="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.rest.ConfigRoa"/>
 
-    <bean id="SwaggerRoa" class="org.openo.nfvo.jujuvnfmadapter.service.rest.SwaggerRoa"/>
-    <bean id="vnfResourceRoa" class="org.openo.nfvo.jujuvnfmadapter.service.rest.VnfResourceRoa">
+    <bean id="SwaggerRoa" class="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.rest.SwaggerRoa"/>
+    <bean id="vnfResourceRoa" class="org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.rest.VnfResourceRoa">
     	<property name="vnfResourceMgr" ref="vnfResourceMgr"/>
     </bean>
 
