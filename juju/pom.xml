@@ -30,4 +30,5 @@
     <modules>
         <module>juju-vnfmadapter</module>
     </modules>
+    
 </project>
