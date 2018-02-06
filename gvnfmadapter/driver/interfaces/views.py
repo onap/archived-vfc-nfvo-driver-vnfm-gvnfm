@@ -18,6 +18,7 @@ import logging
 import time
 import traceback
 
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -25,19 +26,31 @@ from rest_framework.response import Response
 from driver.pub.exceptions import GvnfmDriverException
 from driver.pub.utils import restcall
 from driver.pub.utils.restcall import req_by_msb
+from driver.interfaces.serializers import VnfRequestParamsSerializer, ResponseSerializer, ErrorSerializer
 
 logger = logging.getLogger(__name__)
 
 
+@swagger_auto_schema(method='post',
+                     request_body=VnfRequestParamsSerializer(),
+                     responses={
+                         status.HTTP_201_CREATED: ResponseSerializer(),
+                         status.HTTP_500_INTERNAL_SERVER_ERROR: ErrorSerializer()})
 @api_view(http_method_names=['POST'])
 def instantiate_vnf(request, *args, **kwargs):
     try:
         logger.debug("instantiate_vnf--post::> %s" % request.data)
         logger.debug("Create vnf begin!")
+        requestSerializer = VnfRequestParamsSerializer(data=request.data)
+        request_isValid = requestSerializer.is_valid()
+        if not request_isValid:
+            raise Exception(requestSerializer.errors)
+
+        requestData = requestSerializer.data
         input_data = {
-            "vnfdId": ignorcase_get(request.data, "vnfDescriptorId"),
-            "vnfInstanceName": ignorcase_get(request.data, "vnfInstanceName"),
-            "vnfInstanceDescription": ignorcase_get(request.data, "vnfInstanceDescription")
+            "vnfdId": ignorcase_get(requestData, "vnfDescriptorId"),
+            "vnfInstanceName": ignorcase_get(requestData, "vnfInstanceName"),
+            "vnfInstanceDescription": ignorcase_get(requestData, "vnfInstanceDescription")
         }
         vnfm_id = ignorcase_get(kwargs, "vnfmid")
         logger.debug("do_createvnf: request data=[%s],input_data=[%s],vnfm_id=[%s]", request.data, input_data, vnfm_id)
@@ -48,9 +61,9 @@ def instantiate_vnf(request, *args, **kwargs):
         logger.debug("Instantiate vnf start!")
         vnfInstanceId = resp["vnfInstanceId"]
         input_data = {
-            "flavourId": ignorcase_get(request.data, "flavourId"),
-            "extVirtualLinks": ignorcase_get(request.data, "extVirtualLink"),
-            "additionalParams": ignorcase_get(request.data, "additionalParam")
+            "flavourId": ignorcase_get(requestData, "flavourId"),
+            "extVirtualLinks": ignorcase_get(requestData, "extVirtualLink"),
+            "additionalParams": ignorcase_get(requestData, "additionalParam")
         }
         logger.debug("do_instvnf: vnfInstanceId=[%s],request data=[%s],input_data=[%s],vnfm_id=[%s]",
                      vnfInstanceId, request.data, input_data, vnfm_id)
