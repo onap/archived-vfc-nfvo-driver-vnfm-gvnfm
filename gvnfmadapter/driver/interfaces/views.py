@@ -200,7 +200,7 @@ def grantvnf(request, *args, **kwargs):
             'tenant': ignorcase_get(accessinfo, 'tenant')
         }
         logger.debug("[%s]resp_data=%s", fun_name(), resp_data)
-        return Response(data=resp_data, status=ret[2])
+        return Response(data=resp_data, status=status.HTTP_201_CREATED)
     except GvnfmDriverException as e:
         logger.error('Grant vnf failed, detail message: %s' % e.message)
         return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -219,7 +219,7 @@ def notify(request, *args, **kwargs):
         if ret[0] != 0:
             logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
             raise GvnfmDriverException('Failed to notify vnf.')
-        return Response(data=None, status=ret[2])
+        return Response(data=None, status=status.HTTP_200_OK)
     except GvnfmDriverException as e:
         logger.error('Grant vnf failed, detail message: %s' % e.message)
         return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

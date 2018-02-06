@@ -257,7 +257,7 @@ class InterfacesTest(TestCase):
         mock_call_req.return_value = [0, json.JSONEncoder().encode(vim_info), '201']
         response = self.client.put("/api/gvnfmdriver/v1/resource/grant",
                                    data=json.dumps(req_data), content_type='application/json')
-        self.assertEqual(str(status.HTTP_201_CREATED), response.status_code)
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         expect_resp_data = {
             "vimid": "516cee95-e8ca-4d26-9268-38e343c2e31e",
             "tenant": "admin"
@@ -332,7 +332,7 @@ class InterfacesTest(TestCase):
         response = self.client.post("/api/gvnfmdriver/v1/vnfs/lifecyclechangesnotification",
                                     data=json.dumps(req_data),
                                     content_type='application/json')
-        self.assertEqual(str(status.HTTP_200_OK), response.status_code)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
         expect_resp_data = None
         self.assertEqual(expect_resp_data, response.data)
 
