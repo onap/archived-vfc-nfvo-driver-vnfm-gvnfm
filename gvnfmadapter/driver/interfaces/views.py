@@ -20,8 +20,8 @@ import traceback
 
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from driver.pub.exceptions import GvnfmDriverException
 from driver.pub.utils import restcall
@@ -31,232 +31,236 @@ from driver.interfaces.serializers import VnfRequestParamsSerializer, ResponseSe
 logger = logging.getLogger(__name__)
 
 
-@swagger_auto_schema(method='post',
-                     request_body=VnfRequestParamsSerializer(),
-                     responses={
-                         status.HTTP_201_CREATED: ResponseSerializer(),
-                         status.HTTP_500_INTERNAL_SERVER_ERROR: ErrorSerializer()})
-@api_view(http_method_names=['POST'])
-def instantiate_vnf(request, *args, **kwargs):
-    try:
+class VnfInstInfo(APIView):
+    @swagger_auto_schema(
+        request_body=VnfRequestParamsSerializer(),
+        responses={
+            status.HTTP_201_CREATED: ResponseSerializer(),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: ErrorSerializer()
+        }
+    )
+    def post(self, request, vnfmtype, vnfmid):
         logger.debug("instantiate_vnf--post::> %s" % request.data)
         logger.debug("Create vnf begin!")
-        requestSerializer = VnfRequestParamsSerializer(data=request.data)
-        request_isValid = requestSerializer.is_valid()
-        if not request_isValid:
-            raise Exception(requestSerializer.errors)
+        try:
+            requestSerializer = VnfRequestParamsSerializer(data=request.data)
+            request_isValid = requestSerializer.is_valid()
+            if not request_isValid:
+                raise Exception(requestSerializer.errors)
 
-        requestData = requestSerializer.data
-        input_data = {
-            "vnfdId": ignorcase_get(requestData, "vnfDescriptorId"),
-            "vnfInstanceName": ignorcase_get(requestData, "vnfInstanceName"),
-            "vnfInstanceDescription": ignorcase_get(requestData, "vnfInstanceDescription")
-        }
-        vnfm_id = ignorcase_get(kwargs, "vnfmid")
-        logger.debug("do_createvnf: request data=[%s],input_data=[%s],vnfm_id=[%s]", request.data, input_data, vnfm_id)
-        resp = do_createvnf(vnfm_id, input_data)
-        logger.debug("do_createvnf: response data=[%s]", resp)
-        logger.debug("Create vnf end!")
+            requestData = requestSerializer.data
+            input_data = {
+                "vnfdId": ignorcase_get(requestData, "vnfDescriptorId"),
+                "vnfInstanceName": ignorcase_get(requestData, "vnfInstanceName"),
+                "vnfInstanceDescription": ignorcase_get(requestData, "vnfInstanceDescription")
+            }
+            vnfm_id = vnfmid
+            logger.debug("do_createvnf: request data=[%s],input_data=[%s],vnfm_id=[%s]",
+                         request.data, input_data, vnfm_id)
+            resp = do_createvnf(vnfm_id, input_data)
+            logger.debug("do_createvnf: response data=[%s]", resp)
+            logger.debug("Create vnf end!")
 
-        logger.debug("Instantiate vnf start!")
-        vnfInstanceId = resp["vnfInstanceId"]
-        input_data = {
-            "flavourId": ignorcase_get(requestData, "flavourId"),
-            "extVirtualLinks": ignorcase_get(requestData, "extVirtualLink"),
-            "additionalParams": ignorcase_get(requestData, "additionalParam")
-        }
-        logger.debug("do_instvnf: vnfInstanceId=[%s],request data=[%s],input_data=[%s],vnfm_id=[%s]",
-                     vnfInstanceId, request.data, input_data, vnfm_id)
-        resp = do_instvnf(vnfInstanceId, vnfm_id, input_data)
-        logger.debug("do_instvnf: response data=[%s]", resp)
-        resp_data = {
-            "vnfInstanceId": vnfInstanceId,
-            "jobId": ignorcase_get(resp, "vnfLcOpId")
-        }
-        logger.debug("Instantiate vnf end!")
-        return Response(data=resp_data, status=status.HTTP_201_CREATED)
-    except GvnfmDriverException as e:
-        logger.error('instantiate vnf failed, detail message: %s' % e.message)
-        return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    except:
-        logger.error(traceback.format_exc())
-        return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-@api_view(http_method_names=['POST'])
-def terminate_vnf(request, *args, **kwargs):
-    logger.debug("terminate_vnf--post::> %s" % request.data)
-    logger.debug("Terminate vnf begin!")
-    vnfm_id = ignorcase_get(kwargs, "vnfmid")
-    vnfInstanceId = ignorcase_get(kwargs, "vnfInstanceId")
-    try:
-        input_data = {
-            "terminationType": ignorcase_get(request.data, "terminationType"),
-            "gracefulTerminationTimeout": ignorcase_get(request.data, "gracefulTerminationTimeout")
-        }
-        logger.debug("do_terminatevnf: vnfm_id=[%s],vnfInstanceId=[%s],input_data=[%s]",
-                     vnfm_id, vnfInstanceId, input_data)
-        resp = do_terminatevnf(vnfm_id, vnfInstanceId, input_data)
-        logger.debug("terminate_vnf: response data=[%s]", resp)
-
-        jobId = ignorcase_get(resp, "vnfLcOpId")
-        gracefulTerminationTimeout = ignorcase_get(request.data, "gracefulTerminationTimeout")
-        logger.debug("wait4job: vnfm_id=[%s],jobId=[%s],gracefulTerminationTimeout=[%s]",
-                     vnfm_id, jobId, gracefulTerminationTimeout)
-        resp = wait4job(vnfm_id, jobId, gracefulTerminationTimeout)
-        logger.debug("[wait4job] response=[%s]", resp)
-
-        logger.debug("Delete vnf start!")
-        logger.debug("do_deletevnf: vnfm_id=[%s],vnfInstanceId=[%s],request data=[%s]",
-                     vnfm_id, vnfInstanceId, request.data)
-        resp = do_deletevnf(vnfm_id, vnfInstanceId, request.data)
-        logger.debug("do_deletevnf: response data=[%s]", resp)
-        logger.debug("Delete vnf end!")
-
-        return Response(data=resp, status=status.HTTP_204_NO_CONTENT)
-    except GvnfmDriverException as e:
-        logger.error('Terminate vnf failed, detail message: %s' % e.message)
-        return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    except:
-        logger.error(traceback.format_exc())
-        return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.debug("Instantiate vnf start!")
+            vnfInstanceId = resp["vnfInstanceId"]
+            input_data = {
+                "flavourId": ignorcase_get(requestData, "flavourId"),
+                "extVirtualLinks": ignorcase_get(requestData, "extVirtualLink"),
+                "additionalParams": ignorcase_get(requestData, "additionalParam")
+            }
+            logger.debug("do_instvnf: vnfInstanceId=[%s],request data=[%s],input_data=[%s],vnfm_id=[%s]",
+                         vnfInstanceId, request.data, input_data, vnfm_id)
+            resp = do_instvnf(vnfInstanceId, vnfm_id, input_data)
+            logger.debug("do_instvnf: response data=[%s]", resp)
+            resp_data = {
+                "vnfInstanceId": vnfInstanceId,
+                "jobId": ignorcase_get(resp, "vnfLcOpId")
+            }
+            logger.debug("Instantiate vnf end!")
+            return Response(data=resp_data, status=status.HTTP_201_CREATED)
+        except GvnfmDriverException as e:
+            logger.error('instantiate vnf failed, detail message: %s' % e.message)
+            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except:
+            logger.error(traceback.format_exc())
+            return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(http_method_names=['GET'])
-def query_vnf(request, *args, **kwargs):
-    logger.debug("query_vnf--post::> %s" % request.data)
-    vnfm_id = ignorcase_get(kwargs, "vnfmid")
-    vnfInstanceId = ignorcase_get(kwargs, "vnfInstanceId")
-    try:
-        logger.debug("[%s] request.data=%s", fun_name(), request.data)
-        resp = do_queryvnf(request, vnfm_id, vnfInstanceId)
-        query_vnf_resp_mapping = {
-            "vnfInstanceId": "",
-            "vnfInstanceName": "",
-            "vnfInstanceDescription": "",
-            "vnfdId": "",
-            "vnfPackageId": "",
-            "version": "",
-            "vnfProvider": "",
-            "vnfType": "",
-            "vnfStatus": ""
-        }
-        resp_response_data = mapping_conv(query_vnf_resp_mapping, ignorcase_get(resp, "ResponseInfo"))
-        resp_data = {
-            "vnfInfo": resp_response_data
-        }
-        ResponseInfo = ignorcase_get(resp, "ResponseInfo")
-        resp_data["vnfInfo"]["version"] = ignorcase_get(ResponseInfo, "vnfSoftwareVersion")
-        if ignorcase_get(ResponseInfo, "instantiationState") == "INSTANTIATED":
-            resp_data["vnfInfo"]["vnfStatus"] = "ACTIVE"
-        resp_data["vnfInfo"]["vnfInstanceId"] = ignorcase_get(ResponseInfo, "vnfInstanceId")
-        logger.debug("[%s]resp_data=%s", fun_name(), resp_data)
-        return Response(data=resp_data, status=status.HTTP_200_OK)
-    except GvnfmDriverException as e:
-        logger.error('Query vnf failed, detail message: %s' % e.message)
-        return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    except:
-        logger.error(traceback.format_exc())
-        return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class VnfTermInfo(APIView):
+    def post(self, request, vnfmtype, vnfmid, vnfInstanceId):
+        logger.debug("terminate_vnf--post::> %s" % request.data)
+        logger.debug("Terminate vnf begin!")
+        vnfm_id = vnfmid
+        vnfInstanceId = vnfInstanceId
+        try:
+            input_data = {
+                "terminationType": ignorcase_get(request.data, "terminationType"),
+                "gracefulTerminationTimeout": ignorcase_get(request.data, "gracefulTerminationTimeout")
+            }
+            logger.debug("do_terminatevnf: vnfm_id=[%s],vnfInstanceId=[%s],input_data=[%s]",
+                         vnfm_id, vnfInstanceId, input_data)
+            resp = do_terminatevnf(vnfm_id, vnfInstanceId, input_data)
+            logger.debug("terminate_vnf: response data=[%s]", resp)
+
+            jobId = ignorcase_get(resp, "vnfLcOpId")
+            gracefulTerminationTimeout = ignorcase_get(request.data, "gracefulTerminationTimeout")
+            logger.debug("wait4job: vnfm_id=[%s],jobId=[%s],gracefulTerminationTimeout=[%s]",
+                         vnfm_id, jobId, gracefulTerminationTimeout)
+            resp = wait4job(vnfm_id, jobId, gracefulTerminationTimeout)
+            logger.debug("[wait4job] response=[%s]", resp)
+
+            logger.debug("Delete vnf start!")
+            logger.debug("do_deletevnf: vnfm_id=[%s],vnfInstanceId=[%s],request data=[%s]",
+                         vnfm_id, vnfInstanceId, request.data)
+            resp = do_deletevnf(vnfm_id, vnfInstanceId, request.data)
+            logger.debug("do_deletevnf: response data=[%s]", resp)
+            logger.debug("Delete vnf end!")
+
+            return Response(data=resp, status=status.HTTP_204_NO_CONTENT)
+        except GvnfmDriverException as e:
+            logger.error('Terminate vnf failed, detail message: %s' % e.message)
+            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except:
+            logger.error(traceback.format_exc())
+            return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(http_method_names=['GET'])
-def operation_status(request, *args, **kwargs):
-    logger.debug("operation_status--post::> %s" % request.data)
-    try:
-        logger.debug("[%s] request.data=%s", fun_name(), request.data)
-        vnfm_id = ignorcase_get(kwargs, "vnfmid")
-        jobId = ignorcase_get(kwargs, "jobId")
-        responseId = ignorcase_get(kwargs, "responseId")
-        logger.debug("[operation_status] vnfm_id=%s", vnfm_id)
-        vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
-        logger.debug("[operation_status] vnfm_info=[%s]", vnfm_info)
-
-        ret = call_vnfm("api/vnflcm/v1/vnf_lc_ops/%s?responseId=%s" % (jobId, responseId), "GET", vnfm_info)
-        if ret[0] != 0:
-            logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
-            raise GvnfmDriverException('Failed to query vnf operation status.')
-        resp_data = json.JSONDecoder().decode(ret[1])
-        logger.debug("[%s]resp_data=%s", fun_name(), resp_data)
-        ResponseInfo = ignorcase_get(resp_data, "ResponseInfo")
-        responseDescriptor = ignorcase_get(ResponseInfo, "responseDescriptor")
-        status_tmp = ignorcase_get(responseDescriptor, "lcmOperationStatus")
-        del responseDescriptor["lcmOperationStatus"]
-        responseDescriptor["status"] = status_tmp
-        operation_data = {
-            "jobId": ignorcase_get(ResponseInfo, "vnfLcOpId"),
-            "responseDescriptor": responseDescriptor
-        }
-        return Response(data=operation_data, status=status.HTTP_200_OK)
-    except GvnfmDriverException as e:
-        logger.error('Query vnf failed, detail message: %s' % e.message)
-        return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    except:
-        logger.error(traceback.format_exc())
-        return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-@api_view(http_method_names=['PUT'])
-def grantvnf(request, *args, **kwargs):
-    try:
-        logger.debug("[grantvnf] req_data = %s", request.data)
-        ret = req_by_msb('api/nslcm/v1/grantvnf', "POST", content=json.JSONEncoder().encode(request.data))
-        logger.debug("ret = %s", ret)
-        if ret[0] != 0:
-            logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
-            raise GvnfmDriverException('Failed to grant vnf.')
-        resp = json.JSONDecoder().decode(ret[1])
-        vim_info = resp['vim']
-        accessinfo = ignorcase_get(resp['vim'], 'accessinfo')
-        resp_data = {
-            'vimid': ignorcase_get(vim_info, 'vimid'),
-            'tenant': ignorcase_get(accessinfo, 'tenant')
-        }
-        logger.debug("[%s]resp_data=%s", fun_name(), resp_data)
-        return Response(data=resp_data, status=status.HTTP_201_CREATED)
-    except GvnfmDriverException as e:
-        logger.error('Grant vnf failed, detail message: %s' % e.message)
-        return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    except:
-        logger.error(traceback.format_exc())
-        return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class VnfQueryInfo(APIView):
+    def get(self, request, vnfmtype, vnfmid, vnfInstanceId):
+        logger.debug("query_vnf--post::> %s" % request.data)
+        vnfm_id = vnfmid
+        vnfInstanceId = vnfInstanceId
+        try:
+            logger.debug("[%s] request.data=%s", fun_name(), request.data)
+            resp = do_queryvnf(request, vnfm_id, vnfInstanceId)
+            query_vnf_resp_mapping = {
+                "vnfInstanceId": "",
+                "vnfInstanceName": "",
+                "vnfInstanceDescription": "",
+                "vnfdId": "",
+                "vnfPackageId": "",
+                "version": "",
+                "vnfProvider": "",
+                "vnfType": "",
+                "vnfStatus": ""
+            }
+            resp_response_data = mapping_conv(query_vnf_resp_mapping, ignorcase_get(resp, "ResponseInfo"))
+            resp_data = {
+                "vnfInfo": resp_response_data
+            }
+            ResponseInfo = ignorcase_get(resp, "ResponseInfo")
+            resp_data["vnfInfo"]["version"] = ignorcase_get(ResponseInfo, "vnfSoftwareVersion")
+            if ignorcase_get(ResponseInfo, "instantiationState") == "INSTANTIATED":
+                resp_data["vnfInfo"]["vnfStatus"] = "ACTIVE"
+            resp_data["vnfInfo"]["vnfInstanceId"] = ignorcase_get(ResponseInfo, "vnfInstanceId")
+            logger.debug("[%s]resp_data=%s", fun_name(), resp_data)
+            return Response(data=resp_data, status=status.HTTP_200_OK)
+        except GvnfmDriverException as e:
+            logger.error('Query vnf failed, detail message: %s' % e.message)
+            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except:
+            logger.error(traceback.format_exc())
+            return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(http_method_names=['POST'])
-def notify(request, *args, **kwargs):
-    try:
-        logger.debug("[%s]req_data = %s", fun_name(), request.data)
-        vnfinstanceid = ignorcase_get(request.data, 'vnfinstanceid')
-        ret = req_by_msb("api/nslcm/v1/vnfs/%s/Notify" % vnfinstanceid, "POST", json.JSONEncoder().encode(request.data))
-        logger.debug("[%s]data = %s", fun_name(), ret)
-        if ret[0] != 0:
-            logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
-            raise GvnfmDriverException('Failed to notify vnf.')
-        return Response(data=None, status=status.HTTP_200_OK)
-    except GvnfmDriverException as e:
-        logger.error('Grant vnf failed, detail message: %s' % e.message)
-        return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    except:
-        logger.error(traceback.format_exc())
-        return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class VnfOperInfo(APIView):
+    def get(self, request, vnfmtype, vnfmid, jobid):
+        logger.debug("operation_status--post::> %s" % request.data)
+        try:
+            logger.debug("[%s] request.data=%s", fun_name(), request.data)
+            vnfm_id = vnfmid
+            jobId = jobid
+            responseId = ignorcase_get(request.META, 'responseId')
+            logger.debug("[operation_status] vnfm_id=%s", vnfm_id)
+            vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
+            logger.debug("[operation_status] vnfm_info=[%s]", vnfm_info)
+
+            ret = call_vnfm("api/vnflcm/v1/vnf_lc_ops/%s?responseId=%s" % (jobId, responseId), "GET", vnfm_info)
+            if ret[0] != 0:
+                logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
+                raise GvnfmDriverException('Failed to query vnf operation status.')
+            resp_data = json.JSONDecoder().decode(ret[1])
+            logger.debug("[%s]resp_data=%s", fun_name(), resp_data)
+            ResponseInfo = ignorcase_get(resp_data, "ResponseInfo")
+            responseDescriptor = ignorcase_get(ResponseInfo, "responseDescriptor")
+            status_tmp = ignorcase_get(responseDescriptor, "lcmOperationStatus")
+            del responseDescriptor["lcmOperationStatus"]
+            responseDescriptor["status"] = status_tmp
+            operation_data = {
+                "jobId": ignorcase_get(ResponseInfo, "vnfLcOpId"),
+                "responseDescriptor": responseDescriptor
+            }
+            return Response(data=operation_data, status=status.HTTP_200_OK)
+        except GvnfmDriverException as e:
+            logger.error('Query vnf failed, detail message: %s' % e.message)
+            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except:
+            logger.error(traceback.format_exc())
+            return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(http_method_names=['GET'])
-def get_vnfpkgs(request, *args, **kwargs):
-    try:
-        logger.debug("Enter %s", fun_name())
-        ret = req_by_msb("api/nslcm/v1/vnfpackage", "GET")
-        if ret[0] != 0:
-            logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
-            raise GvnfmDriverException('Failed to get vnfpkgs.')
-        resp = json.JSONDecoder().decode(ret[1])
-        return Response(data=resp, status=status.HTTP_200_OK)
-    except GvnfmDriverException as e:
-        logger.error('Get vnfpkgs failed, detail message: %s' % e.message)
-        return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    except:
-        logger.error(traceback.format_exc())
-        return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+class VnfGrantInfo(APIView):
+    def put(self, request, vnfmtype):
+        try:
+            logger.debug("[grantvnf] req_data = %s", request.data)
+            ret = req_by_msb('api/nslcm/v1/grantvnf', "POST", content=json.JSONEncoder().encode(request.data))
+            logger.debug("ret = %s", ret)
+            if ret[0] != 0:
+                logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
+                raise GvnfmDriverException('Failed to grant vnf.')
+            resp = json.JSONDecoder().decode(ret[1])
+            vim_info = resp['vim']
+            accessinfo = ignorcase_get(resp['vim'], 'accessinfo')
+            resp_data = {
+                'vimid': ignorcase_get(vim_info, 'vimid'),
+                'tenant': ignorcase_get(accessinfo, 'tenant')
+            }
+            logger.debug("[%s]resp_data=%s", fun_name(), resp_data)
+            return Response(data=resp_data, status=status.HTTP_201_CREATED)
+        except GvnfmDriverException as e:
+            logger.error('Grant vnf failed, detail message: %s' % e.message)
+            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except:
+            logger.error(traceback.format_exc())
+            return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class VnfNotifyInfo(APIView):
+    def post(self, request, vnfmtype):
+        try:
+            logger.debug("[%s]req_data = %s", fun_name(), request.data)
+            vnfinstanceid = ignorcase_get(request.data, 'vnfinstanceid')
+            ret = req_by_msb("api/nslcm/v1/vnfs/%s/Notify" % vnfinstanceid, "POST",
+                             json.JSONEncoder().encode(request.data))
+            logger.debug("[%s]data = %s", fun_name(), ret)
+            if ret[0] != 0:
+                logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
+                raise GvnfmDriverException('Failed to notify vnf.')
+            return Response(data=None, status=status.HTTP_200_OK)
+        except GvnfmDriverException as e:
+            logger.error('Grant vnf failed, detail message: %s' % e.message)
+            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except:
+            logger.error(traceback.format_exc())
+            return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class VnfPkgsInfo(APIView):
+    def get(request, *args, **kwargs):
+        try:
+            logger.debug("Enter %s", fun_name())
+            ret = req_by_msb("api/nslcm/v1/vnfpackage", "GET")
+            if ret[0] != 0:
+                logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
+                raise GvnfmDriverException('Failed to get vnfpkgs.')
+            resp = json.JSONDecoder().decode(ret[1])
+            return Response(data=resp, status=status.HTTP_200_OK)
+        except GvnfmDriverException as e:
+            logger.error('Get vnfpkgs failed, detail message: %s' % e.message)
+            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except:
+            logger.error(traceback.format_exc())
+            return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def call_vnfm(resource, method, vnfm_info, data=""):
