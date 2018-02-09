@@ -32,15 +32,25 @@ class AdditionalParams(serializers.Serializer):
     )
 
 
-class VnfRequestParamsSerializer(serializers.Serializer):
+class VnfInstReqParamsSerializer(serializers.Serializer):
     vnfDescriptorId = serializers.CharField(
         help_text="Identifier that identifies the VNFD which defines the VNF instance to be created.",
-        required=True
+        max_length=255,
+        required=True,
+        allow_null=True
     )
     vnfInstanceName = serializers.CharField(
-        help_text="Human-readable name of the VNF instance to be created.", required=True)
+        help_text="Human-readable name of the VNF instance to be created.",
+        max_length=255,
+        required=True,
+        allow_null=False
+    )
     vnfInstanceDescription = serializers.CharField(
-        help_text="Human-readable description of the VNF instance to be created.", required=False)
+        help_text="Human-readable description of the VNF instance to be created.",
+        max_length=255,
+        required=False,
+        allow_null=True
+    )
     additionalParam = AdditionalParams(
         help_text="Additional input parameters for the instantiation process,"
                   " specific to the VNF being instantiated.",
@@ -49,9 +59,27 @@ class VnfRequestParamsSerializer(serializers.Serializer):
 
 
 class ResponseSerializer(serializers.Serializer):
-    vnfInstanceId = serializers.CharField(help_text="VNF instance identifier", required=True)
-    jobId = serializers.CharField(help_text="Job ID", required=True)
+    vnfInstanceId = serializers.CharField(help_text="VNF instance identifier.", required=True)
+    jobId = serializers.CharField(help_text="Job ID.", required=True)
 
 
-class ErrorSerializer(serializers.Serializer):
-    error = serializers.CharField(help_text="error message", required=True)
+class VnfTermReqSerializer(serializers.Serializer):
+    vnfInstanceId = serializers.CharField(
+        help_text="VNF instance identifier.",
+        max_length=255,
+        required=True,
+        allow_null=True
+    )
+
+
+class VnfInfo(serializers.Serializer):
+    vnfInstanceId = serializers.CharField(help_text="VNF instance identifier.", required=True)
+    vnfStatus = serializers.CharField(help_text="The instantiation state of the VNF.", required=True)
+    version = serializers.CharField(help_text="Version of the VNF.", required=True)
+
+
+class VnfQueryRespSerializer(serializers.Serializer):
+    vnfInfo = VnfInfo(
+        help_text="The information items about the selected VNF instance(s) that are returned.",
+        required=True
+    )

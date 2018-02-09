@@ -26,24 +26,26 @@ from rest_framework.views import APIView
 from driver.pub.exceptions import GvnfmDriverException
 from driver.pub.utils import restcall
 from driver.pub.utils.restcall import req_by_msb
-from driver.interfaces.serializers import VnfRequestParamsSerializer, ResponseSerializer, ErrorSerializer
+from driver.interfaces.serializers import VnfInstReqParamsSerializer, ResponseSerializer
+from driver.interfaces.serializers import VnfTermReqSerializer, VnfQueryRespSerializer
 
 logger = logging.getLogger(__name__)
 
 
 class VnfInstInfo(APIView):
     @swagger_auto_schema(
-        request_body=VnfRequestParamsSerializer(),
+        request_body=VnfInstReqParamsSerializer(),
         responses={
             status.HTTP_201_CREATED: ResponseSerializer(),
-            status.HTTP_500_INTERNAL_SERVER_ERROR: ErrorSerializer()
+            status.HTTP_404_NOT_FOUND: "The vnfm instance id is wrong",
+            status.HTTP_500_INTERNAL_SERVER_ERROR: "The url is invalid"
         }
     )
     def post(self, request, vnfmtype, vnfmid):
         logger.debug("instantiate_vnf--post::> %s" % request.data)
         logger.debug("Create vnf begin!")
         try:
-            requestSerializer = VnfRequestParamsSerializer(data=request.data)
+            requestSerializer = VnfInstReqParamsSerializer(data=request.data)
             request_isValid = requestSerializer.is_valid()
             if not request_isValid:
                 raise Exception(requestSerializer.errors)
@@ -87,6 +89,14 @@ class VnfInstInfo(APIView):
 
 
 class VnfTermInfo(APIView):
+    @swagger_auto_schema(
+        request_body=VnfTermReqSerializer(),
+        responses={
+            status.HTTP_201_CREATED: ResponseSerializer(),
+            status.HTTP_404_NOT_FOUND: "The vnfmid and vnfInstanceId are wrong",
+            status.HTTP_500_INTERNAL_SERVER_ERROR: "The url is invalid"
+        }
+    )
     def post(self, request, vnfmtype, vnfmid, vnfInstanceId):
         logger.debug("terminate_vnf--post::> %s" % request.data)
         logger.debug("Terminate vnf begin!")
@@ -126,6 +136,13 @@ class VnfTermInfo(APIView):
 
 
 class VnfQueryInfo(APIView):
+    @swagger_auto_schema(
+        responses={
+            status.HTTP_201_CREATED: VnfQueryRespSerializer(),
+            status.HTTP_404_NOT_FOUND: "The vnfmid and vnfInstanceId are wrong",
+            status.HTTP_500_INTERNAL_SERVER_ERROR: "The url is invalid"
+        }
+    )
     def get(self, request, vnfmtype, vnfmid, vnfInstanceId):
         logger.debug("query_vnf--post::> %s" % request.data)
         vnfm_id = vnfmid
