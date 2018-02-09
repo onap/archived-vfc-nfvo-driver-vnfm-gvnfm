@@ -25,7 +25,7 @@
     <artifactId>juju</artifactId>
     <version>1.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>nfvo/drivers/vnfm/gvnfm/juju</name>
+    <name>vfc-nfvo-driver-vnfm-gvnfm-juju</name>
     <description>nfvo juju-vnfmadapter</description>
     <modules>
         <module>juju-vnfmadapter</module>
