@@ -88,7 +88,7 @@ class VnfQueryRespSerializer(serializers.Serializer):
 class ResponseDescriptor(serializers.Serializer):
     status = serializers.CharField(help_text="status.", required=True)
     responsehistorylist = serializers.CharField(help_text="History response messages.", required=True)
-    responseid = serializers.CharField(help_text="Response identifier.", required=True)
+    responseid = serializers.IntegerField(help_text="Response identifier.", required=True)
     errorcode = serializers.CharField(help_text="Errorcode.", required=True)
     progress = serializers.IntegerField(help_text="Progress.", required=True)
     statusdescription = serializers.CharField(help_text="Status description.", required=True)
@@ -120,3 +120,13 @@ class VnfGrantReqSerializer(serializers.Serializer):
 class VnfGrantRespSerializer(serializers.Serializer):
     vimid = serializers.CharField(help_text="VIM identifier.", required=True)
     tenant = serializers.CharField(help_text="Tenant name.", required=True)
+
+
+class VnfNotifyReqSerializer(serializers.Serializer):
+    nfvoid = serializers.CharField(help_text="NFVO identifier.", required=True)
+    vnfmid = serializers.CharField(help_text="VNFM identifier.", required=True)
+    vimid = serializers.CharField(help_text="VIM identifier.", required=True)
+    timestamp = serializers.CharField(help_text="Timestamp.", required=True)
+    vnfistanceid = serializers.CharField(help_text="VNF instance identifier.", required=True)
+    eventtype = serializers.CharField(help_text="Event type.", required=True)
+    vmlist = serializers.CharField(help_text="VM list.", required=True)

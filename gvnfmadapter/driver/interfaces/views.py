@@ -29,6 +29,7 @@ from driver.pub.utils.restcall import req_by_msb
 from driver.interfaces.serializers import VnfInstReqParamsSerializer, ResponseSerializer
 from driver.interfaces.serializers import VnfTermReqSerializer, VnfQueryRespSerializer
 from driver.interfaces.serializers import VnfOperRespSerializer, VnfGrantReqSerializer, VnfGrantRespSerializer
+from driver.interfaces.serializers import VnfNotifyReqSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -259,6 +260,14 @@ class VnfGrantInfo(APIView):
 
 
 class VnfNotifyInfo(APIView):
+    @swagger_auto_schema(
+        request_body=VnfNotifyReqSerializer(),
+        responses={
+            status.HTTP_201_CREATED: "Successful Notify",
+            status.HTTP_404_NOT_FOUND: "The request body is wrong",
+            status.HTTP_500_INTERNAL_SERVER_ERROR: "The url is invalid"
+        }
+    )
     def post(self, request, vnfmtype):
         try:
             logger.debug("[%s]req_data = %s", fun_name(), request.data)
