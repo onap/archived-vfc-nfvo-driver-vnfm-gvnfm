@@ -28,6 +28,7 @@ from driver.pub.utils import restcall
 from driver.pub.utils.restcall import req_by_msb
 from driver.interfaces.serializers import VnfInstReqParamsSerializer, ResponseSerializer
 from driver.interfaces.serializers import VnfTermReqSerializer, VnfQueryRespSerializer
+from driver.interfaces.serializers import VnfOperRespSerializer, VnfGrantReqSerializer, VnfGrantRespSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -181,6 +182,13 @@ class VnfQueryInfo(APIView):
 
 
 class VnfOperInfo(APIView):
+    @swagger_auto_schema(
+        responses={
+            status.HTTP_201_CREATED: VnfOperRespSerializer(),
+            status.HTTP_404_NOT_FOUND: "The vnfmid, jobid and responseId are wrong",
+            status.HTTP_500_INTERNAL_SERVER_ERROR: "The url is invalid"
+        }
+    )
     def get(self, request, vnfmtype, vnfmid, jobid):
         logger.debug("operation_status--post::> %s" % request.data)
         try:
@@ -217,6 +225,14 @@ class VnfOperInfo(APIView):
 
 
 class VnfGrantInfo(APIView):
+    @swagger_auto_schema(
+        request_body=VnfGrantReqSerializer(),
+        responses={
+            status.HTTP_201_CREATED: VnfGrantRespSerializer(),
+            status.HTTP_404_NOT_FOUND: "The request body is wrong",
+            status.HTTP_500_INTERNAL_SERVER_ERROR: "The url is invalid"
+        }
+    )
     def put(self, request, vnfmtype):
         try:
             logger.debug("[grantvnf] req_data = %s", request.data)

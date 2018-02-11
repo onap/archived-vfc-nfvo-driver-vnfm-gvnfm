@@ -83,3 +83,40 @@ class VnfQueryRespSerializer(serializers.Serializer):
         help_text="The information items about the selected VNF instance(s) that are returned.",
         required=True
     )
+
+
+class ResponseDescriptor(serializers.Serializer):
+    status = serializers.CharField(help_text="status.", required=True)
+    responsehistorylist = serializers.CharField(help_text="History response messages.", required=True)
+    responseid = serializers.CharField(help_text="Response identifier.", required=True)
+    errorcode = serializers.CharField(help_text="Errorcode.", required=True)
+    progress = serializers.IntegerField(help_text="Progress.", required=True)
+    statusdescription = serializers.CharField(help_text="Status description.", required=True)
+
+
+class OperationStatusInfo(serializers.Serializer):
+    responsedescriptor = ResponseDescriptor(help_text="Response descriptor.", required=True)
+    jobid = serializers.CharField(help_text="Job ID.", required=True)
+
+
+class VnfOperRespSerializer(serializers.Serializer):
+    operationStatusInfo = OperationStatusInfo(
+        help_text="Operation Status.",
+        required=True
+    )
+
+
+class VnfGrantReqSerializer(serializers.Serializer):
+    vnfmid = serializers.CharField(help_text="VNFM identifier.", required=True)
+    nfvoid = serializers.CharField(help_text="NFVO identifier.", required=True)
+    vimid = serializers.CharField(help_text="VIM identifier.", required=True)
+    exvimidlist = serializers.CharField(help_text="Extend VIM identifier list.", required=True)
+    tenant = serializers.CharField(help_text="Tenant name.", required=True)
+    vnfistanceid = serializers.CharField(help_text="VNF instance identifier.", required=True)
+    operationright = serializers.CharField(help_text="Operation right.", required=True)
+    vmlist = serializers.CharField(help_text="VM list.", required=True)
+
+
+class VnfGrantRespSerializer(serializers.Serializer):
+    vimid = serializers.CharField(help_text="VIM identifier.", required=True)
+    tenant = serializers.CharField(help_text="Tenant name.", required=True)
