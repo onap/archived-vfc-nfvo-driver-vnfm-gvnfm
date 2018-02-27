@@ -23,7 +23,7 @@
     </parent>
 
     <artifactId>juju-vnfmadapter-service</artifactId>
-    <name>nfvo/drivers/vnfm/gvnfm/juju/juju-vnfmadapter/Juju-vnfmadapterService/service</name>
+    <name>vfc-nfvo-driver-vnfm-gvnfm-juju-vnfmadapter-vnfmadapterService-service</name>
     <packaging>war</packaging>
 
     <dependencies>
