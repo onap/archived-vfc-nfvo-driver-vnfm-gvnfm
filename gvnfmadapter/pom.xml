@@ -25,7 +25,7 @@
     <artifactId>vfc-nfvo-driver-vnfm-gvnfm-gvnfmadapter</artifactId>
     <version>1.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>vfc/nfvo/driver/vnfm/gvnfm/gvnfmadapter</name>
+    <name>vfc-nfv-driver-vnfm-gvnfm-gvnfmadapter</name>
     <description>vfc nfvo drivers-vnfm-gvnfm-gvnfmadapter</description>
     <build>
       <plugins>
