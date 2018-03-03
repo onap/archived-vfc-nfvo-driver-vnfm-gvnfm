@@ -103,7 +103,6 @@ class VnfTermInfo(APIView):
         logger.debug("terminate_vnf--post::> %s" % request.data)
         logger.debug("Terminate vnf begin!")
         vnfm_id = vnfmid
-        vnfInstanceId = vnfInstanceId
         try:
             input_data = {
                 "terminationType": ignorcase_get(request.data, "terminationType"),
@@ -148,7 +147,6 @@ class VnfQueryInfo(APIView):
     def get(self, request, vnfmtype, vnfmid, vnfInstanceId):
         logger.debug("query_vnf--post::> %s" % request.data)
         vnfm_id = vnfmid
-        vnfInstanceId = vnfInstanceId
         try:
             logger.debug("[%s] request.data=%s", fun_name(), request.data)
             resp = do_queryvnf(request, vnfm_id, vnfInstanceId)
