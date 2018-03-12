@@ -101,7 +101,8 @@ public class AdapterResourceManager implements IResourceManager {
 			csarPkgInfo = readCsarPkgInfo();
 	        csarPkgInfoObj = JSONObject.fromObject(csarPkgInfo); //NOSONAR
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			LOG.error("csarPkgInfo", e);
 		}
 		
         String csarfilepath = csarPkgInfoObj.getString("csar_file_path");
@@ -183,17 +184,15 @@ public class AdapterResourceManager implements IResourceManager {
      * @since  NFVO 0.5
      */
     public static String readCsarPkgInfo() throws IOException {
-        InputStream ins = null;
-        BufferedInputStream bins = null;
         String fileContent = "";
 
         String fileName = SystemEnvVariablesFactory.getInstance().getAppRoot() + System.getProperty("file.separator")
                 + "etc" + System.getProperty("file.separator") + "csarInfo" + System.getProperty("file.separator")
                 + Constant.CSARINFO;
 
-        try {
-            ins = new FileInputStream(fileName);
-            bins = new BufferedInputStream(ins);
+        try (
+            InputStream ins = new FileInputStream(fileName);
+            BufferedInputStream bins = new BufferedInputStream(ins)){
 
             byte[] contentByte = new byte[ins.available()];
             int num = bins.read(contentByte);
@@ -203,14 +202,7 @@ public class AdapterResourceManager implements IResourceManager {
             }
         } catch (FileNotFoundException e) {
             LOG.error(fileName + "is not found!", e);
-        } finally {
-            if (ins != null) {
-                ins.close();
-            }
-            if (bins != null) {
-                bins.close();
-            }
-        }
+        } 
         return fileContent;
     }
     
