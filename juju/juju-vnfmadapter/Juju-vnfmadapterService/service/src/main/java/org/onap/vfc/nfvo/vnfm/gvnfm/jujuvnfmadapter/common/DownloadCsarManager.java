@@ -78,8 +78,8 @@ public class DownloadCsarManager {
      */
     public static String download(String url, String filepath) {
         String status = "";
-        try {
-            CloseableHttpClient client = HttpClients.createDefault();
+        try( 
+            CloseableHttpClient client = HttpClients.createDefault()){
             HttpGet httpget = new HttpGet(url);
             CloseableHttpResponse response = client.execute(httpget);
 
@@ -91,16 +91,17 @@ public class DownloadCsarManager {
 
             File file = new File(filepath);
             file.getParentFile().mkdirs();
-            FileOutputStream fileout = new FileOutputStream(file);
+            try(FileOutputStream fileout = new FileOutputStream(file)){
 
             byte[] buffer = new byte[CACHE];
             int ch;
             while ((ch = is.read(buffer)) != -1) {
                 fileout.write(buffer,0,ch);
             }
+	    }
             is.close();
-            fileout.flush();
-            fileout.close();
+            //fileout.flush();
+            //fileout.close();
             status = Constant.DOWNLOADCSAR_SUCCESS;
 
         } catch (Exception e) {
@@ -168,8 +169,7 @@ public class DownloadCsarManager {
     	final int BUFFER = 2048;
     	int status=0;
     	
-        try {
-            ZipFile zipFile = new ZipFile(fileName);
+        try ( ZipFile zipFile = new ZipFile(fileName)){
             Enumeration emu = zipFile.entries();
             int i=0;
             while(emu.hasMoreElements()){
@@ -188,8 +188,8 @@ public class DownloadCsarManager {
                 if(parent != null && (!parent.exists())){
                     parent.mkdirs();
                 }
-                FileOutputStream fos = new FileOutputStream(file);
-                BufferedOutputStream bos = new BufferedOutputStream(fos,BUFFER);           
+                try(FileOutputStream fos = new FileOutputStream(file);
+                BufferedOutputStream bos = new BufferedOutputStream(fos,BUFFER)){           
                 
                 int count;
                 byte data[] = new byte[BUFFER];
@@ -197,8 +197,9 @@ public class DownloadCsarManager {
                 {
                     bos.write(data, 0, count);
                 }
-                bos.flush();
-                bos.close();
+		}
+                //bos.flush();
+                //bos.close();
                 bis.close();
 
                 if(entry.getName().endsWith(".zip")){
@@ -217,7 +218,9 @@ public class DownloadCsarManager {
             zipFile.close();
         } catch (Exception e) {
         	status=Constant.UNZIP_FAIL;
-            e.printStackTrace();
+            //e.printStackTrace();
+		LOG.error("unzipCSAR Exception: ",e);
+
         }
         return status;
     }
