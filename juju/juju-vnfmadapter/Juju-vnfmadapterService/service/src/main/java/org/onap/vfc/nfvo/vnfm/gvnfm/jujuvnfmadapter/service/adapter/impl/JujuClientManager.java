@@ -167,16 +167,13 @@ public class JujuClientManager implements IJujuClientManager {
      * @since  NFVO 0.5
      */
     public static String readJujuConfigInfo() {
-        InputStream ins = null;
-
-        BufferedInputStream bins = null;
         String fileContent = null;
         String fileName = SystemEnvVariablesFactory.getInstance().getAppRoot() + System.getProperty("file.separator")
                 + "etc" + System.getProperty("file.separator") + "conf" + System.getProperty("file.separator")
                 + "juju_conf.json";
-        try {
-            ins = new FileInputStream(fileName);
-            bins = new BufferedInputStream(ins);
+        try (
+            InputStream ins = new FileInputStream(fileName);
+            BufferedInputStream bins = new BufferedInputStream(ins)){
 
             byte[] contentByte = new byte[ins.available()];
             int num = bins.read(contentByte);
@@ -186,17 +183,7 @@ public class JujuClientManager implements IJujuClientManager {
             }
         } catch (Exception e) {
             LOG.error(fileName + "is not found!", e);
-        } finally {
-            try {
-                if (ins != null) {
-                    ins.close();
-                }
-                if (bins != null) {
-                    bins.close();
-                }
-            } catch (IOException e) {
-            }
-        }
+        } 
         return fileContent;
     }
     private JSONObject changeDir(String charmPath) {
