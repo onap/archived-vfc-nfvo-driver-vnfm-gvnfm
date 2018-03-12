@@ -51,9 +51,9 @@ public class UnCompressUtil {
 
     private static Logger log = LoggerFactory.getLogger(UnCompressUtil.class);
 
-    public static Map<String, String> archiveMap = new HashMap<String, String>();
+    private static Map<String, String> archiveMap = new HashMap<String, String>();
 
-    public static Map<String, String> compressorMap = new HashMap<String, String>();
+    private static Map<String, String> compressorMap = new HashMap<String, String>();
 
     static {
         // archive type
@@ -89,14 +89,11 @@ public class UnCompressUtil {
      * @since NFVO 0.5
      */
     public static boolean unCompressGzip(String zipfileName, String outputDirectory, List<String> fileNames) {
-        FileInputStream fis = null;
-        ArchiveInputStream in = null;
-        BufferedInputStream bis = null;
-        try {
-            fis = new FileInputStream(zipfileName);
+        try (
+            FileInputStream fis = new FileInputStream(zipfileName);
             GZIPInputStream gis = new GZIPInputStream(new BufferedInputStream(fis));
-            in = new ArchiveStreamFactory().createArchiveInputStream("tar", gis);
-            bis = new BufferedInputStream(in);
+            ArchiveInputStream in = new ArchiveStreamFactory().createArchiveInputStream("tar", gis);
+            BufferedInputStream bis = new BufferedInputStream(in)){
             TarArchiveEntry entry = (TarArchiveEntry)in.getNextEntry();
             while(entry != null) {
                 String name = entry.getName();
@@ -108,35 +105,26 @@ public class UnCompressUtil {
                 }
                 if(name.endsWith("/")) {
                     FileUtils.mkDirs(fileName);
-                } else {
-                    File file = getRealFileName(outputDirectory, name);
-                    if(null != fileNames) {
-                        fileNames.add(file.getName());
-                    }
-                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
-                    int b = -1;
-                    while((b = bis.read()) != -1) {
-                        bos.write(b);
-                    }
-                    log.debug("ungzip to:" + file.getCanonicalPath());
-                    bos.flush();
-                    bos.close();
-                }
+		} else {
+			File file = getRealFileName(outputDirectory, name);
+			if(null != fileNames) {
+				fileNames.add(file.getName());
+			}
+			try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))){
+				int b = -1;
+				while((b = bis.read()) != -1) {
+					bos.write(b);
+				}
+				log.debug("ungzip to:" + file.getCanonicalPath());
+			}
+		}
                 entry = (TarArchiveEntry)in.getNextEntry();
             }
             return true;
         } catch(Exception e) {
             log.error("UnCompressGZip faield:", e);
             return false;
-        } finally {
-            try {
-                if(null != bis) {
-                    bis.close();
-                }
-            } catch(IOException e) {
-                log.error("UnCompressGZip faield:", e);
-            }
-        }
+        } 
     }
 
     public static void unCompressAllZip(String sourcePath, String targetPath) throws FileNotFoundException {
@@ -156,10 +144,9 @@ public class UnCompressUtil {
      * @since NFVO 0.5
      */
     public static boolean unCompressZip(String sourceFile, String targetPath,List<String> fileNames) {
-        try {
-            BufferedOutputStream dest = null;
+        try (
             FileInputStream fis = new FileInputStream(sourceFile);
-            ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
+            ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis))){
             ZipEntry entry = null;
             while((entry = zis.getNextEntry()) != null) {
                 String name = entry.getName();
@@ -176,14 +163,13 @@ public class UnCompressUtil {
                     byte data[] = new byte[2048];
                     File file = getRealFileName(targetPath, name);
                     fileNames.add(file.getName());
-                    dest = new BufferedOutputStream(new FileOutputStream(file));
+
+                    try(BufferedOutputStream dest = new BufferedOutputStream(new FileOutputStream(file))){
 
                     while((count = zis.read(data, 0, 2048)) != -1) {
                         dest.write(data, 0, count);
                     }
-                    log.debug("unzip to:" + file.getCanonicalPath());
-                    dest.flush();
-                    dest.close();
+                    log.debug("unzip to:" + file.getCanonicalPath());}
                 }
             }
             zis.close();
@@ -225,13 +211,11 @@ public class UnCompressUtil {
      * @since NFVO 0.5
      */
     public static boolean unCompressTarXZ(String zipfileName, String outputDirectory, List<String> fileNames) {
-        ArchiveInputStream in = null;
-        BufferedInputStream bis = null;
-        try {
+        try( 
             XZCompressorInputStream xzis =
                     new XZCompressorInputStream(new BufferedInputStream(new FileInputStream(zipfileName)));
-            in = new ArchiveStreamFactory().createArchiveInputStream("tar", xzis);
-            bis = new BufferedInputStream(in);
+            ArchiveInputStream in = new ArchiveStreamFactory().createArchiveInputStream("tar", xzis);
+            BufferedInputStream bis = new BufferedInputStream(in)){
             TarArchiveEntry entry = (TarArchiveEntry)in.getNextEntry();
             while(entry != null) {
                 String name = entry.getName();
@@ -248,29 +232,19 @@ public class UnCompressUtil {
                     if(null != fileNames) {
                         fileNames.add(file.getName());
                     }
-                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                    try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))){
                     int b = -1;
                     while((b = bis.read()) != -1) {
                         bos.write(b);
                     }
-                    log.debug("ungzip to:" + file.getCanonicalPath());
-                    bos.flush();
-                    bos.close();
+                    log.debug("ungzip to:" + file.getCanonicalPath());}
                 }
                 entry = (TarArchiveEntry)in.getNextEntry();
             }
             return true;
         } catch(Exception e) {
             log.error("unCompressTarXZ faield:", e);
-        } finally {
-            try {
-                if(null != bis) {
-                    bis.close();
-                }
-            } catch(IOException e) {
-                log.error("unCompressTarXZ faield:", e);
-            }
-        }
+        } 
         return false;
     }
     
