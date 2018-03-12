@@ -116,10 +116,12 @@ public class YamlUtil {
         name.put("default","hello,it's me");
 //      new Yaml().dump(config, new FileWriter("C:\\Users\\z00292420\\Desktop\\juju\\config2.yaml"));
         String newYaml = new Yaml().dumpAsMap(config);
-        Writer w = new FileWriter(new File("C:\\Users\\z00292420\\Desktop\\juju"));
+        try(Writer w = new FileWriter(new File("C:\\Users\\z00292420\\Desktop\\juju"))){
         w.write(newYaml);
-        w.flush();
-        w.close();
-        System.out.println(newYaml);
+	}catch(Exception e){
+	 log.error("Write Yaml Error: ",e);
+		throw new IOException("Write Yaml Error" + e);
+	}
+        //System.out.println(newYaml);
     }
 }
