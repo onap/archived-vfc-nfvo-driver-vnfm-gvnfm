@@ -89,7 +89,7 @@ public class VnfRoa {
 
     @POST
     @Path("/vnfminfo")
-    public String setVNFMInfo(@Context HttpServletRequest context, @Context HttpServletResponse resp)
+    public static String setVNFMInfo(@Context HttpServletRequest context, @Context HttpServletResponse resp)
             throws ServiceException {
         JSONObject result = new JSONObject();
         result.put("retCode", Constant.REST_SUCCESS);

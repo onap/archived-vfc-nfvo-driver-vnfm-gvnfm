@@ -42,7 +42,7 @@ public class PyObjectFactory {
      * @since NFVO 0.5
      */
     public static PyObjectFactory build(String envName) {
-        PythonInterpreter interpreter = new PythonInterpreter();
+        try(PythonInterpreter interpreter = new PythonInterpreter()){
         
         interpreter.exec("from jujuclient import Environment");
         
@@ -50,6 +50,7 @@ public class PyObjectFactory {
         PyObject env = environmentClass.__call__();
         environmentObj = env.invoke("connect", new PyString(envName));
         return new PyObjectFactory();
+	}
     }
 
     /**

@@ -80,17 +80,15 @@ public class JujuAdapterMgrService implements IJujuAdapterMgrService {
      * @since NFVO 0.5
      */
     public static String readJujuAdapterInfoFromJson() throws IOException {
-        InputStream ins = null;
-        BufferedInputStream bins = null;
         String fileContent = "";
 
         String fileName = SystemEnvVariablesFactory.getInstance().getAppRoot()
                 + System.getProperty(Constant.FILE_SEPARATOR) + "etc" + System.getProperty(Constant.FILE_SEPARATOR)
                 + "adapterInfo" + System.getProperty(Constant.FILE_SEPARATOR) + Constant.JUJUADAPTERINFO;
 
-        try {
-            ins = new FileInputStream(fileName);
-            bins = new BufferedInputStream(ins);
+        try( 
+            InputStream ins = new FileInputStream(fileName);
+            BufferedInputStream bins = new BufferedInputStream(ins)){
 
             byte[] contentByte = new byte[ins.available()];
             int num = bins.read(contentByte);
@@ -100,15 +98,7 @@ public class JujuAdapterMgrService implements IJujuAdapterMgrService {
             }
         } catch(FileNotFoundException e) {
             LOG.error(fileName + "is not found!", e, JujuAdapterMgrService.class);
-        } finally {
-            if(null != ins) {
-                ins.close();
-            }
-
-            if(null != bins) {
-                bins.close();
-            }
-        }
+        } 
 
         return fileContent;
     }
