@@ -74,18 +74,23 @@ public class FileUtils {
      * @since  NFVO 0.5
      */
     public static byte[] readFile(File file, String charsetName) throws IOException {
-        if(file != null) {
-            FileReader reader = new FileReader(file);
-            StringBuilder buffer = new StringBuilder();
-            char[] cbuf = new char[1024];
-            int legth;
-            while((legth = reader.read(cbuf)) != -1) {
-                buffer.append(new String(cbuf, 0, legth));
-            }
-            reader.close();
-            return buffer.toString().getBytes(charsetName);
-        }
-        return new byte[]{};
+	    if(file != null) {
+
+		    try( FileReader reader = new FileReader(file)){
+			    StringBuilder buffer = new StringBuilder();
+			    char[] cbuf = new char[1024];
+			    int legth;
+			    while((legth = reader.read(cbuf)) != -1) {
+				    buffer.append(new String(cbuf, 0, legth));
+			    }
+			    reader.close();
+			    return buffer.toString().getBytes(charsetName);
+		    }catch(IOException e){
+			log.error("read file", e);
+			throw e;
+		}
+	    }
+	    return new byte[]{};
     }
 
     /**
@@ -98,8 +103,8 @@ public class FileUtils {
      * @since  NFVO 0.5
      */
     public static int writeFile(byte[] data, String filePath) {
-        try {
-            OutputStream out = new FileOutputStream(filePath);
+        try( 
+            OutputStream out = new FileOutputStream(filePath)){
             out.write(data, 0, data.length);
             out.close();
             return 0;
@@ -232,30 +237,31 @@ public class FileUtils {
 
 
     public static void copyFile(String oldPath, String newPath, boolean flag)
-            throws Exception {
-        int byteread = 0;
-        File oldfile = new File(oldPath);
-        if (oldfile.exists()) { // �ļ�����ʱ
-            if (flag == false) {
-                delFiles(newPath);
-            }
-            if (new File(newPath).exists() && flag == true) {
-                return;
-            }
-            newFile(newPath);
-            FileInputStream fis = new FileInputStream(oldPath); // ����ԭ�ļ�
-            FileOutputStream fos = new FileOutputStream(newPath);
-            byte[] buffer = new byte[1024];
-            while ((byteread = fis.read(buffer)) != -1) {
-                fos.write(buffer, 0, byteread);
-            }
-            fos.close();
-            fis.close();
-        } else {
-            throw new FileNotFoundException("the " + oldfile + " is not exits ");
-        }
+	    throws IOException {
+		    int byteread = 0;
+		    File oldfile = new File(oldPath);
+		    if (oldfile.exists()) {
+			    if (flag == false) {
+				    delFiles(newPath);
+			    }
+			    if (new File(newPath).exists() && flag == true) {
+				    return;
+			    }
+			    newFile(newPath);
+			    try(FileInputStream fis = new FileInputStream(oldPath);
+					    FileOutputStream fos = new FileOutputStream(newPath)){
+				    byte[] buffer = new byte[1024];
+				    while ((byteread = fis.read(buffer)) != -1) {
+					    fos.write(buffer, 0, byteread);
+				    }
+			    }
+			    //fos.close();
+			    //fis.close();
+		    } else {
+			    throw new FileNotFoundException("the " + oldfile + " is not exits ");
+		    }
 
-    }
+	    }
 
     /**
      * @param filePathAndName
@@ -345,17 +351,15 @@ public class FileUtils {
     }
 
     public static void copy(String oldfile, String newfile, boolean flag)
-            throws Exception {
+            throws IOException {
         File oldf = new File(oldfile);
         File newf = new File(newfile);
         boolean oisd = (oldfile.endsWith("/") || oldfile.endsWith("\\"));
         boolean nisd = (newfile.endsWith("/") || newfile.endsWith("\\"));
 
-        // Դ�ļ�������
         if (!oldf.exists()) {
-            throw new Exception("the  from data is not exists ");
+		 throw new FileNotFoundException("the  from data is not exists");
         }
-        // ����ļ����У�������
         if (oldf.exists() && !newf.exists()) {
             if (newfile.endsWith("/") || newfile.endsWith("\\")) {
                 newFloder(newfile);
@@ -363,16 +367,12 @@ public class FileUtils {
                 newFile(newfile);
             }
         }
-        // Ŀ�����ļ�����Դ���ļ���
         if (oldf.exists() && oisd && !nisd) {
-            throw new Exception(
-                    "the  from data is directory,but the to data is a file");
+		 throw new FileNotFoundException("the  from data is directory,but the to data is a file");
         }
-        // Դ�Ǹ��ļ�,Ŀ�����ļ�
         if (!oisd && !nisd) {
             copyFile(oldf.getAbsolutePath(), newf.getAbsolutePath(), flag);
         }
-        // Դ�Ǹ��ļ��У�Ŀ�����ļ���
         if (oisd && nisd) {
             newFloder(newf.getAbsolutePath());
             List<File> list = getFiles(oldf.getAbsolutePath());
@@ -381,7 +381,6 @@ public class FileUtils {
                         + "/" + list.get(i).getName(), flag);
             }
         }
-        // Դ�Ǹ��ļ���Ŀ���Ǹ��ļ���
         if (!oisd && nisd) {
             newFloder(newf.getAbsolutePath());
             copyFile(oldf.getAbsolutePath(), newf.getAbsolutePath() + "/"
@@ -421,10 +420,10 @@ public class FileUtils {
      * @return
      * @throws Exception
      */
-    public static boolean isUsed(String file) throws Exception {
+    public static boolean isUsed(String file) throws IOException {
         File f = new File(file);
         if (!f.exists()) {
-            throw new Exception("the file is not exists ..");
+            throw new FileNotFoundException("the file is not exists ..");
         }
         File f1 = new File(file + ".temp");
         f.renameTo(f1);
