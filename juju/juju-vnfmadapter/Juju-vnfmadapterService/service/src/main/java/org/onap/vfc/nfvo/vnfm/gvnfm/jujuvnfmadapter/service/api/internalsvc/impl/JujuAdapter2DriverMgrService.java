@@ -82,17 +82,15 @@ public class JujuAdapter2DriverMgrService implements IJujuAdapter2DriverMgrServi
      * @throws IOException
      */
     public static String readVimAdapterInfoFromJson() throws IOException {
-        InputStream ins = null;
-        BufferedInputStream bins = null;
         String fileContent = "";
 
         String fileName = SystemEnvVariablesFactory.getInstance().getAppRoot() + System.getProperty("file.separator")
                 + "etc" + System.getProperty("file.separator") + "adapterInfo" + System.getProperty("file.separator")
                 + VIMADAPTER2DRIVERMGR;
 
-        try {
-            ins = new FileInputStream(fileName);
-            bins = new BufferedInputStream(ins);
+        try (
+            InputStream ins = new FileInputStream(fileName);
+            BufferedInputStream bins = new BufferedInputStream(ins)){
 
             byte[] contentByte = new byte[ins.available()];
             int num = bins.read(contentByte);
@@ -102,14 +100,7 @@ public class JujuAdapter2DriverMgrService implements IJujuAdapter2DriverMgrServi
             }
         } catch(FileNotFoundException e) {
             LOG.error(fileName + "is not found!", e);
-        } finally {
-            if(ins != null) {
-                ins.close();
-            }
-            if(bins != null) {
-                bins.close();
-            }
-        }
+        } 
 
         return fileContent;
     }
