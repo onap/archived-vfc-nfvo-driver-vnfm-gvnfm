@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.rest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,31 +24,29 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.StringUtil;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.process.VnfResourceMgr;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.rest.VnfResourceRoa;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.ServiceException;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.process.VnfResourceMgr;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import mockit.Mock;
 import mockit.MockUp;
-import net.sf.json.JSONObject;
 
 public class VnfResourceRoaTest {
 
     VnfResourceRoa roa = new VnfResourceRoa();
 
     @Before
-    public void setUp(){
+    public void setUp() {
         roa.setVnfResourceMgr(new VnfResourceMgr());
     }
 
     @Test
-    public void grantVnfResTest() throws ServiceException{
-        new MockUp<StringUtil>(){
+    public void grantVnfResTest() throws ServiceException {
+        new MockUp<StringUtil>() {
+
             @Mock
             public <T> T getJsonFromContexts(HttpServletRequest context) {
-                String reqJsonObject = "{}";
-                return (T)JSONObject.fromObject(reqJsonObject);
+                return null;
             }
         };
         HttpServletRequest context = null;
