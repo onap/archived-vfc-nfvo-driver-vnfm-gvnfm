@@ -20,13 +20,13 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.YamlUtil;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.ServiceException;
 import org.yaml.snakeyaml.Yaml;
 
 import net.sf.json.JSON;
 
 public class YamlUtilTest {
+
     YamlUtil yaml;
 
     @Before
@@ -38,12 +38,18 @@ public class YamlUtilTest {
     @Test
     public void test() throws ServiceException {
         String yamlName = "src/test/resources/test.yaml";
+        String arrayName = "src/test/resources/testArray.yaml";
+        JSON json = yaml.yamlToJson(yamlName);
+        yaml.yamlToJson(arrayName);
+        String S = yaml.loadYaml(yamlName);
+        Yaml yaml = new Yaml();
+        File file = new File(yamlName);
+    }
 
-        JSON json=yaml.yamlToJson(yamlName);
-
-        String S=yaml.loadYaml(yamlName);
-          Yaml yaml = new Yaml();
-          File file =new File(yamlName);
+    @Test
+    public void testFileNotFoundException() throws ServiceException {
+        yaml.yamlToJson("src/test/resources/abc.yaml");
+        yaml.loadYaml("src/test/resources/abc.yaml");
     }
 
 }

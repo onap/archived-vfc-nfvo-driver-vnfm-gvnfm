@@ -13,26 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolVersion;
+import org.apache.http.StatusLine;
+import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.message.BasicStatusLine;
 import org.junit.Test;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.DownloadCsarManager;
 
 public class DownloadCsarManagerTest {
+
     DownloadCsarManager mgr;
+
     @Test
     public void test() {
-        String url="";
-        String filepath="";
+        String url = "";
+        String filepath = "";
         mgr.download(url);
         mgr.download(url, filepath);
         mgr.getRandomFileName();
     }
+
     @Test
     public void testPrivateConstructor() throws Exception {
         Constructor constructor = DownloadCsarManager.class.getDeclaredConstructor();
@@ -40,4 +48,35 @@ public class DownloadCsarManagerTest {
         constructor.setAccessible(true);
         constructor.newInstance();
     }
+
+    @Test
+    public void getFileNameTest() {
+        ProtocolVersion version = new ProtocolVersion("HTTP", 1, 1);
+        StatusLine sl = new BasicStatusLine(version, 200, "success");
+        HttpResponse response = new BasicHttpResponse(sl);
+        response.setHeader("Content-Disposition", "filename");
+        DownloadCsarManager.getFileName(response);
+    }
+
+    @Test
+    public void downloadTest() {
+        DownloadCsarManager.download("http://www.baidu.com");
+        DownloadCsarManager.download("http://www.baidu.com", "/opt");
+        DownloadCsarManager.getRandomFileName();
+    }
+
+    @Test
+    public void getFilePath() {
+        ProtocolVersion version = new ProtocolVersion("HTTP", 1, 1);
+        StatusLine sl = new BasicStatusLine(version, 200, "success");
+        HttpResponse response = new BasicHttpResponse(sl);
+        response.setHeader("Content-Disposition", "filename");
+        DownloadCsarManager.getFilePath(response);
+    }
+
+    @Test
+    public void testUnzip() {
+        DownloadCsarManager.unzipCSAR("test.zip", "/opt");
+    }
+
 }
