@@ -241,10 +241,10 @@ public class FileUtils {
 		    int byteread = 0;
 		    File oldfile = new File(oldPath);
 		    if (oldfile.exists()) {
-			    if (flag == false) {
+			    if (!flag) {
 				    delFiles(newPath);
 			    }
-			    if (new File(newPath).exists() && flag == true) {
+			    if (new File(newPath).exists() && flag) {
 				    return;
 			    }
 			    newFile(newPath);
@@ -255,8 +255,6 @@ public class FileUtils {
 					    fos.write(buffer, 0, byteread);
 				    }
 			    }
-			    //fos.close();
-			    //fis.close();
 		    } else {
 			    throw new FileNotFoundException("the " + oldfile + " is not exits ");
 		    }
@@ -278,12 +276,12 @@ public class FileUtils {
             return true;
         if (myDelFile.isDirectory()) {
             File[] fs = myDelFile.listFiles();
-            for (int i = 0; i < fs.length; i++) {
+            for (int i = 0; i < fs.length; i++) {//no need to assign
                 if (fs[i].isFile())
-                    flag = fs[i].delete();
+                    fs[i].delete();
                 if (fs[i].isDirectory()) {
-                    flag = delFiles(fs[i].getAbsolutePath());
-                    flag = fs[i].delete();
+                    delFiles(fs[i].getAbsolutePath());
+                    fs[i].delete();
                 }
             }
         }
@@ -317,7 +315,7 @@ public class FileUtils {
      * */
     public static List<File> getFiles(String path) {
 
-        List<File> list = new ArrayList<File>();
+        List<File> list = new ArrayList<>();
         File file = new File(path);
         if (!file.exists()) {
 
