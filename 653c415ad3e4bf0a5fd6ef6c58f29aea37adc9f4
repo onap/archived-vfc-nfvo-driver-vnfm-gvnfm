@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_c4e794ab",
+        "filename": "juju/juju-vnfmadapter/Juju-vnfmadapterService/service/src/main/java/org/onap/vfc/nfvo/vnfm/gvnfm/jujuvnfmadapter/common/DownloadCsarManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 1337
+      },
+      "writtenOn": "2018-03-23T09:35:26Z",
+      "side": 1,
+      "message": "Suggest to remove the tab indent.",
+      "range": {
+        "startLine": 164,
+        "startChar": 0,
+        "endLine": 164,
+        "endChar": 5
+      },
+      "revId": "653c415ad3e4bf0a5fd6ef6c58f29aea37adc9f4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
