@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2016, Huawei Technologies Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,9 +50,9 @@ public class UnCompressUtil {
 
     private static Logger log = LoggerFactory.getLogger(UnCompressUtil.class);
 
-    private static Map<String, String> archiveMap = new HashMap<String, String>();
+    private static Map<String, String> archiveMap = new HashMap<>();
 
-    private static Map<String, String> compressorMap = new HashMap<String, String>();
+    private static Map<String, String> compressorMap = new HashMap<>();
 
     static {
         // archive type
@@ -160,7 +159,7 @@ public class UnCompressUtil {
                     FileUtils.mkDirs(fileName);
                 } else {
                     int count;
-                    byte data[] = new byte[2048];
+                    byte[] data = new byte[2048];
                     File file = getRealFileName(targetPath, name);
                     fileNames.add(file.getName());
 

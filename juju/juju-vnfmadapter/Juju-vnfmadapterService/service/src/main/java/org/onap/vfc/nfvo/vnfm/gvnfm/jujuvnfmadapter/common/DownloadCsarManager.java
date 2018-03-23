@@ -19,10 +19,7 @@ package org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
@@ -41,8 +38,6 @@ import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.constant.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 /**
  * Utility class to download CSAR
@@ -100,8 +95,6 @@ public class DownloadCsarManager {
             }
 	    }
             is.close();
-            //fileout.flush();
-            //fileout.close();
             status = Constant.DOWNLOADCSAR_SUCCESS;
 
         } catch (Exception e) {
@@ -171,7 +164,6 @@ public class DownloadCsarManager {
     	
         try ( ZipFile zipFile = new ZipFile(fileName)){
             Enumeration emu = zipFile.entries();
-            int i=0;
             while(emu.hasMoreElements()){
                 ZipEntry entry = (ZipEntry)emu.nextElement();
                 //read directory as file first,so only need to create directory
@@ -192,14 +184,12 @@ public class DownloadCsarManager {
                 BufferedOutputStream bos = new BufferedOutputStream(fos,BUFFER)){           
                 
                 int count;
-                byte data[] = new byte[BUFFER];
+                byte[] data = new byte[BUFFER];
                 while ((count = bis.read(data, 0, BUFFER)) != -1)
                 {
                     bos.write(data, 0, count);
                 }
 		}
-                //bos.flush();
-                //bos.close();
                 bis.close();
 
                 if(entry.getName().endsWith(".zip")){
@@ -218,7 +208,6 @@ public class DownloadCsarManager {
             zipFile.close();
         } catch (Exception e) {
         	status=Constant.UNZIP_FAIL;
-            //e.printStackTrace();
 		LOG.error("unzipCSAR Exception: ",e);
 
         }
@@ -238,6 +227,6 @@ public class DownloadCsarManager {
         return csarfilepath;
     }
     public static void main(String[] args) {
-        System.out.println(getImagesPath("e:/juju/csar2/"));
+        LOG.info("AbsolutePath: " + getImagesPath("e:/juju/csar2/"));
     }
 }
