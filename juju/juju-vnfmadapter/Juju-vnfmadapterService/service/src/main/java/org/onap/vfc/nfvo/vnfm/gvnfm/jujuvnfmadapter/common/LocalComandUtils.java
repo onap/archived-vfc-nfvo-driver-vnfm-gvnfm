@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2016 Huawei Technologies Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,12 +38,11 @@ import org.slf4j.LoggerFactory;
  * @version NFVO 0.5 Sep 19, 2016
  */
 public class LocalComandUtils {
+    private static final Logger log = LoggerFactory.getLogger(LocalComandUtils.class);
+
     private LocalComandUtils(){
         
     }
-
-    private static final Logger log = LoggerFactory.getLogger(LocalComandUtils.class);
-
 
     /**
      * <br>
