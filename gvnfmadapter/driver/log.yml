@@ -24,7 +24,7 @@ handlers:
         level: "DEBUG"
         class:
             "logging.handlers.RotatingFileHandler"
-        filename: "/var/log/onap/vfc-gvnfmdriver/runtime_gvnfmdriver.log"
+        filename: "/var/log/onap/vfc/gvnfmdriver/runtime_gvnfmdriver.log"
         formatter:
             "mdcFormat"
         maxBytes: 52428800

@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-logDir="/var/log/onap/vfc-gvnfmdriver/"
+logDir="/var/log/onap/vfc/gvnfmdriver/"
 if [ ! -x  $logDir  ]; then
        mkdir -p $logDir
 fi
