@@ -16,9 +16,10 @@
 
 package org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,94 +35,73 @@ import net.sf.json.JSONObject;
  * <p>
  * </p>
  * 
- * @author		quanzhong@huawei.com
- * @version     NFVO 0.5  Oct 25, 2016
+ * @author quanzhong@huawei.com
+ * @version NFVO 0.5 Oct 25, 2016
  */
 public class YamlUtil {
+
     private static Logger log = LoggerFactory.getLogger(YamlUtil.class);
 
-    
-    
     /**
-     * 
      * <br/>
      * 
      * @param yamlName
      * @return
-     * @since  NFVO 0.5
+     * @since NFVO 0.5
      */
-    public static JSON yamlToJson(String yamlName){
+    public static JSON yamlToJson(String yamlName) {
         Object res = parseYaml(yamlName);
-        if(res instanceof ArrayList){
+        if(res instanceof ArrayList) {
             return JSONArray.fromObject(res);
         }
-        return  JSONObject.fromObject(res);
+        return JSONObject.fromObject(res);
     }
-    
+
     /**
-     * 
      * <br/>
      * 
      * @param yamlName
      * @return
-     * @since  NFVO 0.5
+     * @since NFVO 0.5
      */
-    public static String loadYaml(String yamlName){
+    public static String loadYaml(String yamlName) {
         String res = null;
         try {
             Yaml yaml = new Yaml();
-            File file =new File(yamlName);
-            
+            File file = new File(yamlName);
+
             Object obj = yaml.load(new FileInputStream(file));
-            if(obj != null){
+            if(obj != null) {
                 res = obj.toString();
             }
-            log.debug("yaml-> "+res);
-        }catch(ParserException e){
-            log.error("error format:",e);
-        }catch(FileNotFoundException e) {
-            log.error("the yaml file not exist {}",yamlName,e);
+            log.debug("yaml-> " + res);
+        } catch(ParserException e) {
+            log.error("error format:", e);
+        } catch(FileNotFoundException e) {
+            log.error("the yaml file not exist {}", yamlName, e);
         }
         return res;
     }
-    
+
     /**
-     * 
      * <br/>
      * 
      * @param yamlName
      * @return
-     * @since  NFVO 0.5
+     * @since NFVO 0.5
      */
-    public static Object parseYaml(String yamlName){
+    public static Object parseYaml(String yamlName) {
         Object obj = null;
         try {
-            File file =new File(yamlName);
+            File file = new File(yamlName);
             obj = new Yaml().load(new FileInputStream(file));
-        }catch(ParserException e){
-            log.error("error format:",e);
-            
-        }catch(FileNotFoundException e) {
-            log.error("the yaml file not exist {}",yamlName,e);
+        } catch(ParserException e) {
+            log.error("error format:", e);
+
+        } catch(FileNotFoundException e) {
+            log.error("the yaml file not exist {}", yamlName, e);
         }
         return obj;
     }
 
-    public static void main(String[] args) throws IOException {
-
-
-        Map config = new Yaml().loadAs(new FileInputStream("C:\\Users\\z00292420\\Desktop\\juju\\config2.yaml"), Map.class);
-        Map options = (Map)config.get("options");
-        Map name = (Map)options.get("name");
-        name.put("default","hello,it's me");
-//      new Yaml().dump(config, new FileWriter("C:\\Users\\z00292420\\Desktop\\juju\\config2.yaml"));
-        String newYaml = new Yaml().dumpAsMap(config);
-        try(Writer w = new FileWriter(new File("C:\\Users\\z00292420\\Desktop\\juju"))){
-        w.write(newYaml);
-	}catch(Exception e){
-	 log.error("Write Yaml Error: ",e);
-		throw new IOException("Write Yaml Error" + e);
-	}
-        //System.out.println(newYaml);
-    }
 }
