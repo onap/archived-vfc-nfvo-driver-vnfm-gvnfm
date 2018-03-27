@@ -288,7 +288,8 @@ public class EntityUtils {
         public void run() {
             try {
                 exitValue = process.waitFor();
-            } catch(InterruptedException e) {
+            } catch(Exception e) {
+		LOG.error("process.waitFor(): ",e);
                 return;
             }
         }

@@ -31,7 +31,7 @@ public class SwitchController {
      * turn debug model
      */
     private static boolean debugModel = false;
-    public static String vnfmServiceUrl = null;
+    private static String vnfmServiceUrl = null;
 
     public SwitchController() { //NOSONAR
         //Constructor
@@ -52,4 +52,10 @@ public class SwitchController {
         SwitchController.debugModel = debugModel;
     }
     
+    public static void setVnfmServiceUrl(String inVnfmServiceUrl) {
+        SwitchController.vnfmServiceUrl = inVnfmServiceUrl;
+    }
+    public static String getVnfmServiceUrl() {
+	return SwitchController.vnfmServiceUrl;
+    }
 }

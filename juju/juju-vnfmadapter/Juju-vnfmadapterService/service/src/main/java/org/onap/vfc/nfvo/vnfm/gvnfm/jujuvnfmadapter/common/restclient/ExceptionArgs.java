@@ -15,6 +15,7 @@
  */
 
 package org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient;
+import java.io.Serializable;
 
 /**
  * ROA exception handling parameters.
@@ -25,7 +26,7 @@ package org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient;
  * @author
  * @version 28-May-2016
  */
-public class ExceptionArgs {
+public class ExceptionArgs implements Serializable{
 
     /**
      * Exception descriptions.

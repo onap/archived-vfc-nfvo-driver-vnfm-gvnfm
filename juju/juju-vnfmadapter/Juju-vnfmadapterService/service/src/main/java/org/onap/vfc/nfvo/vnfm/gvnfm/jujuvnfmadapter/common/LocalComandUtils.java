@@ -196,7 +196,8 @@ public class LocalComandUtils {
         public void run() {
             try {
                 exitValue = process.waitFor();
-            } catch(InterruptedException e) {
+            } catch(Exception e) {
+		log.error("process.waitFor(): ",e);
                 return;
             }
         }

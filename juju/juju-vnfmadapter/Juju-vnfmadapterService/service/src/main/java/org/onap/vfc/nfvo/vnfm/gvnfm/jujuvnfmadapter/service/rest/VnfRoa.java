@@ -95,7 +95,7 @@ public class VnfRoa {
         result.put("retCode", Constant.REST_SUCCESS);
         JSONObject reqJsonObject = StringUtil.getJsonFromContexts(context);
         String vnfmServiceUrl = reqJsonObject.getString("url");
-        SwitchController.vnfmServiceUrl = vnfmServiceUrl;
+        SwitchController.setVnfmServiceUrl(vnfmServiceUrl);
         LOG.info(reqJsonObject + ":setVNFMInfo success!");
         return result.toString();
     }
