@@ -103,7 +103,7 @@ public class VnfMgr {
                 LOG.warn("the value 'vnfmServiceUrl' not exist."+e.getMessage());
             }
             if (StringUtils.isBlank(url)) {
-                url = SwitchController.vnfmServiceUrl;
+                url = SwitchController.getVnfmServiceUrl();
             }
             if (StringUtils.isBlank(url)) {
                 JSONObject vnfmObject = VnfmUtil.getVnfmById(vnfmId);
@@ -242,7 +242,7 @@ public class VnfMgr {
         JSONObject restJson = new JSONObject();
         restJson.put(EntityUtils.RESULT_CODE_KEY, Constant.REST_FAIL);
         try {
-            String url = SwitchController.vnfmServiceUrl;
+            String url = SwitchController.getVnfmServiceUrl();
 
             if (StringUtils.isBlank(url)) {
                 JSONObject vnfmObject = VnfmUtil.getVnfmById(vnfmId);
@@ -305,7 +305,7 @@ public class VnfMgr {
         JSONObject restJson = new JSONObject();
         restJson.put(EntityUtils.RESULT_CODE_KEY, Constant.REST_FAIL);
         try {
-            String url = SwitchController.vnfmServiceUrl;
+            String url = SwitchController.getVnfmServiceUrl();
             JSONObject vnfmObject = null;
             if (StringUtils.isBlank(url)) {
                 // call the ESR to get jujuvnfm server url
