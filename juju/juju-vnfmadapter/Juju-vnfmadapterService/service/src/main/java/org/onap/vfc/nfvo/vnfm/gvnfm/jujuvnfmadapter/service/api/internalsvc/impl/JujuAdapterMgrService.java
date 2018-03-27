@@ -133,13 +133,13 @@ public class JujuAdapterMgrService implements IJujuAdapterMgrService {
             // catch Runtime Exception
             try {
                 sendRequest(paramsMap, adapterInfo);
-            } catch(RuntimeException e) {
+            } catch(Exception e) {
                 LOG.error(e.getMessage(), e);
             }
 
         }
 
-        private void sendRequest(Map<String, String> paramsMap, JSONObject driverInfo) {
+        private void sendRequest(Map<String, String> paramsMap, JSONObject driverInfo) throws InterruptedException{
             JSONObject resultObj = adapter2MSBMgr.registerJujuAdapter(paramsMap, driverInfo);
 
             if(Integer.valueOf(resultObj.get("retCode").toString()) == Constant.HTTP_CREATED) {
@@ -150,6 +150,14 @@ public class JujuAdapterMgrService implements IJujuAdapterMgrService {
                         + resultObj.get("reason").toString() + " retCode:" + resultObj.get("retCode").toString());
 
                 // if registration fails,wait one minute and try again
+                synchronized(lockObject) {
+                        while(Integer.valueOf(resultObj.get("retCode").toString()) != Constant.HTTP_CREATED){
+                        lockObject.wait(Constant.REPEAT_REG_TIME);
+                        resultObj = adapter2MSBMgr.registerJujuAdapter(paramsMap, driverInfo);
+                        }
+                    }
+                LOG.info("Vnfmadapter has now Successfully Registered to the Driver Manager!");
+		/*
                 try {
                     synchronized(lockObject) {
                         lockObject.wait(Constant.REPEAT_REG_TIME);
@@ -159,10 +167,9 @@ public class JujuAdapterMgrService implements IJujuAdapterMgrService {
                 }
 
                 sendRequest(this.paramsMap, this.adapterInfo);
+		*/
             }
-
         }
-
     }
 
     @Override
