@@ -135,23 +135,31 @@ public class JujuAdapter2DriverMgrService implements IJujuAdapter2DriverMgrServi
             // catch Runtime Exception
             try {
                 sendRequest(paramsMap, adapterInfo);
-            } catch(RuntimeException e) {
+            } catch(Exception e) {
                 LOG.error(e.getMessage(), e);
             }
 
         }
 
-        private void sendRequest(Map<String, String> paramsMap, JSONObject driverInfo) {
+        private void sendRequest(Map<String, String> paramsMap, JSONObject driverInfo) throws InterruptedException {
             JSONObject resultObj = adapter2DriverMgr.registerDriver(paramsMap, driverInfo);
-
-            if(Integer.valueOf(resultObj.get("retCode").toString()) == Constant.HTTP_CREATED) {
-                LOG.info("Vnfmadapter has now Successfully Registered to the Driver Manager!");
-            } else {
-                LOG.error("Vnfmadapter failed to  Register to the Driver Manager! Reason:"
+	
+	if(Integer.valueOf(resultObj.get("retCode").toString()) == Constant.HTTP_CREATED){
+ 		LOG.info("Vnfmadapter has now Successfully Registered to the Driver Manager!");
+	}else{
+		LOG.error("Vnfmadapter failed to  Register to the Driver Manager! Reason:"
                         + resultObj.get("reason").toString() + " retCode:" + resultObj.get("retCode").toString());
 
                 // if registration fails,wait one minute and try again
-                try {
+		synchronized(lockObject) {
+			while(Integer.valueOf(resultObj.get("retCode").toString()) != Constant.HTTP_CREATED){
+                        lockObject.wait(Constant.REPEAT_REG_TIME);
+			resultObj = adapter2DriverMgr.registerDriver(this.paramsMap, this.adapterInfo);
+			}
+                    }
+		LOG.info("Vnfmadapter has now Successfully Registered to the Driver Manager!");
+	
+       		/*try {
                     synchronized(lockObject) {
                         lockObject.wait(Constant.REPEAT_REG_TIME);
                     }
@@ -160,12 +168,11 @@ public class JujuAdapter2DriverMgrService implements IJujuAdapter2DriverMgrServi
                 }
 
                 sendRequest(this.paramsMap, this.adapterInfo);
-            }
-
-        }
+	 	*/
+      }
 
     }
-
+}
     @Override
     public void unregister() {
         // unregister
