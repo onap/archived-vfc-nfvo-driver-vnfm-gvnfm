@@ -16,9 +16,11 @@
 
 package org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.rest;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.EntityUtils;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.SwitchController;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.ServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,26 +31,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.EntityUtils;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.FileUtils;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.JujuConfigUtil;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.SwitchController;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.VnfmUtil;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.EntityUtils.ExeRes;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.servicetoken.JujuVnfmRestfulUtil;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.servicetoken.VnfmRestfulUtil;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.adapter.impl.AdapterResourceManager;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.constant.Constant;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.constant.UrlConstant;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.ServiceException;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.RestfulResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import mockit.Mock;
-import mockit.MockUp;
-import net.sf.json.JSONObject;
 
 /**
  * <br/>
@@ -112,52 +94,53 @@ public class ConfigRoa {
      * @throws ServiceException
      * @since NFVO 0.5
      */
-    @GET
-    @Path("/mock/{methodName}")
-    public boolean mock(@PathParam("methodName") String methodName, @Context HttpServletRequest context,
-            @Context HttpServletResponse resp) throws ServiceException {
-        if("getVnfmById".equals(methodName)) {
-            new MockUp<VnfmUtil>() {
-
-                @Mock
-                public JSONObject getVnfmById(String vnfmId) {
-                    JSONObject json = new JSONObject();
-                    json.put("vnfmId", vnfmId);
-                    json.put("vnfdId", "testVnfdId");
-                    json.put("vnfPackageId", "testPackageId");
-                    json.put("version", "1");
-                    json.put("url", JujuConfigUtil.getValue("jujuvnfm_server_url"));
-                    return json;
-                }
-            };
-        } else if("execute".equals(methodName)) {
-            new MockUp<EntityUtils>() {
-
-                @Mock
-                public ExeRes execute(String dir, List<String> command) {
-                    ExeRes er = new ExeRes();
-                    String resContent = null;
-                    try {
-                        resContent = new String(
-                                FileUtils.readFile(new File(JujuConfigUtil.getValue("juju_cmd_res_file")), "UTF-8"));
-                    } catch(Exception e) {
-                        LOG.error("mock fail",e);
-                        resContent = "mock fail";
-                    }
-                    er.setBody(resContent);
-                    return er;
-                }
-            };
-        }else if("fetchDownloadUrlFromCatalog".equals(methodName)) {
-            new MockUp<AdapterResourceManager>() {
-                @Mock
-                public String fetchDownloadUrlFromCatalog(String csarId){
-                    return JujuConfigUtil.getValue("catalog_download_url");
-                }
-            };
-        }
-        return true;
-    }
+    /*
+     * @GET
+     * @Path("/mock/{methodName}")
+     * public boolean mock(@PathParam("methodName") String methodName, @Context HttpServletRequest
+     * context,
+     * @Context HttpServletResponse resp) throws ServiceException {
+     * if("getVnfmById".equals(methodName)) {
+     * new MockUp<VnfmUtil>() {
+     * @Mock
+     * public JSONObject getVnfmById(String vnfmId) {
+     * JSONObject json = new JSONObject();
+     * json.put("vnfmId", vnfmId);
+     * json.put("vnfdId", "testVnfdId");
+     * json.put("vnfPackageId", "testPackageId");
+     * json.put("version", "1");
+     * json.put("url", JujuConfigUtil.getValue("jujuvnfm_server_url"));
+     * return json;
+     * }
+     * };
+     * } else if("execute".equals(methodName)) {
+     * new MockUp<EntityUtils>() {
+     * @Mock
+     * public ExeRes execute(String dir, List<String> command) {
+     * ExeRes er = new ExeRes();
+     * String resContent = null;
+     * try {
+     * resContent = new String(
+     * FileUtils.readFile(new File(JujuConfigUtil.getValue("juju_cmd_res_file")), "UTF-8"));
+     * } catch(Exception e) {
+     * LOG.error("mock fail", e);
+     * resContent = "mock fail";
+     * }
+     * er.setBody(resContent);
+     * return er;
+     * }
+     * };
+     * } else if("fetchDownloadUrlFromCatalog".equals(methodName)) {
+     * new MockUp<AdapterResourceManager>() {
+     * @Mock
+     * public String fetchDownloadUrlFromCatalog(String csarId) {
+     * return JujuConfigUtil.getValue("catalog_download_url");
+     * }
+     * };
+     * }
+     * return true;
+     * }
+     */
 
     /**
      * <br/>
@@ -169,25 +152,27 @@ public class ConfigRoa {
      * @throws ServiceException
      * @since NFVO 0.5
      */
-    @GET
-    @Path("/unmock/{methodName}")
-    public boolean unmock(@PathParam("methodName") String methodName, @Context HttpServletRequest context,
-            @Context HttpServletResponse resp) throws ServiceException {
-        if("getVnfmById".equals(methodName)) {
-            new MockUp<VnfmUtil>() {
-
-                @Mock
-                public JSONObject getVnfmById(String vnfmId) {
-                    RestfulResponse rsp = VnfmRestfulUtil.getRemoteResponse(
-                            String.format(UrlConstant.REST_ESRINFO_GET, vnfmId), JujuVnfmRestfulUtil.GET_TYPE, null);
-                    if(rsp == null || rsp.getStatus() != Constant.HTTP_OK) {
-                        return null;
-                    }
-                    LOG.error("funtion=getVnfmById, status={}", rsp.getStatus());
-                    return JSONObject.fromObject(rsp.getResponseContent());
-                }
-            };
-        }
-        return true;
-    }
+    /*
+     * @GET
+     * @Path("/unmock/{methodName}")
+     * public boolean unmock(@PathParam("methodName") String methodName, @Context HttpServletRequest
+     * context,
+     * @Context HttpServletResponse resp) throws ServiceException {
+     * if("getVnfmById".equals(methodName)) {
+     * new MockUp<VnfmUtil>() {
+     * @Mock
+     * public JSONObject getVnfmById(String vnfmId) {
+     * RestfulResponse rsp = VnfmRestfulUtil.getRemoteResponse(
+     * String.format(UrlConstant.REST_ESRINFO_GET, vnfmId), JujuVnfmRestfulUtil.GET_TYPE, null);
+     * if(rsp == null || rsp.getStatus() != Constant.HTTP_OK) {
+     * return null;
+     * }
+     * LOG.error("funtion=getVnfmById, status={}", rsp.getStatus());
+     * return JSONObject.fromObject(rsp.getResponseContent());
+     * }
+     * };
+     * }
+     * return true;
+     * }
+     */
 }

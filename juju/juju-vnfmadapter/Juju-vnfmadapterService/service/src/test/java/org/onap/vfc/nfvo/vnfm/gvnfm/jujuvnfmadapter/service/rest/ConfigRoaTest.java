@@ -13,27 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.rest;
 
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.ServiceException;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.JujuConfigUtil;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.servicetoken.VnfmRestfulUtil;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.service.rest.ConfigRoa;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.ServiceException;
-import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.restclient.RestfulResponse;
-import org.springframework.mock.web.MockHttpServletResponse;
-
-import mockit.Mock;
-import mockit.MockUp;
-import net.sf.json.JSONObject;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ConfigRoaTest {
+
     ConfigRoa roa;
 
     @Before
@@ -65,22 +61,21 @@ public class ConfigRoaTest {
         assertFalse(res);
     }
 
-    @Test
-    public void testmock() throws ServiceException {
-        HttpServletRequest context = null;
-        HttpServletResponse resp = new MockHttpServletResponse();
-        String methodName = "getVnfmById";
-        JSONObject json = new JSONObject();
-
-        new MockUp<JujuConfigUtil>() {
-            @Mock
-            public String getValue(String key) {
-                return null;
-            }
-
-        };
-        roa.mock(methodName, context, resp);
-        roa.unmock(methodName, context, resp);
-
-    }
+    /*
+     * @Test
+     * public void testmock() throws ServiceException {
+     * HttpServletRequest context = null;
+     * HttpServletResponse resp = new MockHttpServletResponse();
+     * String methodName = "getVnfmById";
+     * JSONObject json = new JSONObject();
+     * new MockUp<JujuConfigUtil>() {
+     * @Mock
+     * public String getValue(String key) {
+     * return null;
+     * }
+     * };
+     * roa.mock(methodName, context, resp);
+     * roa.unmock(methodName, context, resp);
+     * }
+     */
 }
