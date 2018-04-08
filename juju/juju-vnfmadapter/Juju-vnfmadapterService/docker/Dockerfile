@@ -24,7 +24,7 @@ RUN echo 'export CATALINA_OPTS="$CATALINA_OPTS -Xms64m -Xmx256m -XX:MaxPermSize=
 ENV CATALINA_HOME /service
 
 # Set up microservice
-RUN wget -q -O vfc-gvnfm-jujudriver.zip "https://nexus.onap.org/service/local/artifact/maven/redirect?r=staging&g=org.onap.vfc.nfvo.driver.vnfm.gvnfm&a=juju-vnfmadapterservice-deployment&v=LATEST&e=zip" && unzip -q -o -B vfc-gvnfm-jujudriver.zip && rm -f vfc-gvnfm-jujudriver.zip
+RUN wget -q -O vfc-gvnfm-jujudriver.zip "https://nexus.onap.org/service/local/artifact/maven/redirect?r=snapshots&g=org.onap.vfc.nfvo.driver.vnfm.gvnfm&a=juju-vnfmadapterservice-deployment&v=LATEST&e=zip" && unzip -q -o -B vfc-gvnfm-jujudriver.zip && rm -f vfc-gvnfm-jujudriver.zip
 # Set permissions
 RUN find . -type d -exec chmod o-w {} \;
 RUN find . -name "*.sh" -exec chmod +x {} \;
