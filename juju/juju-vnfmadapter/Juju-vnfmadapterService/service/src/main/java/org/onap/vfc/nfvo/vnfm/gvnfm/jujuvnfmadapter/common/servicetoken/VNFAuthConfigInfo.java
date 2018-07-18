@@ -56,36 +56,23 @@ public class VNFAuthConfigInfo {
 
     private VNFAuthConfigInfo() {
         Properties vnfProp = new Properties();
-        InputStream authIn = null;
 
-        try {
-            if(isVNFProModified(getAuthCofigPath())) {
-                authIn = new FileInputStream(getAuthCofigPath());
-
-                vnfProp.load(authIn);
-                vnfUserName = vnfProp.getProperty("name");
-                vnfEncryptedPW = vnfProp.getProperty("value");
-                vnfDomain = vnfProp.getProperty("vnfDomain");
-                vnfResourceDomain = vnfProp.getProperty("vnfResourceDomain");
-                defaultDomain = vnfProp.getProperty("defaultDomain");
-                authIn.close();
-            }
-
+        if(!isVNFProModified(getAuthCofigPath())) {
+            //cannot find the config path, hence return
+            LOG.debug("loadAuthConfig can't find config file");
+            return;
+        }
+        try(InputStream authIn = new FileInputStream(getAuthCofigPath())) {
+            vnfProp.load(authIn);
+            vnfUserName = vnfProp.getProperty("name");
+            vnfEncryptedPW = vnfProp.getProperty("value");
+            vnfDomain = vnfProp.getProperty("vnfDomain");
+            vnfResourceDomain = vnfProp.getProperty("vnfResourceDomain");
+            defaultDomain = vnfProp.getProperty("defaultDomain");
         } catch(IOException e) {
             LOG.error("loadAuthConfig can't find config file>> e = {}", e);
-        } finally {
-            try {
-                if(authIn != null) {
-
-                    authIn.close();
-                }
-            } catch(IOException e) {
-                LOG.error("loadAuthConfig can't find config file>> e = {}", e);
-            }
-
-            }
-
         }
+    }
 
     private String getAuthCofigPath() {
         return AUTH_CONFIG_FILE;
