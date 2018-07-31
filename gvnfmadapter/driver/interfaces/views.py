@@ -70,7 +70,8 @@ class VnfInstInfo(APIView):
             input_data = {
                 "flavourId": ignorcase_get(requestData, "flavourId"),
                 "extVirtualLinks": ignorcase_get(requestData, "extVirtualLink"),
-                "additionalParams": ignorcase_get(requestData, "additionalParam")
+                "additionalParams": ignorcase_get(requestData, "additionalParam"),
+                "vnfmId": vnfm_id
             }
             logger.debug("do_instvnf: vnfInstanceId=[%s],request data=[%s],input_data=[%s],vnfm_id=[%s]",
                          vnfInstanceId, request.data, input_data, vnfm_id)
