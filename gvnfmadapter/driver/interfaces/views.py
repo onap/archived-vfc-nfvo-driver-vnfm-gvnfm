@@ -52,7 +52,8 @@ class VnfInstInfo(APIView):
             if not request_isValid:
                 raise Exception(requestSerializer.errors)
 
-            requestData = requestSerializer.data
+            # requestData = requestSerializer.data
+	    requestData = request.data
             input_data = {
                 "vnfdId": ignorcase_get(requestData, "vnfDescriptorId"),
                 "vnfInstanceName": ignorcase_get(requestData, "vnfInstanceName"),
