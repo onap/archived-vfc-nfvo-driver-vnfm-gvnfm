@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'driver.interfaces',
+    'driver.swagger',
     'drf_yasg'
 ]
 
