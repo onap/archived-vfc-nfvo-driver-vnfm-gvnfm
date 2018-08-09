@@ -36,7 +36,6 @@ SchemaView = get_schema_view(
 )
 
 urlpatterns = [
-    # url(r'^api/gvnfmdriver/v1/swagger.json$', views.SwaggerView.as_view()),
     url(r'^api/gvnfmdriver/v1/swagger(?P<format>.json|.yaml)$', SchemaView.without_ui(cache_timeout=0),
         name='schema-json'),
     url(r'^api/gvnfmdriver/v1/swagger$', SchemaView.with_ui('swagger', cache_timeout=0),
