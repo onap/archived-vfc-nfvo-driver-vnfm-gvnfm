@@ -277,8 +277,10 @@ class VnfNotifyInfo(APIView):
     def post(self, request, vnfmtype):
         try:
             logger.debug("[%s]req_data = %s", fun_name(), request.data)
-            vnfinstanceid = ignorcase_get(request.data, 'vnfinstanceid')
-            ret = req_by_msb("api/nslcm/v1/vnfs/%s/Notify" % vnfinstanceid, "POST",
+            vnfminstid = ignorcase_get(request.data, 'vnfmInstId')
+            vnfinstanceid = ignorcase_get(request.data, 'vnfInstanceId')
+            request.data.pop("vnfmInstId")
+            ret = req_by_msb("api/nslcm/v2/ns/%s/vnfs/%s/Notify" % (vnfminstid, vnfinstanceid), "POST",
                              json.JSONEncoder().encode(request.data))
             logger.debug("[%s]data = %s", fun_name(), ret)
             if ret[0] != 0:

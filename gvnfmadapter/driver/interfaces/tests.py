@@ -305,28 +305,94 @@ class InterfacesTest(TestCase):
         r2 = [0, json.JSONEncoder().encode(vim_info), "200"]
         mock_call_req.side_effect = [r2]
         req_data = {
-            "nfvoid": "1",
-            "vnfmid": "876543211",
-            "vimid": "6543211",
-            "timestamp": "1234567890",
-            "vnfinstanceid": "1",
-            "eventtype": "0",
-            "vmlist": [
-                {
-                    "vmflavor": "SMP",
-                    "vmnumber": "3",
-                    "vmidlist ": [
-                        "vmuuid"
-                    ]
+            "vnfmInstId": "876543211",
+            "notificationType": "string",
+            "subscriptionId": "string",
+            "timeStamp": "1234567890",
+            "notificationStatus": "START",
+            "operationState": "STARTING",
+            "vnfInstanceId": "string",
+            "operation": "INSTANTIATE",
+            "isAutomaticInvocation": True,
+            "vnfLcmOpOccId": "string",
+            "affectedVnfcs": [{
+                "id": "string",
+                "vduId": "string",
+                "changeType": "ADDED",
+                "computeResource": {
+                    "vimConnectionId": "string",
+                    "resourceProviderId": "string",
+                    "resourceId": "string",
+                    "vimLevelResourceType": "string"
                 },
-                {
-                    "vmflavor": "CMP",
-                    "vmnumber": "3",
-                    "vmidlist ": [
-                        "vmuuid"
-                    ]
+                "metadata": {},
+                "affectedVnfcCpIds": [],
+                "addedStorageResourceIds": [],
+                "removedStorageResourceIds": [],
+            }],
+            "affectedVirtualLinks": [{
+                "id": "string",
+                "virtualLinkDescId": "string",
+                "changeType": "ADDED",
+                "networkResource": {
+                    "vimConnectionId": "string",
+                    "resourceProviderId": "string",
+                    "resourceId": "string",
+                    "vimLevelResourceType": "network",
                 }
-            ]
+            }],
+            "affectedVirtualStorages": [{
+                "id": "string",
+                "virtualStorageDescId": "string",
+                "changeType": "ADDED",
+                "storageResource": {
+                    "vimConnectionId": "string",
+                    "resourceProviderId": "string",
+                    "resourceId": "string",
+                    "vimLevelResourceType": "network",
+                },
+                "metadata": {}
+            }],
+            "changedInfo": {
+                "vnfInstanceName": "string",
+                "vnfInstanceDescription": "string",
+                "vnfConfigurableProperties": {},
+                "metadata": {},
+                "extensions": {},
+                "vimConnectionInfo": [{
+                    "id": "string",
+                    "vimId": "string",
+                    "vimType": "string",
+                    "interfaceInfo": {},
+                    "accessInfo": {},
+                    "extra": {}
+                }],
+                "vnfPkgId": "string",
+                "vnfdId": "string",
+                "vnfProvider": "string",
+                "vnfProductName": "string",
+                "vnfSoftwareVersion": "string",
+                "vnfdVersion": "string"
+            },
+            "changedExtConnectivity": [{
+                "id": "string",
+                "resourceHandle": {
+                    "vimConnectionId": "string",
+                    "resourceProviderId": "string",
+                    "resourceId": "string",
+                    "vimLevelResourceType": "string"
+                },
+                "extLinkPorts": [{
+                    "id": "string",
+                    "resourceHandle": {
+                        "vimConnectionId": "string",
+                        "resourceProviderId": "string",
+                        "resourceId": "string",
+                        "vimLevelResourceType": "string"
+                    },
+                    "cpInstanceId": "string"
+                }]
+            }]
         }
         response = self.client.post("/api/gvnfmdriver/v1/vnfs/lifecyclechangesnotification",
                                     data=json.dumps(req_data),
