@@ -228,40 +228,90 @@ class InterfacesTest(TestCase):
 
     @mock.patch.object(restcall, 'call_req')
     def test_grantvnf(self, mock_call_req):
-        vim_info = {
-            "vim": {
-                "accessinfo": {
-                    "tenant": "admin"
+        data = {
+            "vnfInstanceId": "1",
+            "vnfLcmOpOccId": "2",
+            "vnfdId": "3",
+            "flavourId": "4",
+            "operation": "INSTANTIATE",
+            "isAutomaticInvocation": True,
+            "instantiationLevelId": "5",
+            "addResources": [
+                {
+                    "id": "1",
+                    "type": "COMPUTE",
+                    "vduId": "2",
+                    "resourceTemplateId": "3",
+                    "resourceTemplate": {
+                        "vimConnectionId": "4",
+                        "resourceProviderId": "5",
+                        "resourceId": "6",
+                        "vimLevelResourceType": "7"
+                    }
+                }
+            ],
+            "placementConstraints": [
+                {
+                    "affinityOrAntiAffinity": "AFFINITY",
+                    "scope": "NFVI_POP",
+                    "resource": [
+                        {
+                            "idType": "RES_MGMT",
+                            "resourceId": "1",
+                            "vimConnectionId": "2",
+                            "resourceProviderId": "3"
+                        }
+                    ]
+                }
+            ],
+            "vimConstraints": [
+                {
+                    "sameResourceGroup": True,
+                    "resource": [
+                        {
+                            "idType": "RES_MGMT",
+                            "resourceId": "1",
+                            "vimConnectionId": "2",
+                            "resourceProviderId": "3"
+                        }
+                    ]
+                }
+            ],
+            "additionalParams": {},
+            "_links": {
+                "vnfLcmOpOcc": {
+                    "href": "1"
                 },
-                "vimid": "516cee95-e8ca-4d26-9268-38e343c2e31e"
+                "vnfInstance": {
+                    "href": "2"
+                }
             }
         }
-        req_data = {
-            "vnfmid": "13232222",
-            "nfvoid": "03212234",
-            "vimid": "12345678",
-            "exvimidlist ": "exvimid",
-            "tenant": " tenant1",
-            "vnfinstanceid": "1234",
-            "operationright": "0",
-            "vmlist": [
+        grant_resp_data = {
+            "id": "1",
+            "vnfInstanceId": "1",
+            "vnfLcmOpOccId": "2",
+            "vimConnections": [
                 {
-                    "vmflavor": "SMP",
-                    "vmnumber": "3"
-                },
-                {
-                    "vmflavor": "CMP",
-                    "vmnumber": "3"
+                    "id": "1",
+                    "vimId": "1"
                 }
             ]
         }
-        mock_call_req.return_value = [0, json.JSONEncoder().encode(vim_info), '201']
+        mock_call_req.return_value = [0, json.JSONEncoder().encode(grant_resp_data), '201']
         response = self.client.put("/api/gvnfmdriver/v1/resource/grant",
-                                   data=json.dumps(req_data), content_type='application/json')
+                                   data=json.dumps(data), content_type='application/json')
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         expect_resp_data = {
-            "vimid": "516cee95-e8ca-4d26-9268-38e343c2e31e",
-            "tenant": "admin"
+            "id": "1",
+            "vnfInstanceId": "1",
+            "vnfLcmOpOccId": "2",
+            "vimConnections": [
+                {
+                    "id": "1",
+                    "vimId": "1"
+                }
+            ]
         }
         self.assertDictEqual(expect_resp_data, response.data)
 
