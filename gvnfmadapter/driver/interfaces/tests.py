@@ -43,17 +43,16 @@ class InterfacesTest(TestCase):
             'createTime': '2016-10-3111: 08: 39',
             'description': ''
         }
-        job_info = {
-            "vnfInstanceId": "8",
-            "jobId": "NF-CREATE-8-b384535c-9f45-11e6-8749-fa163e91c2f9"
+        create_vnf_resp = {
+            "id": "8",
+            # "jobId": "NF-CREATE-8-b384535c-9f45-11e6-8749-fa163e91c2f9"
         }
-        vnflcm_info = {
-            "vnfInstanceId": "8",
-            "vnfLcOpId": "NF-INST-8-6ffa8083-6705-49b3-ae54-cbd6265fbe7a"
+        job_info = {
+            "jobId": "NF-INST-8-6ffa8083-6705-49b3-ae54-cbd6265fbe7a"
         }
         r1 = [0, json.JSONEncoder().encode(vnfm_info), "200"]
-        ret = [0, json.JSONEncoder().encode(job_info), '200']
-        ret2 = [0, json.JSONEncoder().encode(vnflcm_info), '200']
+        ret = [0, json.JSONEncoder().encode(create_vnf_resp), '200']
+        ret2 = [0, json.JSONEncoder().encode(job_info), '200']
         mock_call_req.side_effect = [r1, ret, r1, ret2]
         req_data = {
             'vnfInstanceName': 'VFW_f88c0cb7-512a-44c4-bd09-891663f19367',
