@@ -115,7 +115,7 @@ class VnfTermInfo(APIView):
             resp = do_terminatevnf(vnfm_id, vnfInstanceId, input_data)
             logger.debug("terminate_vnf: response data=[%s]", resp)
 
-            jobId = ignorcase_get(resp, "vnfLcOpId")
+            jobId = ignorcase_get(resp, "jobId")
             gracefulTerminationTimeout = ignorcase_get(request.data, "gracefulTerminationTimeout")
             logger.debug("wait4job: vnfm_id=[%s],jobId=[%s],gracefulTerminationTimeout=[%s]",
                          vnfm_id, jobId, gracefulTerminationTimeout)
