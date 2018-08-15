@@ -110,6 +110,7 @@ TIME_ZONE = 'UTC'
 
 STATIC_URL = '/static/'
 
+
 if platform.system() == 'Windows' or 'test' in sys.argv:
     LOGGING = {
         'version': 1,
