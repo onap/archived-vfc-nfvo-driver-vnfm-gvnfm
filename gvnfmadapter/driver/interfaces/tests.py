@@ -142,7 +142,7 @@ class InterfacesTest(TestCase):
         }
         job_info = {
             "ResponseInfo": {
-                "vnfInstanceId": "88",
+                "id": "88",
                 "instantiationState": "INSTANTIATED",
                 "vnfSoftwareVersion": "v1.2.3"
             }

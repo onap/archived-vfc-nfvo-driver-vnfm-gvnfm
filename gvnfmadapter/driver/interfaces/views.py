@@ -53,7 +53,7 @@ class VnfInstInfo(APIView):
                 raise Exception(requestSerializer.errors)
 
             # requestData = requestSerializer.data
-	    requestData = request.data
+            requestData = request.data
             input_data = {
                 "vnfdId": ignorcase_get(requestData, "vnfDescriptorId"),
                 "vnfInstanceName": ignorcase_get(requestData, "vnfInstanceName"),
@@ -163,15 +163,22 @@ class VnfQueryInfo(APIView):
                 "vnfType": "",
                 "vnfStatus": ""
             }
-            resp_response_data = mapping_conv(query_vnf_resp_mapping, ignorcase_get(resp, "ResponseInfo"))
+            ResponseInfo = ignorcase_get(resp, "ResponseInfo")
+            resp_response_data = mapping_conv(query_vnf_resp_mapping, ResponseInfo)
             resp_data = {
                 "vnfInfo": resp_response_data
             }
-            ResponseInfo = ignorcase_get(resp, "ResponseInfo")
-            resp_data["vnfInfo"]["version"] = ignorcase_get(ResponseInfo, "vnfSoftwareVersion")
+            id = ignorcase_get(ResponseInfo, "id")
+            if id:
+                resp_data["vnfInfo"]["vnfInstanceId"] = id
+            vnfPkgId = ignorcase_get(ResponseInfo, "vnfPkgId")
+            if vnfPkgId:
+                resp_data["vnfInfo"]["vnfPackageId"] = vnfPkgId
+            vnfSoftwareVersion = ignorcase_get(ResponseInfo, "vnfSoftwareVersion")
+            if vnfSoftwareVersion:
+                resp_data["vnfInfo"]["version"] = vnfSoftwareVersion
             if ignorcase_get(ResponseInfo, "instantiationState") == "INSTANTIATED":
                 resp_data["vnfInfo"]["vnfStatus"] = "ACTIVE"
-            resp_data["vnfInfo"]["vnfInstanceId"] = ignorcase_get(ResponseInfo, "vnfInstanceId")
             logger.debug("[%s]resp_data=%s", fun_name(), resp_data)
             return Response(data=resp_data, status=status.HTTP_200_OK)
         except GvnfmDriverException as e:
@@ -320,11 +327,13 @@ def call_vnfm(resource, method, vnfm_info, data=""):
 def mapping_conv(keyword_map, rest_return):
     resp_data = {}
     for param in keyword_map:
-        if keyword_map[param]:
-            if isinstance(keyword_map[param], dict):
-                resp_data[param] = mapping_conv(keyword_map[param], ignorcase_get(rest_return, param))
-            else:
-                resp_data[param] = ignorcase_get(rest_return, param)
+        # if keyword_map[param]:
+        if isinstance(keyword_map[param], dict):
+            resp_data[param] = mapping_conv(keyword_map[param], ignorcase_get(rest_return, param))
+        else:
+            value = ignorcase_get(rest_return, param)
+            if value:
+                resp_data[param] = value
     return resp_data
 
 
