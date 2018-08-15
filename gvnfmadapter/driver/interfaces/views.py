@@ -67,12 +67,11 @@ class VnfInstInfo(APIView):
             logger.debug("Create vnf end!")
 
             logger.debug("Instantiate vnf start!")
-            vnfInstanceId = resp["vnfInstanceId"]
+            vnfInstanceId = resp["id"]
             input_data = {
                 "flavourId": ignorcase_get(requestData, "flavourId"),
                 "extVirtualLinks": ignorcase_get(requestData, "extVirtualLink"),
                 "additionalParams": ignorcase_get(requestData, "additionalParam"),
-                "vnfmId": vnfm_id
             }
             logger.debug("do_instvnf: vnfInstanceId=[%s],request data=[%s],input_data=[%s],vnfm_id=[%s]",
                          vnfInstanceId, request.data, input_data, vnfm_id)
@@ -80,7 +79,7 @@ class VnfInstInfo(APIView):
             logger.debug("do_instvnf: response data=[%s]", resp)
             resp_data = {
                 "vnfInstanceId": vnfInstanceId,
-                "jobId": ignorcase_get(resp, "vnfLcOpId")
+                "jobId": ignorcase_get(resp, "jobId")
             }
             logger.debug("Instantiate vnf end!")
             return Response(data=resp_data, status=status.HTTP_201_CREATED)
