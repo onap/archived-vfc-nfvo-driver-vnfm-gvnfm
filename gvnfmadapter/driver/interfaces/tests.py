@@ -315,6 +315,72 @@ class InterfacesTest(TestCase):
         self.assertDictEqual(expect_resp_data, response.data)
 
     @mock.patch.object(restcall, 'call_req')
+    def test_grantvnf_failed(self, mock_call_req):
+        data = {
+            "vnfInstanceId": "1",
+            "vnfLcmOpOccId": "2",
+            "vnfdId": "3",
+            "flavourId": "4",
+            "operation": "INSTANTIATE",
+            "isAutomaticInvocation": True,
+            "instantiationLevelId": "5",
+            "addResources": [
+                {
+                    "id": "1",
+                    "type": "COMPUTE",
+                    "vduId": "2",
+                    "resourceTemplateId": "3",
+                    "resourceTemplate": {
+                        "vimConnectionId": "4",
+                        "resourceProviderId": "5",
+                        "resourceId": "6",
+                        "vimLevelResourceType": "7"
+                    }
+                }
+            ],
+            "placementConstraints": [
+                {
+                    "affinityOrAntiAffinity": "AFFINITY",
+                    "scope": "NFVI_POP",
+                    "resource": [
+                        {
+                            "idType": "RES_MGMT",
+                            "resourceId": "1",
+                            "vimConnectionId": "2",
+                            "resourceProviderId": "3"
+                        }
+                    ]
+                }
+            ],
+            "vimConstraints": [
+                {
+                    "sameResourceGroup": True,
+                    "resource": [
+                        {
+                            "idType": "RES_MGMT",
+                            "resourceId": "1",
+                            "vimConnectionId": "2",
+                            "resourceProviderId": "3"
+                        }
+                    ]
+                }
+            ],
+            "additionalParams": {},
+            "_links": {
+                "vnfLcmOpOcc": {
+                    "href": "1"
+                },
+                "vnfInstance": {
+                    "href": "2"
+                }
+            }
+        }
+        mock_call_req.return_value = [1, json.JSONEncoder().encode(""), '201']
+        response = self.client.put("/api/gvnfmdriver/v1/resource/grant",
+                                   data=json.dumps(data), content_type='application/json')
+        self.assertEqual(status.HTTP_500_INTERNAL_SERVER_ERROR, response.status_code)
+
+    @mock.patch.object(restcall, 'call_req')
     def test_notify(self, mock_call_req):
         vim_info = {
             "vim": {
@@ -466,3 +532,9 @@ class InterfacesTest(TestCase):
         self.assertEqual(1, len(resp.data["csars"]))
         self.assertEqual("1", resp.data["csars"][0]["csarId"])
         self.assertEqual("2", resp.data["csars"][0]["vnfdId"])
+
+    @mock.patch.object(restcall, 'call_req')
+    def test_get_vnfpkgs_failed(self, mock_call_req):
+        mock_call_req.return_value = [1, json.JSONEncoder().encode(""), '200']
+        resp = self.client.get("/api/gvnfmdriver/v1/vnfpackages")
+        self.assertEqual(status.HTTP_500_INTERNAL_SERVER_ERROR, resp.status_code)
