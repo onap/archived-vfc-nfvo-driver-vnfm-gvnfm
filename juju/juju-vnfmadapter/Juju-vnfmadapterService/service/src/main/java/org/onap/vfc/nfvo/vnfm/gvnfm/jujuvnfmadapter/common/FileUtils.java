@@ -45,6 +45,7 @@ public class FileUtils {
     public static final String GBK = "GBK";
 
     private static Logger log = LoggerFactory.getLogger(FileUtils.class);
+    private static final String OS_NAME = "os.name";
 
     private FileUtils(){
         
@@ -342,7 +343,7 @@ public class FileUtils {
      * */
     public static boolean isWindows() {
 
-        String os = System.getProperty("os.name").toLowerCase();
+        String os = System.getProperty(OS_NAME).toLowerCase();
         // windows
         return (os.indexOf("win") >= 0);
 
@@ -394,7 +395,7 @@ public class FileUtils {
      * */
     public static boolean isMac() {
 
-        String os = System.getProperty("os.name").toLowerCase();
+        String os = System.getProperty(OS_NAME).toLowerCase();
         // Mac
         return (os.indexOf("mac") >= 0);
 
@@ -407,7 +408,7 @@ public class FileUtils {
      * */
     public static boolean isUnix() {
 
-        String os = System.getProperty("os.name").toLowerCase();
+        String os = System.getProperty(OS_NAME).toLowerCase();
         // linux or unix
         return (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0);
 
