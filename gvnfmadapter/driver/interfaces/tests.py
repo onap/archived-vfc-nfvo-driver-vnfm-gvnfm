@@ -538,3 +538,92 @@ class InterfacesTest(TestCase):
         mock_call_req.return_value = [1, json.JSONEncoder().encode(""), '200']
         resp = self.client.get("/api/gvnfmdriver/v1/vnfpackages")
         self.assertEqual(status.HTTP_500_INTERNAL_SERVER_ERROR, resp.status_code)
+
+# Operate API Test case
+    @mock.patch.object(restcall, 'call_req')
+    def test_operate_vnf_404_NotFound(self, mock_call_req):
+        vnfm_info = {
+            "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
+            "name": "g_vnfm",
+            "type": "gvnfmdriver",
+            "vimId": "",
+            "vendor": "vendor1",
+            "version": "v1.0",
+            "description": "vnfm",
+            "certificateUrl": "",
+            "url": "http://10.74.44.11",
+            "userName": "admin",
+            "password": "admin",
+            "createTime": "2016-07-06 15:33:18"
+        }
+        req_data = {
+            "changeStateTo": "STARTED"
+        }
+        probDetail = {"status": 404, "detail": "VNF Instance not found"}
+        r1 = [0, json.JSONEncoder().encode(vnfm_info), "200", ""]
+        r2 = [1, json.JSONEncoder().encode(probDetail), "404", ""]
+        mock_call_req.side_effect = [r1, r2]
+        response = self.client.post("/api/gvnfmdriver/v1/vnfmid/vnfs/2/operate",
+                                    data=json.dumps(req_data), content_type="application/json")
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+        self.assertEqual(probDetail, response.data)
+
+    @mock.patch.object(restcall, 'call_req')
+    def test_operate_vnf_409_Conflict(self, mock_call_req):
+        vnfm_info = {
+            "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
+            "name": "g_vnfm",
+            "type": "gvnfmdriver",
+            "vimId": "",
+            "vendor": "vendor1",
+            "version": "v1.0",
+            "description": "vnfm",
+            "certificateUrl": "",
+            "url": "http://10.74.44.11",
+            "userName": "admin",
+            "password": "admin",
+            "createTime": "2016-07-06 15:33:18"
+        }
+        req_data = {
+            "changeStateTo": "STOPPED",
+            "stopType": "GRACEFUL",
+            "gracefulStopTimeout": 2
+        }
+        probDetail = {"status": 409, "detail": "VNF Instance not in Instantiated State"}
+        r1 = [0, json.JSONEncoder().encode(vnfm_info), "200", ""]
+        r2 = [1, json.JSONEncoder().encode(probDetail), "409", ""]
+        mock_call_req.side_effect = [r1, r2]
+        response = self.client.post("/api/gvnfmdriver/v1/vnfmid/vnfs/2/operate",
+                                    data=json.dumps(req_data), content_type="application/json")
+        self.assertEqual(status.HTTP_409_CONFLICT, response.status_code)
+        self.assertEqual(probDetail, response.data)
+
+    @mock.patch.object(restcall, 'call_req')
+    def test_operate_vnf_success(self, mock_call_req):
+        vnfm_info = {
+            "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
+            "name": "g_vnfm",
+            "type": "gvnfmdriver",
+            "vimId": "",
+            "vendor": "vendor1",
+            "version": "v1.0",
+            "description": "vnfm",
+            "certificateUrl": "",
+            "url": "http://10.74.44.11",
+            "userName": "admin",
+            "password": "admin",
+            "createTime": "2016-07-06 15:33:18"
+        }
+        req_data = {
+            "changeStateTo": "STOPPED",
+            "stopType": "GRACEFUL",
+            "gracefulStopTimeout": 2
+        }
+        r1 = [0, json.JSONEncoder().encode(vnfm_info), "200", ""]
+        r2 = [0, json.JSONEncoder().encode(''), "202", "/vnf_lc_ops/NF-OPERATE-12-2a3be946-b01d-11e8-9302-08002705b121"]
+        mock_call_req.side_effect = [r1, r2]
+        response = self.client.post("/api/gvnfmdriver/v1/vnfmid/vnfs/2/operate",
+                                    data=json.dumps(req_data), content_type="application/json")
+        self.assertEqual(status.HTTP_202_ACCEPTED, response.status_code)
+        self.assertEqual(None, response.data)
+        self.assertEqual("/vnf_lc_ops/NF-OPERATE-12-2a3be946-b01d-11e8-9302-08002705b121", response['Location'])
