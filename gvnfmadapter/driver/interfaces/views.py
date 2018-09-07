@@ -35,6 +35,7 @@ from driver.pub.exceptions import GvnfmDriverException
 from driver.pub.utils import restcall
 from driver.pub.utils.restcall import req_by_msb
 from driver.interfaces.serializers.operate_request import VnfOperateRequestSerializer
+from driver.interfaces.serializers.heal_request import HealVnfRequestSerializerToVnfm, VnfHealRequestSerializer
 from driver.interfaces.serializers.response import ProblemDetailsSerializer
 
 logger = logging.getLogger(__name__)
@@ -335,6 +336,56 @@ class VnfOperateView(APIView):
             return response
         except GvnfmDriverException as e:
             logger.error('operate vnf failed, detail message: %s' % e.message)
+            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except:
+            logger.error(traceback.format_exc())
+            return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class VnfHealView(APIView):
+    @swagger_auto_schema(
+        request_body=VnfHealRequestSerializer(),
+        responses={
+            status.HTTP_202_ACCEPTED: "Success",
+            status.HTTP_404_NOT_FOUND: ProblemDetailsSerializer(),
+            status.HTTP_409_CONFLICT: ProblemDetailsSerializer(),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: "Internal error"
+        }
+    )
+    def post(self, request, vnfmtype, vnfmid, vnfInstanceId):
+        logger.debug("Heal_vnf--post::> %s" % request.data)
+        logger.debug("Heal vnf begin!")
+        try:
+            requestSerializer = VnfHealRequestSerializer(data=request.data)
+            request_isValid = requestSerializer.is_valid()
+            if not request_isValid:
+                raise Exception(requestSerializer.errors)
+            healdata = {
+                u"additionalParams": {
+                    u"action": ignorcase_get(request.data, "action"),
+                    u"affectedvm": ignorcase_get(request.data, "affectedvm")
+                }
+            }
+            input_data = HealVnfRequestSerializerToVnfm(data=healdata)
+            resp_isvalid = input_data.is_valid()
+            if not resp_isvalid:
+                raise GvnfmDriverException(input_data.errors)
+            logger.debug("Heal vnf start!")
+            logger.debug("do_heal: vnfmid=[%s],vnfInstanceId=[%s],request data=[%s]",
+                         vnfmid, vnfInstanceId, input_data)
+            statusCode, resp, location = do_lcmVnf(vnfmid, vnfInstanceId, input_data.data, "heal")
+            logger.debug("do_heal: response data=[%s]", resp)
+            logger.debug("Heal vnf end!")
+            ret = int(statusCode)
+            if ret == status.HTTP_404_NOT_FOUND:
+                return Response(data=resp, status=status.HTTP_404_NOT_FOUND)
+            elif ret == status.HTTP_409_CONFLICT:
+                return Response(data=resp, status=status.HTTP_409_CONFLICT)
+            response = Response(data=None, status=status.HTTP_202_ACCEPTED)
+            response["Location"] = location
+            return response
+        except GvnfmDriverException as e:
+            logger.error('Heal vnf failed, detail message: %s' % e.message)
             return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except:
             logger.error(traceback.format_exc())
