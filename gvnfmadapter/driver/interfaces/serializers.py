@@ -159,3 +159,23 @@ class ProblemDetailsSerializer(serializers.Serializer):
     status = serializers.IntegerField(help_text="Status", required=True)
     detail = serializers.CharField(help_text="Detail", required=True, allow_null=True)
     instance = serializers.CharField(help_text="Instance", required=False, allow_null=True)
+
+
+class AffectedVm(serializers.Serializer):
+    vmid = serializers.CharField(help_text="Vm id", required=True)
+    vduid = serializers.CharField(help_text="Vdu id", required=True)
+    vmname = serializers.CharField(help_text="Vm name", required=True)
+
+
+class VnfHealRequestSerializer(serializers.Serializer):
+    action = serializers.CharField(help_text="Action for NS heal", required=True, allow_null=True)
+    affectedvm = AffectedVm(help_text="Get the vm information to be healed", required=True)
+
+class HealVnfRequestSerializerToVnfm(serializers.Serializer):
+    cause = serializers.CharField(help_text="Cause of NS heal", required=False, allow_null=True)
+    additionalParams = serializers.DictField(
+        help_text="Additional input parameters for the healing process, \
+        specific to the VNF being healed, \
+        as declared in the VNFD as part of HealVnfOpConfig.",
+        required=False,
+        allow_null=True)
