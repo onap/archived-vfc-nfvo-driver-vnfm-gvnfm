@@ -29,7 +29,7 @@ from driver.pub.utils.restcall import req_by_msb
 from driver.interfaces.serializers import VnfInstReqParamsSerializer, ResponseSerializer
 from driver.interfaces.serializers import VnfTermReqSerializer, VnfQueryRespSerializer
 from driver.interfaces.serializers import VnfOperRespSerializer, VnfGrantReqSerializer, VnfGrantRespSerializer
-from driver.interfaces.serializers import VnfNotifyReqSerializer
+from driver.interfaces.serializers import VnfNotifyReqSerializer, VnfOperateRequestSerializer, ProblemDetailsSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -289,6 +289,46 @@ class VnfNotifyInfo(APIView):
             return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+class VnfOperateView(APIView):
+    @swagger_auto_schema(
+        request_body=VnfOperateRequestSerializer(),
+        responses={
+            status.HTTP_202_ACCEPTED: "Success",
+            status.HTTP_404_NOT_FOUND: ProblemDetailsSerializer(),
+            status.HTTP_409_CONFLICT: ProblemDetailsSerializer(),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: "Internal error"
+        }
+    )
+    def post(self, request, vnfmtype, vnfmid, vnfInstanceId):
+        logger.debug("operate_vnf--post::> %s" % request.data)
+        logger.debug("Operate vnf begin!")
+        try:
+            requestSerializer = VnfOperateRequestSerializer(data=request.data)
+            request_isValid = requestSerializer.is_valid()
+            if not request_isValid:
+                raise Exception(requestSerializer.errors)
+            logger.debug("Operate vnf start!")
+            logger.debug("do_operate: vnfmid=[%s],vnfInstanceId=[%s],request data=[%s]",
+                         vnfmid, vnfInstanceId, request.data)
+            statusCode, resp, location = do_lcmVnf(vnfmid, vnfInstanceId, request.data, "operate")
+            logger.debug("do_operate: response data=[%s]", resp)
+            logger.debug("Operate vnf end!")
+            ret = int(statusCode)
+            if ret == status.HTTP_404_NOT_FOUND:
+                return Response(data=resp, status=status.HTTP_404_NOT_FOUND)
+            elif ret == status.HTTP_409_CONFLICT:
+                return Response(data=resp, status=status.HTTP_409_CONFLICT)
+            response = Response(data=None, status=status.HTTP_202_ACCEPTED)
+            response["Location"] = location
+            return response
+        except GvnfmDriverException as e:
+            logger.error('operate vnf failed, detail message: %s' % e.message)
+            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except:
+            logger.error(traceback.format_exc())
+            return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class VnfPkgsInfo(APIView):
     def get(request, *args, **kwargs):
         try:
@@ -444,6 +484,17 @@ def do_deletevnf(vnfm_id, vnfInstanceId, data):
         logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
         raise GvnfmDriverException('Failed to delete vnf.')
     return json.JSONDecoder().decode(ret[1])
+
+
+def do_lcmVnf(vnfm_id, vnfInstanceId, data, lcmType):
+    logger.debug("[%s] request.data=%s", fun_name(), data)
+    vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
+    logger.debug("[do_lcmVnf] vnfm_info=[%s]", vnfm_info)
+    ret = call_vnfm("api/vnflcm/v1/vnf_instances/%s/%s" % (vnfInstanceId, lcmType), "POST", vnfm_info, data)
+    if ret[0] != 0 and int(ret[2]) != status.HTTP_404_NOT_FOUND and int(ret[2]) != status.HTTP_409_CONFLICT:
+        logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
+        raise GvnfmDriverException('Failed to Operate vnf.')
+    return (ret[2], json.JSONDecoder().decode(ret[1]), ret[3])
 
 
 def do_queryvnf(data, vnfm_id, vnfInstanceId):

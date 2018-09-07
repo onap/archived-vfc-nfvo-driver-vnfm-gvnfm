@@ -130,3 +130,32 @@ class VnfNotifyReqSerializer(serializers.Serializer):
     vnfistanceid = serializers.CharField(help_text="VNF instance identifier.", required=True)
     eventtype = serializers.CharField(help_text="Event type.", required=True)
     vmlist = serializers.CharField(help_text="VM list.", required=True)
+
+
+class VnfOperateRequestSerializer(serializers.Serializer):
+    changeStateTo = serializers.ChoiceField(
+        help_text="The desired operational state (i.e. started or stopped) to change the VNF to.",
+        choices=["STARTED", "STOPPED"],
+        required=True)
+    stopType = serializers.ChoiceField(
+        help_text="It signals whether forceful or graceful stop is requested.",
+        choices=["FORCEFUL", "GRACEFUL"],
+        required=False)
+    gracefulStopTimeout = serializers.IntegerField(
+        help_text="The time interval to wait for the VNF to be taken out of service during graceful stop.",
+        required=False)
+    additionalParams = serializers.DictField(
+        help_text="Additional input parameters for the operate process, \
+        specific to the VNF being operated, \
+        as declared in the VNFD as part of OperateVnfOpConfig.",
+        child=serializers.CharField(help_text="", allow_blank=True),
+        required=False,
+        allow_null=True)
+
+
+class ProblemDetailsSerializer(serializers.Serializer):
+    type = serializers.CharField(help_text="Type", required=False, allow_null=True)
+    title = serializers.CharField(help_text="Title", required=False, allow_null=True)
+    status = serializers.IntegerField(help_text="Status", required=True)
+    detail = serializers.CharField(help_text="Detail", required=True, allow_null=True)
+    instance = serializers.CharField(help_text="Instance", required=False, allow_null=True)
