@@ -14,7 +14,7 @@
 
 from django.conf.urls import url
 from driver.interfaces.views import VnfInstInfo, VnfTermInfo, VnfQueryInfo, VnfOperInfo
-from driver.interfaces.views import VnfPkgsInfo, VnfGrantInfo, VnfNotifyInfo
+from driver.interfaces.views import VnfPkgsInfo, VnfGrantInfo, VnfNotifyInfo, VnfOperateView
 
 urlpatterns = [
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/vnfs$', VnfInstInfo.as_view()),
@@ -27,5 +27,7 @@ urlpatterns = [
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/vnfpackages$', VnfPkgsInfo.as_view()),
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/resource/grant$', VnfGrantInfo.as_view()),
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/vnfs/lifecyclechangesnotification$',
-        VnfNotifyInfo.as_view())
+        VnfNotifyInfo.as_view()),
+    url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/vnfs/(?P<vnfInstanceId>'
+        r'[0-9a-zA-Z\-\_]+)/operate$', VnfOperateView.as_view()),
 ]
