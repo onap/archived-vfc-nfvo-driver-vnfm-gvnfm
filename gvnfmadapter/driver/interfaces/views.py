@@ -29,7 +29,7 @@ from driver.pub.utils.restcall import req_by_msb
 from driver.interfaces.serializers import VnfInstReqParamsSerializer, ResponseSerializer
 from driver.interfaces.serializers import VnfTermReqSerializer, VnfQueryRespSerializer
 from driver.interfaces.serializers import VnfOperRespSerializer, VnfGrantReqSerializer, VnfGrantRespSerializer
-from driver.interfaces.serializers import VnfNotifyReqSerializer
+from driver.interfaces.serializers import VnfNotifyReqSerializer, VNFLCMOpOccSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -305,6 +305,36 @@ class VnfPkgsInfo(APIView):
         except:
             logger.error(traceback.format_exc())
             return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class QuerySingleVnfLcmOpOcc(APIView):
+    @swagger_auto_schema(
+        responses={
+            status.HTTP_200_OK: VNFLCMOpOccSerializer(),
+            status.HTTP_500_INTERNAL_SERVER_ERROR: ""
+        }
+    )
+    def get(self, request, vnfmtype, vnfmid, lcmopoccid):
+        logger.debug("[%s]LCMOpOccId = %s", fun_name(), lcmopoccid)
+        try:
+            vnfm_info = get_vnfminfo_from_nslcm(vnfmid)
+            logger.debug("[get lcm op occ] vnfm_info=[%s]", vnfm_info)
+            ret = call_vnfm("api/vnflcm/v1/vnf_lcm_op_occs/%s" % lcmopoccid, "GET", vnfm_info)
+            if ret[0] != 0:
+                logger.error("Status code is %s. detail is %s.", ret[2], ret[1])
+                raise GvnfmDriverException("Failed to query vnf lcm op occ %s" % lcmopoccid)
+            resp_data = json.JSONDecoder().decode(ret[1])
+            vnf_lcm_op_occ_serializer = VNFLCMOpOccSerializer(data=resp_data)
+            if vnf_lcm_op_occ_serializer.is_valid():
+                logger.debug("[%s]resp_data=%s" % (fun_name(), resp_data))
+                return Response(data=vnf_lcm_op_occ_serializer.data, status=status.HTTP_200_OK)
+            else:
+                raise GvnfmDriverException(vnf_lcm_op_occ_serializer.errors)
+        except GvnfmDriverException as e:
+            logger.error("Query vnflcmopocc failed, detail message: %s" % e.message)
+            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except:
+            logger.error(traceback.format_exc())
+            return Response(data={'error': traceback.format_exc()}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def call_vnfm(resource, method, vnfm_info, data=""):

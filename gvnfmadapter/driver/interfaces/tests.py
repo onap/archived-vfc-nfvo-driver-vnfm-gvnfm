@@ -538,3 +538,69 @@ class InterfacesTest(TestCase):
         mock_call_req.return_value = [1, json.JSONEncoder().encode(""), '200']
         resp = self.client.get("/api/gvnfmdriver/v1/vnfpackages")
         self.assertEqual(status.HTTP_500_INTERNAL_SERVER_ERROR, resp.status_code)
+
+    @mock.patch.object(restcall, 'call_req')
+    def test_get_vnflcmopocc_with_id(self, mock_call_req):
+        vnfLcmOpOccId = "99442b18-a5c7-11e8-998c-bf1755941f16"
+        vnfm_info = {
+            "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
+            "name": "g_vnfm",
+            "type": "gvnfmdriver",
+            "vimId": "",
+            "vendor": "ZTE",
+            "version": "v1.0",
+            "description": "vnfm",
+            "certificateUrl": "",
+            "url": "http://10.74.44.11",
+            "userName": "admin",
+            "password": "admin",
+            "createTime": "2016-07-06 15:33:18"
+        }
+        dummy_single_vnf_lcm_op = {
+            "id": vnfLcmOpOccId,
+            "operationState": "STARTING",
+            "stateEnteredTime": "2018-07-09",
+            "startTime": "2018-07-09",
+            "vnfInstanceId": "cd552c9c-ab6f-11e8-b354-236c32aa91a1",
+            "grantId": None,
+            "operation": "SCALE",
+            "isAutomaticInvocation": False,
+            "operationParams": {},
+            "isCancelPending": False,
+            "cancelMode": None,
+            "error": None,
+            "resourceChanges": None,
+            "changedInfo": None,
+            "changedExtConnectivity": None,
+            "_links": {
+                "self": {
+                    "href": "dem1o"
+                },
+                "vnfInstance": "demo"
+            }
+        }
+        mock_call_req.return_value = [0, json.JSONEncoder().encode(dummy_single_vnf_lcm_op), status.HTTP_200_OK]
+        resp = self.client.get("/api/gvnfmdriver/v1/%s/vnf_lcm_op_occs/%s" % (vnfm_info['vnfmId'], vnfLcmOpOccId))
+        self.assertEqual(dummy_single_vnf_lcm_op, resp.data)
+        self.assertEqual(status.HTTP_200_OK, resp.status_code)
+
+    @mock.patch.object(restcall, 'call_req')
+    def test_get_vnflcmopocc_failed(self, mock_call_req):
+        vnfLcmOpOccId = "99442b18-a5c7-11e8-998c-bf1755941f16"
+        vnfm_info = {
+            "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
+            "name": "g_vnfm",
+            "type": "gvnfmdriver",
+            "vimId": "",
+            "vendor": "ZTE",
+            "version": "v1.0",
+            "description": "vnfm",
+            "certificateUrl": "",
+            "url": "http://10.74.44.11",
+            "userName": "admin",
+            "password": "admin",
+            "createTime": "2016-07-06 15:33:18"
+        }
+        mock_call_req.return_value = [1, json.JSONEncoder().encode({}), status.HTTP_500_INTERNAL_SERVER_ERROR]
+        resp = self.client.get("/api/gvnfmdriver/v1/%s/vnf_lcm_op_occs/%s" % (vnfm_info['vnfmId'], vnfLcmOpOccId))
+        self.assertEqual(status.HTTP_500_INTERNAL_SERVER_ERROR, resp.status_code)
