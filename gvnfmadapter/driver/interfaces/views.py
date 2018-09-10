@@ -233,7 +233,7 @@ class VnfOperInfo(APIView):
 
 class VnfGrantInfo(APIView):
     @swagger_auto_schema(
-        request_body=VnfGrantReqSerializer(),
+        request_body=VnfGrantReqSerializer(),  # TODO: not used
         responses={
             status.HTTP_201_CREATED: VnfGrantRespSerializer(),
             status.HTTP_404_NOT_FOUND: "The request body is wrong",
@@ -268,7 +268,7 @@ class VnfNotifyInfo(APIView):
             status.HTTP_500_INTERNAL_SERVER_ERROR: "The url is invalid"
         }
     )
-    def post(self, request, vnfmtype):
+    def post(self, request, vnfmtype):  # TODO: not compatable with VnfIdentifierCreationNotification and VnfIdentifierDeletionNotification
         try:
             logger.debug("[%s]req_data = %s", fun_name(), request.data)
             vnfminstid = ignorcase_get(request.data, 'vnfmInstId')
