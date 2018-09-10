@@ -286,31 +286,50 @@ class InterfacesTest(TestCase):
                 }
             }
         }
-        grant_resp_data = {
-            "id": "1",
-            "vnfInstanceId": "1",
-            "vnfLcmOpOccId": "2",
-            "vimConnections": [
-                {
-                    "id": "1",
-                    "vimId": "1"
-                }
-            ]
+        grant = {
+            'id': 'Identifier of the garnt',
+            'vnfInstanceId': 'Identifier of the related VNF instance',
+            'vnfLcmOpOccId': 'Identifier of the related VNF LcmOpOcc',
+            'vimConnections': [],
+            'zones': [],
+            'zoneGroups': [],
+            'computeReservationId': None,
+            'networkReservationId': None,
+            'storageReservationId': None,
+            'addResources': None,
+            'tempResources': None,
+            'removeResource': None,
+            'updateResource': None,
+            'vimAssets': None,
+            'extVirtualLinks': None,
+            'extManagedVirtualLinks': None,
+            'additionalParams': {},
+            '_links': None
         }
-        mock_call_req.return_value = [0, json.JSONEncoder().encode(grant_resp_data), '201']
+
+        mock_call_req.return_value = [0, json.JSONEncoder().encode(grant), '201']
         response = self.client.put("/api/gvnfmdriver/v1/resource/grant",
                                    data=json.dumps(data), content_type='application/json')
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         expect_resp_data = {
-            "id": "1",
-            "vnfInstanceId": "1",
-            "vnfLcmOpOccId": "2",
-            "vimConnections": [
-                {
-                    "id": "1",
-                    "vimId": "1"
-                }
-            ]
+            'id': 'Identifier of the garnt',
+            'vnfInstanceId': 'Identifier of the related VNF instance',
+            'vnfLcmOpOccId': 'Identifier of the related VNF LcmOpOcc',
+            'vimConnections': [],
+            'zones': [],
+            'zoneGroups': [],
+            'computeReservationId': None,
+            'networkReservationId': None,
+            'storageReservationId': None,
+            'addResources': None,
+            'tempResources': None,
+            'removeResource': None,
+            'updateResource': None,
+            'vimAssets': None,
+            'extVirtualLinks': None,
+            'extManagedVirtualLinks': None,
+            'additionalParams': {},
+            '_links': None
         }
         self.assertDictEqual(expect_resp_data, response.data)
 
