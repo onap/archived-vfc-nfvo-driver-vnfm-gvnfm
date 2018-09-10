@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_3fdfd96a",
+        "filename": "gvnfmadapter/driver/interfaces/tests.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 563,
+      "author": {
+        "id": 4247
+      },
+      "writtenOn": "2018-09-10T09:09:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_bc91b748",
+      "range": {
+        "startLine": 563,
+        "startChar": 0,
+        "endLine": 563,
+        "endChar": 1
+      },
+      "revId": "b370136e247528202ebf96037073952bf7a4995f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_dc96f33e",
         "filename": "gvnfmadapter/driver/interfaces/tests.py",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2018-09-10T02:12:24Z",
       "side": 1,
       "message": "Blanks need be deleted",
+      "range": {
+        "startLine": 594,
+        "startChar": 0,
+        "endLine": 594,
+        "endChar": 1
+      },
+      "revId": "b370136e247528202ebf96037073952bf7a4995f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_5fdc1573",
+        "filename": "gvnfmadapter/driver/interfaces/tests.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 594,
+      "author": {
+        "id": 4247
+      },
+      "writtenOn": "2018-09-10T09:09:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_dc96f33e",
       "range": {
         "startLine": 594,
         "startChar": 0,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_ffe4013d",
+        "filename": "gvnfmadapter/driver/interfaces/tests.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 624,
+      "author": {
+        "id": 4247
+      },
+      "writtenOn": "2018-09-10T09:09:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_7c979f3a",
+      "range": {
+        "startLine": 624,
+        "startChar": 0,
+        "endLine": 624,
+        "endChar": 1
+      },
+      "revId": "b370136e247528202ebf96037073952bf7a4995f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_fc73af4b",
         "filename": "gvnfmadapter/driver/interfaces/views.py",
         "patchSetId": 2
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_7fc8f1a7",
+        "filename": "gvnfmadapter/driver/interfaces/views.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 4247
+      },
+      "writtenOn": "2018-09-10T09:09:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_fc73af4b",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 51
+      },
+      "revId": "b370136e247528202ebf96037073952bf7a4995f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_9c9cfb5e",
         "filename": "gvnfmadapter/driver/pub/utils/restcall.py",
         "patchSetId": 2
@@ -105,6 +201,30 @@
       "writtenOn": "2018-09-10T02:12:24Z",
       "side": 1,
       "message": "Can be replaced by resp.get(\u0027Location\u0027, \u0027\u0027)",
+      "range": {
+        "startLine": 51,
+        "startChar": 32,
+        "endLine": 51,
+        "endChar": 48
+      },
+      "revId": "b370136e247528202ebf96037073952bf7a4995f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_5fc3b588",
+        "filename": "gvnfmadapter/driver/pub/utils/restcall.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 4247
+      },
+      "writtenOn": "2018-09-10T09:09:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_9c9cfb5e",
       "range": {
         "startLine": 51,
         "startChar": 32,
