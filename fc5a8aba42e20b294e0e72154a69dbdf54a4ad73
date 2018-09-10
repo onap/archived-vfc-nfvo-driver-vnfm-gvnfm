@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_5ca2e399",
+        "filename": "gvnfmadapter/driver/interfaces/tests.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 624,
+      "author": {
+        "id": 1389
+      },
+      "writtenOn": "2018-09-10T02:21:15Z",
+      "side": 1,
+      "message": "Blanks need be deleted",
+      "range": {
+        "startLine": 624,
+        "startChar": 0,
+        "endLine": 624,
+        "endChar": 1
+      },
+      "revId": "fc5a8aba42e20b294e0e72154a69dbdf54a4ad73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_fcaacf6f",
+        "filename": "gvnfmadapter/driver/interfaces/tests.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 1389
+      },
+      "writtenOn": "2018-09-10T02:21:15Z",
+      "side": 1,
+      "message": "Blanks need be deleted",
+      "range": {
+        "startLine": 661,
+        "startChar": 0,
+        "endLine": 661,
+        "endChar": 1
+      },
+      "revId": "fc5a8aba42e20b294e0e72154a69dbdf54a4ad73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_1ca8eb75",
+        "filename": "gvnfmadapter/driver/interfaces/tests.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 695,
+      "author": {
+        "id": 1389
+      },
+      "writtenOn": "2018-09-10T02:21:15Z",
+      "side": 1,
+      "message": "Blanks need be deleted",
+      "range": {
+        "startLine": 695,
+        "startChar": 0,
+        "endLine": 695,
+        "endChar": 1
+      },
+      "revId": "fc5a8aba42e20b294e0e72154a69dbdf54a4ad73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_bcb8d7c8",
+        "filename": "gvnfmadapter/driver/interfaces/tests.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 728,
+      "author": {
+        "id": 1389
+      },
+      "writtenOn": "2018-09-10T02:21:15Z",
+      "side": 1,
+      "message": "Blanks need be deleted",
+      "range": {
+        "startLine": 728,
+        "startChar": 0,
+        "endLine": 728,
+        "endChar": 1
+      },
+      "revId": "fc5a8aba42e20b294e0e72154a69dbdf54a4ad73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_9cb39be8",
+        "filename": "gvnfmadapter/driver/interfaces/views.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 1389
+      },
+      "writtenOn": "2018-09-10T02:21:15Z",
+      "side": 1,
+      "message": "use status.HTTP_404_NOT_FOUND instead",
+      "range": {
+        "startLine": 362,
+        "startChar": 29,
+        "endLine": 362,
+        "endChar": 46
+      },
+      "revId": "fc5a8aba42e20b294e0e72154a69dbdf54a4ad73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_3cccc769",
+        "filename": "gvnfmadapter/driver/interfaces/views.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 1389
+      },
+      "writtenOn": "2018-09-10T02:21:15Z",
+      "side": 1,
+      "message": "use status.HTTP_409_CONFLICT instead",
+      "range": {
+        "startLine": 364,
+        "startChar": 31,
+        "endLine": 364,
+        "endChar": 48
+      },
+      "revId": "fc5a8aba42e20b294e0e72154a69dbdf54a4ad73",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
