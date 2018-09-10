@@ -233,7 +233,7 @@ class VnfOperInfo(APIView):
 
 class VnfGrantInfo(APIView):
     @swagger_auto_schema(
-        request_body=VnfGrantReqSerializer(),
+        request_body=VnfGrantReqSerializer(),  # TODO: not used
         responses={
             status.HTTP_201_CREATED: VnfGrantRespSerializer(),
             status.HTTP_404_NOT_FOUND: "The request body is wrong",
@@ -243,20 +243,14 @@ class VnfGrantInfo(APIView):
     def put(self, request, vnfmtype):
         try:
             logger.debug("[grantvnf] req_data = %s", request.data)
-            ret = req_by_msb('api/nslcm/v1/grantvnf', "POST", content=json.JSONEncoder().encode(request.data))
+            ret = req_by_msb('api/nslcm/v2/grants', "POST", content=json.JSONEncoder().encode(request.data))
             logger.debug("ret = %s", ret)
             if ret[0] != 0:
                 logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
                 raise GvnfmDriverException('Failed to grant vnf.')
             resp = json.JSONDecoder().decode(ret[1])
-            vim_info = resp['vim']
-            accessinfo = ignorcase_get(resp['vim'], 'accessinfo')
-            resp_data = {
-                'vimid': ignorcase_get(vim_info, 'vimid'),
-                'tenant': ignorcase_get(accessinfo, 'tenant')
-            }
-            logger.debug("[%s]resp_data=%s", fun_name(), resp_data)
-            return Response(data=resp_data, status=status.HTTP_201_CREATED)
+            logger.debug("[%s]resp_data=%s", fun_name(), resp)
+            return Response(data=resp, status=status.HTTP_201_CREATED)
         except GvnfmDriverException as e:
             logger.error('Grant vnf failed, detail message: %s' % e.message)
             return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -274,7 +268,7 @@ class VnfNotifyInfo(APIView):
             status.HTTP_500_INTERNAL_SERVER_ERROR: "The url is invalid"
         }
     )
-    def post(self, request, vnfmtype):
+    def post(self, request, vnfmtype):  # TODO: not compatable with VnfIdentifierCreationNotification and VnfIdentifierDeletionNotification
         try:
             logger.debug("[%s]req_data = %s", fun_name(), request.data)
             vnfminstid = ignorcase_get(request.data, 'vnfmInstId')

@@ -15,6 +15,84 @@
 from rest_framework import serializers
 
 
+class ResourceHandleSerializer(serializers.Serializer):
+    vimConnectionId = serializers.CharField(
+        help_text="Identifier of the VIM connection to manage the resource.",
+        required=False,
+        allow_null=True,
+        allow_blank=True
+    )
+    resourceProviderId = serializers.CharField(
+        help_text="Identifier of the entity responsible for the management of the resource.",
+        required=False,
+        allow_null=True,
+        allow_blank=True
+    )
+    resourceId = serializers.CharField(
+        help_text="Identifier of the resource in the scope of the VIM or the resource provider.",
+        required=True
+    )
+    vimLevelResourceType = serializers.CharField(
+        help_text="Type of the resource in the scope of the VIM or the resource provider.",
+        required=False,
+        allow_null=True,
+        allow_blank=True
+    )
+
+
+class ResourceDefinitionSerializer(serializers.Serializer):
+    id = serializers.CharField(
+        help_text="Identifier of this ResourceDefinition, unique at least within the scope of the GrantRequest.",
+        required=True
+    )
+    type = serializers.ChoiceField(
+        help_text="Type of the resource definition referenced.",
+        choices=["COMPUTE", "VL", "STORAGE", "LINKPORT"],
+        required=True
+    )
+    vduId = serializers.CharField(
+        help_text="Reference to the related VDU in the VNFD applicable to this resource.",
+        required=False,
+        allow_null=True,
+        allow_blank=True
+    )
+    resourceTemplateId = serializers.CharField(
+        help_text="Reference to a resource template(such as VnfVirtualLinkDesc) in the VNFD.",
+        required=False,
+        allow_null=True,
+        allow_blank=True
+    )
+    resource = ResourceHandleSerializer(
+        help_text="Resource information for an existing resource.",
+        required=False,
+        allow_null=True
+    )
+
+
+class ConstraintResourceRefSerializer(serializers.Serializer):
+    idType = serializers.ChoiceField(
+        help_text="The type of the identifier.",
+        choices=["RES_MGMT", "GRANT"],
+        required=True
+    )
+    resourceId = serializers.CharField(
+        help_text="An actual resource-management-level identifier(idType=RES_MGMT), or an identifier that references a ResourceDefinition(idType=GRANT).",
+        required=True
+    )
+    vimConnectionId = serializers.CharField(
+        help_text="",
+        required=False,
+        allow_null=True,
+        allow_blank=True
+    )
+    resourceProviderId = serializers.CharField(
+        help_text="Identifier of the resource provider. It shall only be present when idType = RES_MGMT.",
+        required=False,
+        allow_null=True,
+        allow_blank=True
+    )
+
+
 class AdditionalParams(serializers.Serializer):
     sdncontroller = serializers.CharField(help_text="sdncontroller", required=False)
     NatIpRange = serializers.CharField(help_text="NatIpRange", required=False)
