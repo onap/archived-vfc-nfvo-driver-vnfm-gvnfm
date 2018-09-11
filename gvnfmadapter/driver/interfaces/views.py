@@ -23,13 +23,13 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from driver.interfaces.serializers.serializers import VnfInstReqParamsSerializer, ResponseSerializer
+from driver.interfaces.serializers.serializers import VnfNotifyReqSerializer, VNFLCMOpOccSerializer
+from driver.interfaces.serializers.serializers import VnfOperRespSerializer, VnfGrantReqSerializer, VnfGrantRespSerializer
+from driver.interfaces.serializers.serializers import VnfTermReqSerializer, VnfQueryRespSerializer
 from driver.pub.exceptions import GvnfmDriverException
 from driver.pub.utils import restcall
 from driver.pub.utils.restcall import req_by_msb
-from driver.interfaces.serializers import VnfInstReqParamsSerializer, ResponseSerializer
-from driver.interfaces.serializers import VnfTermReqSerializer, VnfQueryRespSerializer
-from driver.interfaces.serializers import VnfOperRespSerializer, VnfGrantReqSerializer, VnfGrantRespSerializer
-from driver.interfaces.serializers import VnfNotifyReqSerializer, VNFLCMOpOccSerializer
 
 logger = logging.getLogger(__name__)
 
