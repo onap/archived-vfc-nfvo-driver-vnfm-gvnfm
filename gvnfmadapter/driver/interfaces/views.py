@@ -25,8 +25,10 @@ from rest_framework.views import APIView
 
 from driver.interfaces.serializers.serializers import VnfInstReqParamsSerializer, ResponseSerializer
 from driver.interfaces.serializers.serializers import VnfNotifyReqSerializer, VNFLCMOpOccSerializer
-from driver.interfaces.serializers.serializers import VnfOperRespSerializer, VnfGrantReqSerializer, VnfGrantRespSerializer
+from driver.interfaces.serializers.serializers import VnfOperRespSerializer
 from driver.interfaces.serializers.serializers import VnfTermReqSerializer, VnfQueryRespSerializer
+from driver.interfaces.serializers.grant_request import GrantRequestSerializer
+from driver.interfaces.serializers.grant import GrantSerializer
 from driver.pub.exceptions import GvnfmDriverException
 from driver.pub.utils import restcall
 from driver.pub.utils.restcall import req_by_msb
@@ -233,9 +235,9 @@ class VnfOperInfo(APIView):
 
 class VnfGrantInfo(APIView):
     @swagger_auto_schema(
-        request_body=VnfGrantReqSerializer(),  # TODO: not used
+        request_body=GrantRequestSerializer(),  # TODO: not used
         responses={
-            status.HTTP_201_CREATED: VnfGrantRespSerializer(),
+            status.HTTP_201_CREATED: GrantSerializer(),
             status.HTTP_404_NOT_FOUND: "The request body is wrong",
             status.HTTP_500_INTERNAL_SERVER_ERROR: "The url is invalid"
         }
@@ -243,12 +245,18 @@ class VnfGrantInfo(APIView):
     def put(self, request, vnfmtype):
         try:
             logger.debug("[grantvnf] req_data = %s", request.data)
+            grant_request = GrantRequestSerializer(data=request.data)
+            if not grant_request.is_valid():
+                raise GvnfmDriverException(grant_request.error_messages)
             ret = req_by_msb('api/nslcm/v2/grants', "POST", content=json.JSONEncoder().encode(request.data))
             logger.debug("ret = %s", ret)
             if ret[0] != 0:
                 logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
                 raise GvnfmDriverException('Failed to grant vnf.')
             resp = json.JSONDecoder().decode(ret[1])
+            grant = GrantSerializer(data=resp)
+            if not grant.is_valid():
+                raise GvnfmDriverException(grant.error_messages)
             logger.debug("[%s]resp_data=%s", fun_name(), resp)
             return Response(data=resp, status=status.HTTP_201_CREATED)
         except GvnfmDriverException as e:

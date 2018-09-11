@@ -290,21 +290,26 @@ class InterfacesTest(TestCase):
             'id': 'Identifier of the garnt',
             'vnfInstanceId': 'Identifier of the related VNF instance',
             'vnfLcmOpOccId': 'Identifier of the related VNF LcmOpOcc',
-            'vimConnections': [],
-            'zones': [],
-            'zoneGroups': [],
-            'computeReservationId': None,
-            'networkReservationId': None,
-            'storageReservationId': None,
-            'addResources': None,
-            'tempResources': None,
-            'removeResource': None,
-            'updateResource': None,
-            'vimAssets': None,
-            'extVirtualLinks': None,
-            'extManagedVirtualLinks': None,
-            'additionalParams': {},
-            '_links': None
+            # NOT REQUIERD #
+            # 'vimConnections': [],
+            # 'zones': [],
+            # 'zoneGroups': [],
+            # 'computeReservationId': None,
+            # 'networkReservationId': None,
+            # 'storageReservationId': None,
+            # 'addResources': None,
+            # 'tempResources': None,
+            # 'removeResource': None,
+            # 'updateResource': None,
+            # 'vimAssets': None,
+            # 'extVirtualLinks': None,
+            # 'extManagedVirtualLinks': None,
+            # 'additionalParams': None,
+            '_links': {
+                'self': {'href': 'URI of this resource'},
+                'vnfLcmOpOcc': {'href': 'Related VNF lifecycle management operation occurrence'},
+                'vnfInstance': {'href': 'Related VNF instance'}
+            }
         }
 
         mock_call_req.return_value = [0, json.JSONEncoder().encode(grant), '201']
@@ -315,21 +320,26 @@ class InterfacesTest(TestCase):
             'id': 'Identifier of the garnt',
             'vnfInstanceId': 'Identifier of the related VNF instance',
             'vnfLcmOpOccId': 'Identifier of the related VNF LcmOpOcc',
-            'vimConnections': [],
-            'zones': [],
-            'zoneGroups': [],
-            'computeReservationId': None,
-            'networkReservationId': None,
-            'storageReservationId': None,
-            'addResources': None,
-            'tempResources': None,
-            'removeResource': None,
-            'updateResource': None,
-            'vimAssets': None,
-            'extVirtualLinks': None,
-            'extManagedVirtualLinks': None,
-            'additionalParams': {},
-            '_links': None
+            # NOT REQUIERD #
+            # 'vimConnections': [],
+            # 'zones': [],
+            # 'zoneGroups': [],
+            # 'computeReservationId': None,
+            # 'networkReservationId': None,
+            # 'storageReservationId': None,
+            # 'addResources': None,
+            # 'tempResources': None,
+            # 'removeResource': None,
+            # 'updateResource': None,
+            # 'vimAssets': None,
+            # 'extVirtualLinks': None,
+            # 'extManagedVirtualLinks': None,
+            # 'additionalParams': None,
+            '_links': {
+                'self': {'href': 'URI of this resource'},
+                'vnfLcmOpOcc': {'href': 'Related VNF lifecycle management operation occurrence'},
+                'vnfInstance': {'href': 'Related VNF instance'}
+            }
         }
         self.assertDictEqual(expect_resp_data, response.data)
 
