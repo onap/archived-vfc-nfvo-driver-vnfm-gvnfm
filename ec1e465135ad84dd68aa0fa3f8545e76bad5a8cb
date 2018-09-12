@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_aef72fd2",
+        "filename": "gvnfmadapter/driver/interfaces/serializers/__init__.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1389
+      },
+      "writtenOn": "2018-09-12T00:30:05Z",
+      "side": 1,
+      "message": "Need license header",
+      "revId": "ec1e465135ad84dd68aa0fa3f8545e76bad5a8cb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
