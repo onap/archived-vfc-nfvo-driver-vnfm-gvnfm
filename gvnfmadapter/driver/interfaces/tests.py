@@ -40,7 +40,7 @@ class InterfacesTest(TestCase):
             'vnfmId': 'b0797c9b-3da9-459c-b25c-3813e9d8fd70',
             'password': 'admin',
             'type': 'gvnfmdriver',
-            'createTime': '2016-10-3111: 08: 39',
+            'createTime': '2016-10-3T11:08:39',
             'description': ''
         }
         create_vnf_resp = {
@@ -583,7 +583,7 @@ class InterfacesTest(TestCase):
             "url": "http://10.74.44.11",
             "userName": "admin",
             "password": "admin",
-            "createTime": "2016-07-06 15:33:18"
+            "createTime": "2016-07-06T15:33:18"
         }
         dummy_single_vnf_lcm_op = {
             "id": vnfLcmOpOccId,
@@ -633,3 +633,60 @@ class InterfacesTest(TestCase):
         mock_call_req.return_value = [1, json.JSONEncoder().encode({}), status.HTTP_500_INTERNAL_SERVER_ERROR]
         resp = self.client.get("/api/gvnfmdriver/v1/%s/vnf_lcm_op_occs/%s" % (vnfm_info['vnfmId'], vnfLcmOpOccId))
         self.assertEqual(status.HTTP_500_INTERNAL_SERVER_ERROR, resp.status_code)
+
+    @mock.patch.object(restcall, 'call_req')
+    def test_subscribe_successfully(self, mock_call_req):
+        lccn_subscription_request_data = {
+            "filter": {
+                "notificationTypes": ["VnfLcmOperationOccurrenceNotification"],
+                "operationTypes": ["INSTANTIATE"],
+                "operationStates": ["STARTING"],
+            },
+            "callbackUri": "http://aurl.com",
+            "authentication": {
+                "authType": ["BASIC"],
+                "paramsBasic": {
+                    "username": "username",
+                    "password": "password"
+                }
+            }
+        }
+        lccn_subscription_data = {
+            "id": "cd552c9c-ab6f-11e8-b354-236c32aa91a1",
+            "callbackUri": "http://aurl.com",
+            "filter": {
+                "notificationTypes": ["VnfLcmOperationOccurrenceNotification"],
+                "operationTypes": ["INSTANTIATE"],
+                "operationStates": ["STARTING"]
+            },
+            "_links": {
+                "self": {"href": "URI of this resource."}
+            },
+        }
+        mock_call_req.return_value = [0, json.JSONEncoder().encode(lccn_subscription_data), status.HTTP_201_CREATED]
+        response = self.client.post("/api/gvnfmdriver/v1/subscriptions", json.dumps(lccn_subscription_request_data),
+                                    content_type='application/json')
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        self.assertEqual(lccn_subscription_data, response.data)
+
+    @mock.patch.object(restcall, 'call_req')
+    def test_subscribe_failed(self, mock_call_req):
+        lccn_subscription_request_data = {
+            "filter": {
+                "notificationTypes": ["VnfLcmOperationOccurrenceNotification"],
+                "operationTypes": ["INSTANTIATE"],
+                "operationStates": ["STARTING"],
+            },
+            "callbackUri": "http://aurl.com",
+            "authentication": {
+                "authType": ["BASIC"],
+                "paramsBasic": {
+                    "username": "username",
+                    "password": "password"
+                }
+            }
+        }
+        mock_call_req.return_value = [1, None, status.HTTP_303_SEE_OTHER]
+        response = self.client.post("/api/gvnfmdriver/v1/subscriptions", json.dumps(lccn_subscription_request_data),
+                                    content_type='application/json')
+        self.assertEqual(status.HTTP_500_INTERNAL_SERVER_ERROR, response.status_code)

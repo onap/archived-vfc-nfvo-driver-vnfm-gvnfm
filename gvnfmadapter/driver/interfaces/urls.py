@@ -14,20 +14,19 @@
 
 from django.conf.urls import url
 from driver.interfaces.views import VnfInstInfo, VnfTermInfo, VnfQueryInfo, VnfOperInfo
+from driver.interfaces.views import Subscription
 from driver.interfaces.views import VnfPkgsInfo, VnfGrantInfo, VnfNotifyInfo, QuerySingleVnfLcmOpOcc
 
 urlpatterns = [
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/vnfs$', VnfInstInfo.as_view()),
-    url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/vnfs/(?P<vnfInstanceId>'
-        r'[0-9a-zA-Z\-\_]+)/terminate$', VnfTermInfo.as_view()),
-    url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/vnfs/(?P<vnfInstanceId>'
-        r'[0-9a-zA-Z\-\_]+)$', VnfQueryInfo.as_view()),
-    url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/jobs/(?P<jobid>[0-9a-zA-Z\-\_]+)$',
-        VnfOperInfo.as_view()),
+    url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/vnfs/(?P<vnfInstanceId>[0-9a-zA-Z\-\_]+)/terminate$', VnfTermInfo.as_view()),
+    url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/vnfs/(?P<vnfInstanceId>[0-9a-zA-Z\-\_]+)$', VnfQueryInfo.as_view()),
+    url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/jobs/(?P<jobid>[0-9a-zA-Z\-\_]+)$', VnfOperInfo.as_view()),
+    url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/subscriptions$', Subscription.as_view()),
+
+
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/vnfpackages$', VnfPkgsInfo.as_view()),
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/resource/grant$', VnfGrantInfo.as_view()),
-    url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/vnfs/lifecyclechangesnotification$',
-        VnfNotifyInfo.as_view()),
-    url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/vnf_lcm_op_occs/(?P<lcmopoccid>[0-9a-zA-Z_-]+)$',
-        QuerySingleVnfLcmOpOcc.as_view()),
+    url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/vnfs/lifecyclechangesnotification$', VnfNotifyInfo.as_view()),
+    url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/vnf_lcm_op_occs/(?P<lcmopoccid>[0-9a-zA-Z_-]+)$', QuerySingleVnfLcmOpOcc.as_view()),
 ]
