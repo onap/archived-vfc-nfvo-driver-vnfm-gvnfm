@@ -29,6 +29,8 @@ from driver.interfaces.serializers.serializers import VnfOperRespSerializer
 from driver.interfaces.serializers.serializers import VnfTermReqSerializer, VnfQueryRespSerializer
 from driver.interfaces.serializers.grant_request import GrantRequestSerializer
 from driver.interfaces.serializers.grant import GrantSerializer
+from driver.interfaces.serializers.lccn_subscription import LccnSubscriptionSerializer
+from driver.interfaces.serializers.lccn_subscription_request import LccnSubscriptionRequestSerializer
 from driver.pub.exceptions import GvnfmDriverException
 from driver.pub.utils import restcall
 from driver.pub.utils.restcall import req_by_msb
@@ -345,6 +347,38 @@ class QuerySingleVnfLcmOpOcc(APIView):
             return Response(data={'error': traceback.format_exc()}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+class Subscription(APIView):
+    @swagger_auto_schema(
+        request_body=LccnSubscriptionRequestSerializer(),
+        responses={
+            status.HTTP_201_CREATED: LccnSubscriptionSerializer(),
+            status.HTTP_303_SEE_OTHER: None,
+            status.HTTP_500_INTERNAL_SERVER_ERROR: "INTERNAL_SERVER_ERROR"
+        }
+    )
+    def post(self, request, vnfmtype):
+        logger.debug("Subscription--post::> %s" % request.data)
+        logger.debug("Subscription begin!")
+        try:
+            lccn_subscription_request_serializer = LccnSubscriptionRequestSerializer(data=request.data)
+            if not lccn_subscription_request_serializer.is_valid():
+                raise GvnfmDriverException(lccn_subscription_request_serializer.error_messages)
+            resp_data = do_subscription(request.data)
+            lccn_subscription_serializer = LccnSubscriptionSerializer(data=resp_data)
+            if not lccn_subscription_serializer.is_valid():
+                logger.debug("[%s]resp_data=%s" % (fun_name(), resp_data))
+                raise GvnfmDriverException(lccn_subscription_serializer.errors)
+            logger.debug("Subscription end!")
+            return Response(data=lccn_subscription_serializer.data, status=status.HTTP_201_CREATED)
+        except GvnfmDriverException as e:
+            logger.error(e.message)
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            logger.error(e.message)
+            logger.error(traceback.format_exc())
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 def call_vnfm(resource, method, vnfm_info, data=""):
     ret = restcall.call_req(
         base_url=ignorcase_get(vnfm_info, "url"),
@@ -492,4 +526,14 @@ def do_queryvnf(data, vnfm_id, vnfInstanceId):
     if ret[0] != 0:
         logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
         raise GvnfmDriverException('Failed to query vnf.')
+    return json.JSONDecoder().decode(ret[1])
+
+
+def do_subscription(data):
+    logger.debug("[%s] request.data=%s", fun_name(), data)
+    ret = req_by_msb("api/vnflcm/v1/subscriptions", "POST", json.JSONEncoder().encode(data))
+    logger.debug("[%s] call_req ret=%s", fun_name(), ret)
+    if ret[0] != 0:
+        logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
+        raise GvnfmDriverException('Failed to subscribe.')
     return json.JSONDecoder().decode(ret[1])
