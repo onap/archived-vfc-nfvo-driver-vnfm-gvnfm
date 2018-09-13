@@ -14,6 +14,7 @@
 
 from driver.interfaces.serializers.link import LinkSerializer
 from driver.interfaces.serializers.resource_handle import ResourceHandleSerializer
+from driver.interfaces.serializers.problem_details import ProblemDetailsSerializer
 
 from rest_framework import serializers
 
@@ -217,19 +218,6 @@ class VimConnectionInfoSerializer(serializers.Serializer):
         help_text="VIM type specific additional information. \
         The applicable structure, and whether or not this attribute is available, is dependent on the content of vimType.",
         child=serializers.CharField(help_text="KeyValue Pairs", allow_blank=True),
-        required=False,
-        allow_null=True)
-
-
-class ProblemDetailsSerializer(serializers.Serializer):
-    type = serializers.CharField(help_text="Type", required=False, allow_null=True)
-    title = serializers.CharField(help_text="Title", required=False, allow_null=True)
-    status = serializers.IntegerField(help_text="Status", required=True)
-    detail = serializers.CharField(help_text="Detail", required=True, allow_null=True)
-    instance = serializers.CharField(help_text="Instance", required=False, allow_null=True)
-    additional_details = serializers.ListField(
-        help_text="Any number of additional attributes, as defined in a " +
-        "specification or by an implementation.",
         required=False,
         allow_null=True)
 
