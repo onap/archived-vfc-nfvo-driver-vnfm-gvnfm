@@ -636,6 +636,20 @@ class InterfacesTest(TestCase):
 
     @mock.patch.object(restcall, 'call_req')
     def test_subscribe_successfully(self, mock_call_req):
+        vnfm_info = {
+            "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
+            "name": "g_vnfm",
+            "type": "gvnfmdriver",
+            "vimId": "",
+            "vendor": "ZTE",
+            "version": "v1.0",
+            "description": "vnfm",
+            "certificateUrl": "",
+            "url": "http://10.74.44.11",
+            "userName": "admin",
+            "password": "admin",
+            "createTime": "2016-07-06 15:33:18"
+        }
         lccn_subscription_request_data = {
             "filter": {
                 "notificationTypes": ["VnfLcmOperationOccurrenceNotification"],
@@ -663,14 +677,33 @@ class InterfacesTest(TestCase):
                 "self": {"href": "URI of this resource."}
             },
         }
-        mock_call_req.return_value = [0, json.JSONEncoder().encode(lccn_subscription_data), status.HTTP_201_CREATED]
-        response = self.client.post("/api/gvnfmdriver/v1/subscriptions", json.dumps(lccn_subscription_request_data),
-                                    content_type='application/json')
+        ret_of_vnfminfo_from_nslcm = [0, json.JSONEncoder().encode(vnfm_info), "200"]
+        ret_from_vnfm = [0, json.JSONEncoder().encode(lccn_subscription_data), status.HTTP_201_CREATED]
+        mock_call_req.side_effect = [ret_of_vnfminfo_from_nslcm, ret_from_vnfm]
+        response = self.client.post(
+            "/api/gvnfmdriver/v1/%s/subscriptions" % vnfm_info['vnfmId'],
+            json.dumps(lccn_subscription_request_data),
+            content_type='application/json'
+        )
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         self.assertEqual(lccn_subscription_data, response.data)
 
     @mock.patch.object(restcall, 'call_req')
     def test_subscribe_failed(self, mock_call_req):
+        vnfm_info = {
+            "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
+            "name": "g_vnfm",
+            "type": "gvnfmdriver",
+            "vimId": "",
+            "vendor": "ZTE",
+            "version": "v1.0",
+            "description": "vnfm",
+            "certificateUrl": "",
+            "url": "http://10.74.44.11",
+            "userName": "admin",
+            "password": "admin",
+            "createTime": "2016-07-06 15:33:18"
+        }
         lccn_subscription_request_data = {
             "filter": {
                 "notificationTypes": ["VnfLcmOperationOccurrenceNotification"],
@@ -686,7 +719,12 @@ class InterfacesTest(TestCase):
                 }
             }
         }
-        mock_call_req.return_value = [1, None, status.HTTP_303_SEE_OTHER]
-        response = self.client.post("/api/gvnfmdriver/v1/subscriptions", json.dumps(lccn_subscription_request_data),
-                                    content_type='application/json')
+        ret_of_vnfminfo_from_nslcm = [0, json.JSONEncoder().encode(vnfm_info), "200"]
+        ret_from_vnfm = [1, None, status.HTTP_303_SEE_OTHER]
+        mock_call_req.side_effect = [ret_of_vnfminfo_from_nslcm, ret_from_vnfm]
+        response = self.client.post(
+            "/api/gvnfmdriver/v1/%s/subscriptions" % vnfm_info['vnfmId'],
+            json.dumps(lccn_subscription_request_data),
+            content_type='application/json'
+        )
         self.assertEqual(status.HTTP_500_INTERNAL_SERVER_ERROR, response.status_code)
