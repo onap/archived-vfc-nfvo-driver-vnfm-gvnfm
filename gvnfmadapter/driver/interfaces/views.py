@@ -235,7 +235,7 @@ class VnfGrantInfo(APIView):
     def put(self, request, vnfmtype):
         try:
             logger.debug("[grantvnf] req_data = %s", request.data)
-            ret = req_by_msb('api/nslcm/v1/grantvnf', "POST", content=json.JSONEncoder().encode(request.data))
+            ret = req_by_msb('api/nslcm/v1/ns/grantvnf', "POST", content=json.JSONEncoder().encode(request.data))
             logger.debug("ret = %s", ret)
             if ret[0] != 0:
                 logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
