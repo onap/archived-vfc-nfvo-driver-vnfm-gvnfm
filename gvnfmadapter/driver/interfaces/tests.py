@@ -730,7 +730,6 @@ class InterfacesTest(TestCase):
         self.assertEqual(status.HTTP_500_INTERNAL_SERVER_ERROR, response.status_code)
 
 
-# Operate API Test case
     @mock.patch.object(restcall, 'call_req')
     def test_operate_vnf_404_NotFound(self, mock_call_req):
         vnfm_info = {
