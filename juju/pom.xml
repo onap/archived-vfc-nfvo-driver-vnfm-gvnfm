@@ -23,7 +23,7 @@
     <groupId>org.onap.vfc.nfvo.driver.vnfm.gvnfm</groupId>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>juju</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.2.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>vfc-nfvo-driver-vnfm-gvnfm-juju</name>
     <description>nfvo juju-vnfmadapter</description>
