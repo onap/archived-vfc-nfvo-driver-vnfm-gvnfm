@@ -24,27 +24,33 @@ class VimConnectionInfoSerializer(serializers.Serializer):
     )
     vimId = serializers.CharField(
         help_text="The identifier of the VIM instance. This identifier is managed by the NFVO.",
-        required=False
+        required=False,
+        allow_null=True
     )
     vimType = serializers.CharField(
         help_text="Discriminator for the different types of the VIM information.",
-        required=False
+        required=False,
+        allow_null=True
     )
     interfaceInfo = serializers.DictField(
         help_text="Information about the interface or interfaces to the VIM.",
         child=serializers.CharField(help_text="Interface Info", allow_blank=True),
-        required=False
+        required=False,
+        allow_null=True
     )
     accessInfo = serializers.DictField(
         help_text="Authentication credentials for accessing the VIM.",
         child=serializers.CharField(help_text="Access Info", allow_blank=True),
-        required=False
+        required=False,
+        allow_null=True
     )
     extra = serializers.DictField(
         help_text="VIM type specific additional information.",
         child=serializers.CharField(help_text="Extra", allow_blank=True),
-        required=False
+        required=False,
+        allow_null=True
     )
+
 
 class ZoneInfoSerializer(serializers.Serializer):
     id = serializers.CharField(
