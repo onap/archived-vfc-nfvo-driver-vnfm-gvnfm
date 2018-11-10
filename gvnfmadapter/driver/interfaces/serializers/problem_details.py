@@ -14,6 +14,7 @@
 
 from rest_framework import serializers
 
+
 class ProblemDetailsSerializer(serializers.Serializer):
     type = serializers.CharField(
         help_text='A URI reference according to IETF RFC 3986 [5] that identifies the problem type.',

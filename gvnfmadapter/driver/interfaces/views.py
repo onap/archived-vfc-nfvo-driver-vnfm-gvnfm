@@ -220,13 +220,13 @@ class VnfOperInfo(APIView):
                 raise GvnfmDriverException('Failed to query vnf operation status.')
             resp_data = json.JSONDecoder().decode(ret[1])
             logger.debug("[%s]resp_data=%s", fun_name(), resp_data)
-            ResponseInfo = ignorcase_get(resp_data, "ResponseInfo")
-            responseDescriptor = ignorcase_get(ResponseInfo, "responseDescriptor")
-            status_tmp = ignorcase_get(responseDescriptor, "lcmOperationStatus")
-            del responseDescriptor["lcmOperationStatus"]
+            # ResponseInfo = ignorcase_get(resp_data, "ResponseInfo")
+            responseDescriptor = ignorcase_get(resp_data, "responseDescriptor")
+            status_tmp = ignorcase_get(responseDescriptor, "status")
+            # del responseDescriptor["lcmOperationStatus"]
             responseDescriptor["status"] = status_tmp
             operation_data = {
-                "jobId": ignorcase_get(ResponseInfo, "vnfLcOpId"),
+                "jobId": ignorcase_get(resp_data, "jobId"),
                 "responseDescriptor": responseDescriptor
             }
             return Response(data=operation_data, status=status.HTTP_200_OK)
@@ -408,6 +408,7 @@ class VnfPkgsInfo(APIView):
         except:
             logger.error(traceback.format_exc())
             return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class QuerySingleVnfLcmOpOcc(APIView):
     @swagger_auto_schema(

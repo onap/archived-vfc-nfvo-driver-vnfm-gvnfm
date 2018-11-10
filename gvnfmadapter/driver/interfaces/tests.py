@@ -197,24 +197,22 @@ class InterfacesTest(TestCase):
             }
         }
         resp_body = {
-            "ResponseInfo": {
-                "vnfLcOpId": "NF-CREATE-11-ec6c2f2a-9f48-11e6-9405-fa163e91c2f9",
-                "responseDescriptor": {
-                    "responseId": 3,
-                    "progress": 40,
-                    "lcmOperationStatus": "PROCESSING",
-                    "statusDescription": "OMC VMs are decommissioned in VIM",
-                    "errorCode": "null",
-                    "responseHistoryList": [
-                        {
-                            "status": "error",
-                            "progress": 255,
-                            "errorcode": "",
-                            "responseid": 20,
-                            "statusdescription": "'JsonParser' object has no attribute 'parser_info'"
-                        }
-                    ]
-                }
+            "jobId": "NF-CREATE-11-ec6c2f2a-9f48-11e6-9405-fa163e91c2f9",
+            "responseDescriptor": {
+                "responseId": 3,
+                "progress": 40,
+                "status": "PROCESSING",
+                "statusDescription": "OMC VMs are decommissioned in VIM",
+                "errorCode": "null",
+                "responseHistoryList": [
+                    {
+                        "status": "error",
+                        "progress": 255,
+                        "errorcode": "",
+                        "responseid": 20,
+                        "statusdescription": "'JsonParser' object has no attribute 'parser_info'"
+                    }
+                ]
             }
         }
         r1 = [0, json.JSONEncoder().encode(vnfm_info), '200']
@@ -222,6 +220,7 @@ class InterfacesTest(TestCase):
         mock_call_req.side_effect = [r1, r2]
         response = self.client.get("/api/gvnfmdriver/v1/%s/jobs/%s?responseId=0"
                                    % (vnfm_info["vnfmId"], expected_body["jobId"]))
+        print response
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertDictEqual(expected_body, response.data)
 
@@ -654,7 +653,7 @@ class InterfacesTest(TestCase):
             "filter": {
                 "notificationTypes": ["VnfLcmOperationOccurrenceNotification"],
                 "operationTypes": ["INSTANTIATE"],
-                "operationStates": ["STARTING"],
+                "operationStates": ["STARTING"]
             },
             "callbackUri": "http://aurl.com",
             "authentication": {
