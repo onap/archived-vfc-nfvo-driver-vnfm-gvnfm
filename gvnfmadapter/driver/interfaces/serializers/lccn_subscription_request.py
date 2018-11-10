@@ -17,6 +17,7 @@ from rest_framework import serializers
 from driver.interfaces.serializers.lccn_filter import LifeCycleChangeNotificationsFilterSerializer
 from driver.interfaces.serializers.subscription_authentication import SubscriptionAuthenticationSerializer
 
+
 class LccnSubscriptionRequestSerializer(serializers.Serializer):
     callbackUri = serializers.URLField(
         help_text="The URI of the endpoint to send the notification to.",

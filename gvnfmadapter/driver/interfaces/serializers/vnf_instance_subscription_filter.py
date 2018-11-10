@@ -61,20 +61,24 @@ class VnfInstanceSubscriptionFilterSerializer(serializers.Serializer):
         help_text="VNF instances that were created \
         based on a VNFD identified by one of the vnfdId values",
         child=serializers.UUIDField(),
-        required=False
+        required=False,
+        allow_null=True
     )
     vnfInstanceIds = serializers.ListField(
         help_text="VNF instance IDs that has to be matched",
         child=serializers.UUIDField(),
-        required=False
+        required=False,
+        allow_null=True
     )
     vnfInstanceNames = serializers.ListField(
         help_text="VNF Instance names that has to be matched",
         child=serializers.CharField(max_length=255, required=True),
-        required=False
+        required=False,
+        allow_null=True
     )
     vnfProductsFromProviders = VnfProductsProvidersSerializer(
         help_text="match VNF instances \
         that belong to VNF products from certain providers.",
-        required=False
+        required=False,
+        allow_null=True
     )

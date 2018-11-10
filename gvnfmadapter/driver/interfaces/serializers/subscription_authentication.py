@@ -46,12 +46,16 @@ class BasicAuthSerializer(serializers.Serializer):
     userName = serializers.CharField(
         help_text="Username to be used in HTTP Basic authentication.",
         max_length=255,
-        required=False
+        required=False,
+        allow_null=True,
+        allow_blank=True
     )
     password = serializers.CharField(
         help_text="Password to be used in HTTP Basic authentication.",
         max_length=255,
-        required=False
+        required=False,
+        allow_null=True,
+        allow_blank=True
     )
 
 
@@ -65,10 +69,12 @@ class SubscriptionAuthenticationSerializer(serializers.Serializer):
     )
     paramsBasic = BasicAuthSerializer(
         help_text="Parameters for authentication/authorization using BASIC.",
-        required=False
+        required=False,
+        allow_null=True
     )
     paramsOauth2ClientCredentials = OAuthCredentialsSerializer(
         help_text="Parameters for authentication/authorization \
         using OAUTH2_CLIENT_CREDENTIALS.",
-        required=False
+        required=False,
+        allow_null=True
     )

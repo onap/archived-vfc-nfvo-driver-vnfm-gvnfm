@@ -20,9 +20,11 @@ class AffectedVm(serializers.Serializer):
     vduid = serializers.CharField(help_text="Vdu id", required=True)
     vmname = serializers.CharField(help_text="Vm name", required=True)
 
+
 class VnfHealRequestSerializer(serializers.Serializer):
     action = serializers.CharField(help_text="Action for NS heal", required=True, allow_null=True)
     affectedvm = AffectedVm(help_text="Get the vm information to be healed", required=True)
+
 
 class HealVnfRequestSerializerToVnfm(serializers.Serializer):
     cause = serializers.CharField(help_text="Cause of NS heal", required=False, allow_null=True)
