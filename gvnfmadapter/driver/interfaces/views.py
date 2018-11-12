@@ -112,10 +112,14 @@ class VnfTermInfo(APIView):
         logger.debug("Terminate vnf begin!")
         vnfm_id = vnfmid
         try:
+            term_type = ignorcase_get(request.data, "terminationType")
             input_data = {
-                "terminationType": ignorcase_get(request.data, "terminationType"),
-                "gracefulTerminationTimeout": ignorcase_get(request.data, "gracefulTerminationTimeout")
+                "terminationType": term_type.upper() if term_type else "FORCEFUL"
             }
+            term_timeout = ignorcase_get(request.data, "gracefulTerminationTimeout")
+            if term_timeout:
+                input_data["gracefulTerminationTimeout"] = int(term_timeout)
+
             logger.debug("do_terminatevnf: vnfm_id=[%s],vnfInstanceId=[%s],input_data=[%s]",
                          vnfm_id, vnfInstanceId, input_data)
             resp = do_terminatevnf(vnfm_id, vnfInstanceId, input_data)
