@@ -121,8 +121,7 @@ class InterfacesTest(TestCase):
         r3 = [0, json.JSONEncoder().encode(None), "200"]
         mock_call_req.side_effect = [r1, r2, r1, job_ret, r1, r3]
         response = self.client.post("/api/gvnfmdriver/v1/ztevnfmid/vnfs/2/terminate")
-        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
-        self.assertEqual(None, response.data)
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
 
     @mock.patch.object(restcall, 'call_req')
     def test_query_vnf(self, mock_call_req):

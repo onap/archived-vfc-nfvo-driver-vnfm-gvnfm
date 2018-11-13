@@ -109,7 +109,6 @@ class VnfTermInfo(APIView):
     )
     def post(self, request, vnfmtype, vnfmid, vnfInstanceId):
         logger.debug("terminate_vnf--post::> %s" % request.data)
-        logger.debug("Terminate vnf begin!")
         vnfm_id = vnfmid
         try:
             term_type = ignorcase_get(request.data, "terminationType")
@@ -126,20 +125,18 @@ class VnfTermInfo(APIView):
             logger.debug("terminate_vnf: response data=[%s]", resp)
 
             jobId = ignorcase_get(resp, "jobId")
-            gracefulTerminationTimeout = ignorcase_get(request.data, "gracefulTerminationTimeout")
-            logger.debug("wait4job: vnfm_id=[%s],jobId=[%s],gracefulTerminationTimeout=[%s]",
-                         vnfm_id, jobId, gracefulTerminationTimeout)
-            resp = wait4job(vnfm_id, jobId, gracefulTerminationTimeout)
+            logger.debug("wait4job: vnfm_id=[%s],jobId=[%s]", vnfm_id, jobId)
+            resp = wait4job(vnfm_id, jobId)
             logger.debug("[wait4job] response=[%s]", resp)
 
-            logger.debug("Delete vnf start!")
-            logger.debug("do_deletevnf: vnfm_id=[%s],vnfInstanceId=[%s],request data=[%s]",
-                         vnfm_id, vnfInstanceId, request.data)
-            resp = do_deletevnf(vnfm_id, vnfInstanceId, request.data)
+            resp = do_deletevnf(vnfm_id, vnfInstanceId)
             logger.debug("do_deletevnf: response data=[%s]", resp)
-            logger.debug("Delete vnf end!")
 
-            return Response(data=resp, status=status.HTTP_204_NO_CONTENT)
+            resp_data = {
+                "vnfInstanceId": vnfInstanceId,
+                "jobId": jobId
+            }
+            return Response(data=resp_data, status=status.HTTP_201_CREATED)
         except GvnfmDriverException as e:
             logger.error('Terminate vnf failed, detail message: %s' % e.message)
             return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -606,8 +603,8 @@ def do_terminatevnf(vnfm_id, vnfInstanceId, data):
     return json.JSONDecoder().decode(ret[1])
 
 
-def do_deletevnf(vnfm_id, vnfInstanceId, data):
-    logger.debug("[%s] request.data=%s", fun_name(), data)
+def do_deletevnf(vnfm_id, vnfInstanceId):
+    logger.debug("[%s] vnfm_id=%s, vnfInstanceId=%s", fun_name(), vnfm_id, vnfInstanceId)
     vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
     logger.debug("[do_deletevnf] vnfm_info=[%s]", vnfm_info)
     ret = call_vnfm("api/vnflcm/v1/vnf_instances/%s" % vnfInstanceId, "DELETE", vnfm_info)
