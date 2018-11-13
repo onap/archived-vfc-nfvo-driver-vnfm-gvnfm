@@ -265,7 +265,8 @@ class VnfGrantInfo(APIView):
             resp = json.JSONDecoder().decode(ret[1])
             grant = GrantSerializer(data=resp)
             if not grant.is_valid():
-                raise GvnfmDriverException(grant.error_messages)
+                logger.warn(grant.error_messages)
+                # raise GvnfmDriverException(grant.error_messages)
             logger.debug("[%s]resp_data=%s", fun_name(), resp)
             return Response(data=resp, status=status.HTTP_201_CREATED)
         except GvnfmDriverException as e:
