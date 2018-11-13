@@ -547,18 +547,18 @@ def wait4job(vnfm_id, job_id, gracefulTerminationTimeout=1200, retry_count=60, i
         if "responseDescriptor" not in job_result:
             logger.error("Job(%s) does not exist.", job_id)
             continue
-        progress = job_result["responseDescriptor"]["progress"]
+        progress = str(job_result["responseDescriptor"]["progress"])
         new_response_id = job_result["responseDescriptor"]["responseId"]
         job_desc = job_result["responseDescriptor"]["statusDescription"]
         if new_response_id != response_id:
             logger.debug("%s:%s:%s", progress, new_response_id, job_desc)
             response_id = new_response_id
             count = 0
-        if progress == 255:
+        if progress == "255":
             job_timeout = False
             logger.error("Job(%s) failed: %s", job_id, job_desc)
             break
-        elif progress == 100:
+        elif progress == "100":
             job_end_normal, job_timeout = True, False
             logger.debug("Job(%s) ended normally,job_end_normal=[%s],job_timeout=[%s]",
                          job_id, job_end_normal, job_timeout)
@@ -611,7 +611,7 @@ def do_deletevnf(vnfm_id, vnfInstanceId):
     if ret[0] != 0:
         logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
         raise GvnfmDriverException('Failed to delete vnf.')
-    return json.JSONDecoder().decode(ret[1])
+    return ret[1]
 
 
 def do_lcmVnf(vnfm_id, vnfInstanceId, data, lcmType):
@@ -639,7 +639,7 @@ def do_queryvnf(data, vnfm_id, vnfInstanceId):
 def do_subscription(data, vnfm_id):
     logger.debug("[%s] request.data=%s", fun_name(), data)
     vnfm_info = get_vnfminfo_from_nslcm(vnfm_id)
-    logger.debug("[do_deletevnf] vnfm_info=[%s]", vnfm_info)
+    logger.debug("[do_subscription] vnfm_info=[%s]", vnfm_info)
     ret = call_vnfm("api/vnflcm/v1/subscriptions", "POST", vnfm_info, data)
     logger.debug("[%s] call_req ret=%s", fun_name(), ret)
     if ret[0] != 0:
