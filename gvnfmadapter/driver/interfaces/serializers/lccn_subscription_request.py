@@ -19,7 +19,7 @@ from driver.interfaces.serializers.subscription_authentication import Subscripti
 
 
 class LccnSubscriptionRequestSerializer(serializers.Serializer):
-    callbackUri = serializers.URLField(
+    callbackUri = serializers.CharField(
         help_text="The URI of the endpoint to send the notification to.",
         required=True,
         allow_null=False)
