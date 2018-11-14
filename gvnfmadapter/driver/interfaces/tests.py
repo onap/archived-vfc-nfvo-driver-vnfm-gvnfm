@@ -812,7 +812,6 @@ class InterfacesTest(TestCase):
         response = self.client.post("/api/gvnfmdriver/v1/vnfmid/vnfs/2/operate",
                                     data=json.dumps(req_data), content_type="application/json")
         self.assertEqual(status.HTTP_202_ACCEPTED, response.status_code)
-        self.assertEqual(None, response.data)
         self.assertEqual("/vnf_lc_ops/NF-OPERATE-12-2a3be946-b01d-11e8-9302-08002705b121", response['Location'])
 
 # Heal API

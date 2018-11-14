@@ -333,7 +333,7 @@ class VnfOperateView(APIView):
                 return Response(data=resp, status=status.HTTP_404_NOT_FOUND)
             elif ret == status.HTTP_409_CONFLICT:
                 return Response(data=resp, status=status.HTTP_409_CONFLICT)
-            response = Response(data=None, status=status.HTTP_202_ACCEPTED)
+            response = Response(data=resp, status=status.HTTP_202_ACCEPTED)
             response["Location"] = location
             return response
         except GvnfmDriverException as e:
