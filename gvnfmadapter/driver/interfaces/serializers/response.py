@@ -15,7 +15,7 @@
 from rest_framework import serializers
 
 
-class ProblemDetailsSerializer(serializers.Serializer):
+class ProblemDetailSerializer(serializers.Serializer):
     type = serializers.CharField(help_text="Type", required=False, allow_null=True)
     title = serializers.CharField(help_text="Title", required=False, allow_null=True)
     status = serializers.IntegerField(help_text="Status", required=True)

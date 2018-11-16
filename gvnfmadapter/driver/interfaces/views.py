@@ -36,7 +36,7 @@ from driver.pub.utils import restcall
 from driver.pub.utils.restcall import req_by_msb
 from driver.interfaces.serializers.operate_request import VnfOperateRequestSerializer
 from driver.interfaces.serializers.heal_request import HealVnfRequestSerializerToVnfm, VnfHealRequestSerializer
-from driver.interfaces.serializers.response import ProblemDetailsSerializer
+from driver.interfaces.serializers.response import ProblemDetailSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -309,8 +309,8 @@ class VnfOperateView(APIView):
         request_body=VnfOperateRequestSerializer(),
         responses={
             status.HTTP_202_ACCEPTED: "Success",
-            status.HTTP_404_NOT_FOUND: ProblemDetailsSerializer(),
-            status.HTTP_409_CONFLICT: ProblemDetailsSerializer(),
+            status.HTTP_404_NOT_FOUND: ProblemDetailSerializer(),
+            status.HTTP_409_CONFLICT: ProblemDetailSerializer(),
             status.HTTP_500_INTERNAL_SERVER_ERROR: "Internal error"
         }
     )
@@ -349,8 +349,8 @@ class VnfHealView(APIView):
         request_body=VnfHealRequestSerializer(),
         responses={
             status.HTTP_202_ACCEPTED: "Success",
-            status.HTTP_404_NOT_FOUND: ProblemDetailsSerializer(),
-            status.HTTP_409_CONFLICT: ProblemDetailsSerializer(),
+            status.HTTP_404_NOT_FOUND: ProblemDetailSerializer(),
+            status.HTTP_409_CONFLICT: ProblemDetailSerializer(),
             status.HTTP_500_INTERNAL_SERVER_ERROR: "Internal error"
         }
     )

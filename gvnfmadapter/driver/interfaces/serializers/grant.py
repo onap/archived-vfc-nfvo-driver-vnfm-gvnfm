@@ -17,7 +17,7 @@ from driver.interfaces.serializers.link import LinkSerializer
 from rest_framework import serializers
 
 
-class VimConnectionInfoSerializer(serializers.Serializer):
+class VimConnectionSerializer(serializers.Serializer):
     id = serializers.CharField(
         help_text="The identifier of the VIM Connection. This identifier is managed by the NFVO.",
         required=True
@@ -335,7 +335,7 @@ class GrantSerializer(serializers.Serializer):
         help_text="Identifier of the related VNF lifecycle management operation occurrence.",
         required=True,
     )
-    vimConnections = VimConnectionInfoSerializer(
+    vimConnections = VimConnectionSerializer(
         help_text="Provides information regarding VIM connections that are approved to be used by the VNFM to allocate resources.",
         many=True,
         required=False
