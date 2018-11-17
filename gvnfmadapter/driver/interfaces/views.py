@@ -289,8 +289,8 @@ class VnfNotifyInfo(APIView):
             vnfminstid = ignorcase_get(request.data, 'vnfmInstId')
             vnfinstanceid = ignorcase_get(request.data, 'vnfInstanceId')
             request.data.pop("vnfmInstId")
-            ret = req_by_msb("api/nslcm/v2/ns/%s/vnfs/%s/Notify" % (vnfminstid, vnfinstanceid), "POST",
-                             json.JSONEncoder().encode(request.data))
+            notify_url = "api/nslcm/v2/ns/%s/ns_vnfs/%s/Notify" % (vnfminstid, vnfinstanceid)
+            ret = req_by_msb(notify_url, "POST", json.dumps(request.data))
             logger.debug("[%s]data = %s", fun_name(), ret)
             if ret[0] != 0:
                 logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
