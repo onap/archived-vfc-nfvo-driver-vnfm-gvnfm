@@ -64,7 +64,8 @@ class VnfInstInfo(APIView):
             input_data = {
                 "vnfdId": ignorcase_get(requestData, "vnfDescriptorId"),
                 "vnfInstanceName": ignorcase_get(requestData, "vnfInstanceName"),
-                "vnfInstanceDescription": ignorcase_get(requestData, "vnfInstanceDescription")
+                "vnfInstanceDescription": ignorcase_get(requestData, "vnfInstanceDescription"),
+                "vnfmInstId": vnfmid
             }
             vnfm_id = vnfmid
             logger.debug("do_createvnf: request data=[%s],input_data=[%s],vnfm_id=[%s]",
