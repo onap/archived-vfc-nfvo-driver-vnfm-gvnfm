@@ -623,7 +623,7 @@ def do_lcmVnf(vnfm_id, vnfInstanceId, data, lcmType):
     if ret[0] != 0 and int(ret[2]) != status.HTTP_404_NOT_FOUND and int(ret[2]) != status.HTTP_409_CONFLICT:
         logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
         raise GvnfmDriverException('Failed to Operate vnf.')
-    return (ret[2], json.JSONDecoder().decode(ret[1]), ret[3])
+    return (ret[2], json.JSONDecoder().decode(ret[1]) if ret[1] else {}, ret[3])
 
 
 def do_queryvnf(data, vnfm_id, vnfInstanceId):
