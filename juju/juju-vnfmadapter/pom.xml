@@ -47,6 +47,7 @@
                             <include>**/*Test.scala</include>
                             <include>**/*TestCase.scala</include>
                         </includes>
+			<useSystemClassLoader>false</useSystemClassLoader>
                     </configuration>
             </plugin>
 
