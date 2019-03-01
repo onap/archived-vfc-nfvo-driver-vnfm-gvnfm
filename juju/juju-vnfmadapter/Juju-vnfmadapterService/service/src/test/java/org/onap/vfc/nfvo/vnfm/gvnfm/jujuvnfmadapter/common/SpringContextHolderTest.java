@@ -40,6 +40,15 @@ public class SpringContextHolderTest {
         ctx.setApplicationContext(context);
         contextholder.cleanApplicationContext();
 
+
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testGetMethods()
+    {
+        SpringContextHolder.getApplicationContext();
+        SpringContextHolder.getSpringBean("huawei");
+        SpringContextHolder.getSpringBean("csi");
     }
 
 }
