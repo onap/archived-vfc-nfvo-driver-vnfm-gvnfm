@@ -22,6 +22,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.LocalComandUtils;
 import org.onap.vfc.nfvo.vnfm.gvnfm.jujuvnfmadapter.common.LocalComandUtils.ExeRes;
@@ -31,18 +32,19 @@ import mockit.MockUp;
 
 public class LocalComandUtilsTest {
 
+
     @Test
-    public void testformatCommand(){
-        new MockUp<LocalComandUtils>(){
+    public void testformatCommand() {
+        new MockUp<LocalComandUtils>() {
             @Mock
-            public  String formatCommand(List<String> command){
-                return  null;
+            public String formatCommand(List<String> command) {
+                return null;
             }
         };
-        List<String> command =new ArrayList<String> ();
+        List<String> command = new ArrayList<String>();
         command.add("test1");
         command.add("test2");
-        String s=LocalComandUtils.formatCommand(command);
+        String s = LocalComandUtils.formatCommand(command);
 
 
     }
@@ -54,5 +56,22 @@ public class LocalComandUtilsTest {
         constructor.setAccessible(true);
         constructor.newInstance();
     }
+
+    @Test
+    public void testExecute() {
+        LocalComandUtils.execute("/test/data", "csi");
+    }
+
+    @Test
+    public void testFormatCommand2() {
+
+        List<String> command = new ArrayList<String>();
+        command.add("test1");
+        command.add("test2");
+        LocalComandUtils.formatCommand(command);
+
+    }
+
+
 
 }
