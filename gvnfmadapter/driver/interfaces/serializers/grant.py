@@ -19,11 +19,13 @@ from rest_framework import serializers
 
 class VimConnectionSerializer(serializers.Serializer):
     id = serializers.CharField(
-        help_text="The identifier of the VIM Connection. This identifier is managed by the NFVO.",
+        help_text="The identifier of the VIM Connection. " +
+        "This identifier is managed by the NFVO.",
         required=True
     )
     vimId = serializers.CharField(
-        help_text="The identifier of the VIM instance. This identifier is managed by the NFVO.",
+        help_text="The identifier of the VIM instance. " +
+        "This identifier is managed by the NFVO.",
         required=False,
         allow_null=True
     )
@@ -34,19 +36,25 @@ class VimConnectionSerializer(serializers.Serializer):
     )
     interfaceInfo = serializers.DictField(
         help_text="Information about the interface or interfaces to the VIM.",
-        child=serializers.CharField(help_text="Interface Info", allow_blank=True),
+        child=serializers.CharField(
+            help_text="Interface Info",
+            allow_blank=True),
         required=False,
         allow_null=True
     )
     accessInfo = serializers.DictField(
         help_text="Authentication credentials for accessing the VIM.",
-        child=serializers.CharField(help_text="Access Info", allow_blank=True),
+        child=serializers.CharField(
+            help_text="Access Info",
+            allow_blank=True),
         required=False,
         allow_null=True
     )
     extra = serializers.DictField(
         help_text="VIM type specific additional information.",
-        child=serializers.CharField(help_text="Extra", allow_blank=True),
+        child=serializers.CharField(
+            help_text="Extra",
+            allow_blank=True),
         required=False,
         allow_null=True
     )
@@ -54,11 +62,13 @@ class VimConnectionSerializer(serializers.Serializer):
 
 class ZoneInfoSerializer(serializers.Serializer):
     id = serializers.CharField(
-        help_text="The identifier of this ZoneInfo instance, for the purpose of referencing it from other structures in the Grant structure.",
+        help_text="The identifier of this ZoneInfo instance, " +
+        "for the purpose of referencing it from other structures in the Grant structure.",
         required=True
     )
     zoneId = serializers.CharField(
-        help_text="The identifier of the resource zone, as managed by the resource management layer(typically, the VIM).",
+        help_text="The identifier of the resource zone, " +
+        "as managed by the resource management layer(typically, the VIM).",
         required=False
     )
     vimConnectionId = serializers.CharField(
@@ -74,7 +84,9 @@ class ZoneInfoSerializer(serializers.Serializer):
 class ZoneGroupInfoSerializer(serializers.Serializer):
     zoneId = serializers.ListSerializer(
         help_text="References of identifiers of ZoneInfo structures.",
-        child=serializers.CharField(help_text="IdentifierLocal", allow_blank=True),
+        child=serializers.CharField(
+            help_text="IdentifierLocal",
+            allow_blank=True),
         required=False
     )
 
@@ -93,7 +105,8 @@ class GrantInfoSerializer(serializers.Serializer):
         required=False,
     )
     resourceProviderId = serializers.CharField(
-        help_text="Identifies the entity responsible for the management of the virtualised resource.",
+        help_text="Identifies the entity responsible for the management of " +
+        "the virtualised resource.",
         required=False
     )
     zoneId = serializers.CharField(
@@ -108,50 +121,60 @@ class GrantInfoSerializer(serializers.Serializer):
 
 class VimComputeResourceFlavourSerializer(serializers.Serializer):
     vimConnectionId = serializers.CharField(
-        help_text="Identifier of the VIM connection to access the flavour referenced in this structure.",
+        help_text="Identifier of the VIM connection to access the flavour " +
+        "referenced in this structure.",
         required=False
     )
     resourceProviderId = serializers.CharField(
-        help_text="Identifies the entity responsible for the management of the virtualised resource.",
+        help_text="Identifies the entity responsible for the management of " +
+        "the virtualised resource.",
         required=False,
     )
     vnfdVirtualComputeDescId = serializers.CharField(
-        help_text="Identifier which references the virtual compute descriptor in the VNFD that maps to this flavour.",
+        help_text="Identifier which references the virtual compute descriptor in " +
+        "the VNFD that maps to this flavour.",
         required=False
     )
     vimFlavourId = serializers.CharField(
-        help_text="Identifier of the compute resource flavour in the resource management layer (i.e. VIM).",
+        help_text="Identifier of the compute resource flavour in the " +
+        "resource management layer (i.e. VIM).",
         required=False
     )
 
 
 class VimSoftwareImageSerializer(serializers.Serializer):
     vimConnectionId = serializers.CharField(
-        help_text="Identifier of the VIM connection to access the flavour referenced in this structure.",
+        help_text="Identifier of the VIM connection to access the flavour " +
+        "referenced in this structure.",
         required=False
     )
     resourceProviderId = serializers.CharField(
-        help_text="Identifies the entity responsible for the management of the virtualised resource.",
+        help_text="Identifies the entity responsible for the management of " +
+        "the virtualised resource.",
         required=False
     )
     vnfdSoftwareImageId = serializers.CharField(
-        help_text="Identifier which references the software image descriptor in the VNFD.",
+        help_text="Identifier which references the software image descriptor " +
+        "in the VNFD.",
         required=False
     )
     vimSoftwareImageId = serializers.CharField(
-        help_text="Identifier of the software image in the resource management layer (i.e. VIM).",
+        help_text="Identifier of the software image in the resource management " +
+        "layer (i.e. VIM).",
         required=False
     )
 
 
 class VimAssetsSerializer(serializers.Serializer):
     computeResourceFlavours = VimComputeResourceFlavourSerializer(
-        help_text="Mappings between virtual compute descriptors defined in the VNFD and compute resource flavours managed in the VIM.",
+        help_text="Mappings between virtual compute descriptors defined in " +
+        "the VNFD and compute resource flavours managed in the VIM.",
         many=True,
         required=False
     )
     softwareImages = VimSoftwareImageSerializer(
-        help_text="Mappings between software images defined in the VNFD and software images managed in the VIM.",
+        help_text="Mappings between software images defined in the VNFD and " +
+        "software images managed in the VIM.",
         many=True,
         required=False
     )
@@ -176,7 +199,8 @@ class IpAddresseSerializer(serializers.Serializer):
     )
     fixedAddresses = serializers.ListSerializer(
         help_text="Fixed addresses to assign.",
-        child=serializers.CharField(help_text="IpAddress"),
+        child=serializers.CharField(
+            help_text="IpAddress"),
         required=False
     )
     numDynamicAddresses = serializers.IntegerField(
@@ -219,15 +243,18 @@ class CpProtocolDataSerializer(serializers.Serializer):
 
 class VnfExtCpConfigSerializer(serializers.Serializer):
     cpInstanceId = serializers.CharField(
-        help_text="Identifier of the external CP instance to which this set of configuration parameters is requested to be applied.",
+        help_text="Identifier of the external CP instance to which this set of " +
+        "configuration parameters is requested to be applied.",
         required=False
     )
     linkPortId = serializers.CharField(
-        help_text="Identifier of a pre-configured link port to which the external CP will be associated.",
+        help_text="Identifier of a pre-configured link port to which " +
+        "the external CP will be associated.",
         required=False
     )
     cpProtocolData = CpProtocolDataSerializer(
-        help_text="Parameters for configuring the network protocols on the link port that connects the CP to a VL.",
+        help_text="Parameters for configuring the network protocols on the link port " +
+        "that connects the CP to a VL.",
         many=True
     )
 
@@ -238,7 +265,8 @@ class VnfExtCpDataSerializer(serializers.Serializer):
         required=True
     )
     cpConfig = VnfExtCpConfigSerializer(
-        help_text="List of instance data that need to be configured on the CP instances created from the respective CPD.",
+        help_text="List of instance data that need to be configured on the CP instances " +
+        "created from the respective CPD.",
         many=True,
         required=False
     )
@@ -246,7 +274,8 @@ class VnfExtCpDataSerializer(serializers.Serializer):
 
 class ExtLinkPortDataSerializer(serializers.Serializer):
     id = serializers.CharField(
-        help_text="Identifier of this link port as provided by the entity that has created the link port.",
+        help_text="Identifier of this link port as provided by the entity " +
+        "that has created the link port.",
         required=True
     )
     resourceHandle = serializers.CharField(
@@ -269,7 +298,8 @@ class ExtVirtualLinkDataSerializer(serializers.Serializer):
         required=False
     )
     resourceId = serializers.CharField(
-        help_text="The identifier of the resource in the scope of the VIM or the resource provider.",
+        help_text="The identifier of the resource in the scope of the VIM " +
+        "or the resource provider.",
         required=True
     )
     extCps = VnfExtCpDataSerializer(
@@ -278,7 +308,8 @@ class ExtVirtualLinkDataSerializer(serializers.Serializer):
         required=False
     )
     extLinkPorts = ExtLinkPortDataSerializer(
-        help_text="Externally provided link ports to be used to connect external connection points to this external VL.",
+        help_text="Externally provided link ports to be used to connect external " +
+        "connection points to this external VL.",
         many=True,
         required=False
     )
@@ -302,7 +333,8 @@ class ExtManagedVirtualLinkDataSerializer(serializers.Serializer):
         required=False
     )
     resourceId = serializers.CharField(
-        help_text="The identifier of the resource in the scope of the VIM or the resource provider.",
+        help_text="The identifier of the resource in the scope of the VIM " +
+        "or the resource provider.",
         required=True
     )
 
@@ -336,12 +368,14 @@ class GrantSerializer(serializers.Serializer):
         required=True,
     )
     vimConnections = VimConnectionSerializer(
-        help_text="Provides information regarding VIM connections that are approved to be used by the VNFM to allocate resources.",
+        help_text="Provides information regarding VIM connections that are " +
+        "approved to be used by the VNFM to allocate resources.",
         many=True,
         required=False
     )
     zones = ZoneInfoSerializer(
-        help_text="Identifies resource zones where the resources are approved to be allocated by the VNFM.",
+        help_text="Identifies resource zones where the resources are " +
+        "approved to be allocated by the VNFM.",
         many=True,
         required=False
     )
@@ -351,15 +385,18 @@ class GrantSerializer(serializers.Serializer):
         required=False
     )
     computeReservationId = serializers.CharField(
-        help_text="Information that identifies a reservation applicable to the compute resource requirements.",
+        help_text="Information that identifies a reservation applicable " +
+        "to the compute resource requirements.",
         required=False,
     )
     networkReservationId = serializers.CharField(
-        help_text="Information that identifies a reservation applicable to the network resource requirements.",
+        help_text="Information that identifies a reservation applicable " +
+        "to the network resource requirements.",
         required=False,
     )
     storageReservationId = serializers.CharField(
-        help_text="Information that identifies a reservation applicable to the storage resource requirements.",
+        help_text="Information that identifies a reservation applicable " +
+        "to the storage resource requirements.",
         required=False,
     )
     addResources = GrantInfoSerializer(
@@ -368,7 +405,8 @@ class GrantSerializer(serializers.Serializer):
         required=False
     )
     tempResources = GrantInfoSerializer(
-        help_text="List of resources that are approved to be temporarily instantiated during the runtime of the lifecycle operation.",
+        help_text="List of resources that are approved to be temporarily " +
+        "instantiated during the runtime of the lifecycle operation.",
         many=True,
         required=False
     )
@@ -383,7 +421,8 @@ class GrantSerializer(serializers.Serializer):
         required=False
     )
     vimAssets = VimAssetsSerializer(
-        help_text="Information about assets for the VNF that are managed by the NFVO in the VIM.",
+        help_text="Information about assets for the VNF that are managed " +
+        "by the NFVO in the VIM.",
         required=False,
     )
     extVirtualLinks = ExtVirtualLinkDataSerializer(
@@ -392,14 +431,17 @@ class GrantSerializer(serializers.Serializer):
         required=False
     )
     extManagedVirtualLinks = ExtManagedVirtualLinkDataSerializer(
-        help_text="Information about internal VLs that are managed by other entities than the VNFM.",
+        help_text="Information about internal VLs that are managed " +
+        "by other entities than the VNFM.",
         many=True,
         required=False
     )
     additionalParams = serializers.DictField(
-        help_text="Additional parameters passed by the NFVO, \
-        specific to the VNF and the LCM operation.",
-        child=serializers.CharField(help_text="KeyValue Pairs", allow_blank=True),
+        help_text="Additional parameters passed by the NFVO, " +
+        "specific to the VNF and the LCM operation.",
+        child=serializers.CharField(
+            help_text="KeyValue Pairs",
+            allow_blank=True),
         required=False,
     )
     _links = GrantLinksSerializer(
