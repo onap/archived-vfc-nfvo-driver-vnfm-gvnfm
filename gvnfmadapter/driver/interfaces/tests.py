@@ -913,3 +913,9 @@ class InterfacesTest(TestCase):
         self.assertEqual(status.HTTP_202_ACCEPTED, response.status_code)
         self.assertEqual(None, response.data)
         self.assertEqual("/vnf_lc_ops/NF-HEAL-12-2a3be946-b01d-11e8-9302-08002705b121", response['Location'])
+
+    def test_health_check(self):
+        response = self.client.get("/api/gvnfmdriver/v1/health_check")
+        self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
+        resp_data = json.loads(response.content)
+        self.assertEqual({"status": "active"}, resp_data)

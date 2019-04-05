@@ -647,3 +647,12 @@ def do_subscription(data, vnfm_id):
         logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
         raise GvnfmDriverException('Failed to subscribe.')
     return json.JSONDecoder().decode(ret[1])
+
+
+class HealthCheckView(APIView):
+    @swagger_auto_schema(
+        responses={
+            status.HTTP_200_OK: 'Active'})
+    def get(self, request, format=None):
+        logger.debug("HealthCheck")
+        return Response({"status": "active"})

@@ -16,6 +16,7 @@ from django.conf.urls import url
 from driver.interfaces.views import VnfInstInfo, VnfTermInfo, VnfQueryInfo, VnfOperInfo
 from driver.interfaces.views import Subscription
 from driver.interfaces.views import VnfPkgsInfo, VnfGrantInfo, VnfNotifyInfo, QuerySingleVnfLcmOpOcc, VnfOperateView, VnfHealView
+from driver.interfaces.views import HealthCheckView
 
 urlpatterns = [
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/vnfs$', VnfInstInfo.as_view()),
@@ -32,4 +33,5 @@ urlpatterns = [
         r'[0-9a-zA-Z\-\_]+)/operate$', VnfOperateView.as_view()),
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/vnfs/(?P<vnfInstanceId>'
         r'[0-9a-zA-Z\-\_]+)/heal$', VnfHealView.as_view()),
+    url(r'^api/gvnfmdriver/v1/health_check$', HealthCheckView.as_view()),
 ]
