@@ -21,7 +21,11 @@ RUN apt-get update && \
     apt-get install -y curl && \
     apt-get install -y build-essential && \
 #    apt-get install -y libssl-dev && \
-    apt-get install -y libffi-dev
+    apt-get install -y libffi-dev && \
+	groupadd -r onap && useradd -r -g onap onap && \
+    chmod u+w /etc/sudoers && \
+    sed -i '/User privilege/a\\onap    ALL=(ALL:ALL) NOPASSWD:ALL' /etc/sudoers && \
+    chmod u-x /etc/sudoers
 
 ADD . /service
 WORKDIR /service
@@ -29,7 +33,8 @@ WORKDIR /service
 # get binary zip from nexus
 RUN wget -q -O vfc-nfvo-driver-vnfm-gvnfm-gvnfmadapter.zip 'https://nexus.onap.org/service/local/artifact/maven/redirect?r=snapshots&g=org.onap.vfc.nfvo.driver.vnfm.gvnfm.gvnfmadapter&a=vfc-nfvo-driver-vnfm-gvnfm-gvnfmadapter&v=LATEST&e=zip' && \
     unzip vfc-nfvo-driver-vnfm-gvnfm-gvnfmadapter.zip && \
-    rm -rf vfc-nfvo-driver-vnfm-gvnfm-gvnfmadapter.zip
+    rm -rf vfc-nfvo-driver-vnfm-gvnfm-gvnfmadapter.zip && \
+	chown onap:onap /service -R
 
 WORKDIR /service/vfc/nfvo/driver/vnfm/gvnfm/gvnfmadapter
 RUN pip install -r requirements.txt
@@ -37,6 +42,7 @@ RUN pip install -r requirements.txt
 RUN apt-get --purge remove -y wget unzip gcc libssl-dev
 
 EXPOSE 8484
+USER onap
 
 WORKDIR /service
 ENTRYPOINT vfc/nfvo/driver/vnfm/gvnfm/gvnfmadapter/docker/docker-entrypoint.sh
