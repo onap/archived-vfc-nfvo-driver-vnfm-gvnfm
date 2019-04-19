@@ -20,7 +20,7 @@ fi
 
 # nohup python manage.py runserver 0.0.0.0:8484 > /dev/null &
 
-if [ ${SSL_ENABLED} = "true" ]; then
+if [ "${SSL_ENABLED}" = "true" ]; then
     nohup uwsgi --https :8484,driver/pub/ssl/cert/foobar.crt,driver/pub/ssl/cert/foobar.key, -t 120 --module driver.wsgi --master --processes 4 &
 else
     nohup uwsgi --http :8484 -t 120 --module driver.wsgi --master --processes 4 &
