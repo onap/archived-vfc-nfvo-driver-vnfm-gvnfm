@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 # Set mysql root password
-sed -i 's|Test_12345|rootpass|' ./webapps/juju-vnfmadapter-service/WEB-INF/classes/spring/JujuVnfmadapter/services.xml
+sed -i 's|Test_12345|rootpass|' ./webapps/ROOT/WEB-INF/classes/spring/JujuVnfmadapter/services.xml
 
 # Initialize MySQL schema
 cd bin
