@@ -479,8 +479,10 @@ class Subscription(APIView):
 def call_vnfm(resource, method, vnfm_info, data=""):
     ret = restcall.call_req(
         base_url=ignorcase_get(vnfm_info, "url"),
-        user=ignorcase_get(vnfm_info, "userName"),
-        passwd=ignorcase_get(vnfm_info, "password"),
+        # user=ignorcase_get(vnfm_info, "userName"),
+        # passwd=ignorcase_get(vnfm_info, "password"),
+        user="",
+        passwd="",
         auth_type=restcall.rest_no_auth,
         resource=resource,
         method=method,
