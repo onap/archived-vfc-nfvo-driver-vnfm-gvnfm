@@ -26,8 +26,3 @@ else
     nohup uwsgi --http :8484 -t 120 --module driver.wsgi --master --processes 4 &
 fi
 
-while [ ! -f $logDir/runtime_gvnfmdriver.log ]; do
-    sleep 1
-done
-
-tail -F  $logDir/runtime_gvnfmdriver.log
