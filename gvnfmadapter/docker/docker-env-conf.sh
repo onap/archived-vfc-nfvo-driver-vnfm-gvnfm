@@ -7,8 +7,8 @@ install_sf(){
     apk --no-cache add python-dev libffi-dev musl-dev py2-virtualenv
 
     # get binary zip from nexus - vfc-nfvo-catalog
-    wget -q -O vfc-nfvo-driver-vnfm-gvnfm-gvnfmadapter.zip 'https://nexus.onap.org/service/local/artifact/maven/redirect?r=snapshots&g=org.onap.vfc.nfvo.driver.vnfm.gvnfm.gvnfmadapter&a=vfc-nfvo-driver-vnfm-gvnfm-gvnfmadapter&v=LATEST&e=zip'
-    unzip vfc-nfvo-driver-vnfm-gvnfm-gvnfmadapter.zip
+    wget -q -O vfc-nfvo-driver-vnfm-gvnfm-gvnfmadapter.zip 'https://nexus.onap.org/service/local/artifact/maven/redirect?r=snapshots&g=org.onap.vfc.nfvo.driver.vnfm.gvnfm.gvnfmadapter&a=vfc-nfvo-driver-vnfm-gvnfm-gvnfmadapter&v=${pkg_verison}-SNAPSHOT&e=zip' && \
+    unzip vfc-nfvo-driver-vnfm-gvnfm-gvnfmadapter.zip && \
     rm -rf vfc-nfvo-driver-vnfm-gvnfm-gvnfmadapter.zip
     wait
     pip install --upgrade setuptools pip
