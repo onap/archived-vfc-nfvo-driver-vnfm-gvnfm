@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2f9ef15b_885be812",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 141
+      },
+      "writtenOn": "2019-05-24T02:10:57Z",
+      "side": 1,
+      "message": "Does the Oparent version need to be updated?",
+      "range": {
+        "startLine": 21,
+        "startChar": 22,
+        "endLine": 21,
+        "endChar": 23
+      },
+      "revId": "a625474297dfedef2fa894c40828f7867ac6f304",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
