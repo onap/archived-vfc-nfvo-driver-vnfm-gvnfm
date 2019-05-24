@@ -18,12 +18,12 @@
     <parent>
         <groupId>org.onap.vfc.nfvo.driver.vnfm.gvnfm</groupId>
         <artifactId>vfc-nfvo-driver-vnfm-gvnfm</artifactId>
-        <version>1.3.1-SNAPSHOT</version>
+        <version>1.3.2-SNAPSHOT</version>
     </parent>
     <groupId>org.onap.vfc.nfvo.driver.vnfm.gvnfm</groupId>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>juju</artifactId>
-    <version>1.3.1-SNAPSHOT</version>
+    <version>1.3.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>vfc-nfvo-driver-vnfm-gvnfm-juju</name>
     <description>nfvo juju-vnfmadapter</description>
