@@ -22,6 +22,30 @@
       "revId": "a625474297dfedef2fa894c40828f7867ac6f304",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08aefdd7_e6992fc1",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 925
+      },
+      "writtenOn": "2019-05-24T07:52:03Z",
+      "side": 1,
+      "message": "will upgrade to 2.0.0 later, because oparent 2.0.0 need to be updated with the ci-management.",
+      "parentUuid": "2f9ef15b_885be812",
+      "range": {
+        "startLine": 21,
+        "startChar": 22,
+        "endLine": 21,
+        "endChar": 23
+      },
+      "revId": "a625474297dfedef2fa894c40828f7867ac6f304",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
     }
   ]
 }
