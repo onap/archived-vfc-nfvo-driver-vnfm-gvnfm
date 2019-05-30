@@ -108,34 +108,38 @@ class VnfTermInfo(APIView):
             status.HTTP_500_INTERNAL_SERVER_ERROR: "The url is invalid"
         }
     )
-    def post(self, request, vnfmtype, vnfmid, vnfInstanceId):
+    def post(self, request, vnfmtype, vnfm_id, vnfInstanceId):
         logger.debug("terminate_vnf--post::> %s" % request.data)
-        vnfm_id = vnfmid
         try:
-            term_type = ignorcase_get(request.data, "terminationType")
-            input_data = {
-                "terminationType": term_type.upper() if term_type else "FORCEFUL"
-            }
-            term_timeout = ignorcase_get(request.data, "gracefulTerminationTimeout")
-            if term_timeout:
-                input_data["gracefulTerminationTimeout"] = int(term_timeout)
+            vnf_info = do_queryvnf(request, vnfm_id, vnfInstanceId)
+            logger.debug("VNF instance info: %s" % vnf_info)
+        except GvnfmDriverException as e:
+            logger.debug('VNF already does not exist, detail message: %s' % e.message)
+            return Response(data={"vnfInstanceId": vnfInstanceId}, status=status.HTTP_201_CREATED)
 
-            logger.debug("do_terminatevnf: vnfm_id=[%s],vnfInstanceId=[%s],input_data=[%s]",
-                         vnfm_id, vnfInstanceId, input_data)
-            resp = do_terminatevnf(vnfm_id, vnfInstanceId, input_data)
-            logger.debug("terminate_vnf: response data=[%s]", resp)
+        try:
+            if vnf_info.get("instantiationState", "") == "INSTANTIATED":
+                term_type = ignorcase_get(request.data, "terminationType")
+                input_data = {
+                    "terminationType": term_type.upper() if term_type else "FORCEFUL"
+                }
+                term_timeout = ignorcase_get(request.data, "gracefulTerminationTimeout")
+                if term_timeout:
+                    input_data["gracefulTerminationTimeout"] = int(term_timeout)
 
-            jobId = ignorcase_get(resp, "jobId")
-            logger.debug("wait4job: vnfm_id=[%s],jobId=[%s]", vnfm_id, jobId)
-            resp = wait4job(vnfm_id, jobId)
-            logger.debug("[wait4job] response=[%s]", resp)
+                logger.debug("do_terminatevnf: vnfm_id=[%s],vnfInstanceId=[%s],input_data=[%s]",
+                             vnfm_id, vnfInstanceId, input_data)
+                resp = do_terminatevnf(vnfm_id, vnfInstanceId, input_data)
+                logger.debug("terminate_vnf: response data=[%s]", resp)
+                jobId = ignorcase_get(resp, "jobId")
+                logger.debug("wait4job: vnfm_id=[%s],jobId=[%s]", vnfm_id, jobId)
+                resp = wait4job(vnfm_id, jobId)
+                logger.debug("[wait4job] response=[%s]", resp)
 
             resp = do_deletevnf(vnfm_id, vnfInstanceId)
             logger.debug("do_deletevnf: response data=[%s]", resp)
-
             resp_data = {
-                "vnfInstanceId": vnfInstanceId,
-                "jobId": jobId
+                "vnfInstanceId": vnfInstanceId
             }
             return Response(data=resp_data, status=status.HTTP_201_CREATED)
         except GvnfmDriverException as e:
