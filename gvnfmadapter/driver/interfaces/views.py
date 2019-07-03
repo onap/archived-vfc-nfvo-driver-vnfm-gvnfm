@@ -92,8 +92,8 @@ class VnfInstInfo(APIView):
             logger.debug("Instantiate vnf end!")
             return Response(data=resp_data, status=status.HTTP_201_CREATED)
         except GvnfmDriverException as e:
-            logger.error('instantiate vnf failed, detail message: %s' % e.message)
-            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error('instantiate vnf failed, detail message: %s' % e.args[0])
+            return Response(data={'error': e.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except:
             logger.error(traceback.format_exc())
             return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -115,7 +115,7 @@ class VnfTermInfo(APIView):
             vnf_info = do_queryvnf(request, vnfm_id, vnfInstanceId)
             logger.debug("VNF instance info: %s" % vnf_info)
         except GvnfmDriverException as e:
-            logger.debug('VNF already does not exist, detail message: %s' % e.message)
+            logger.debug('VNF already does not exist, detail message: %s' % e.args[0])
             return Response(data={"vnfInstanceId": vnfInstanceId}, status=status.HTTP_201_CREATED)
 
         try:
@@ -144,8 +144,8 @@ class VnfTermInfo(APIView):
             }
             return Response(data=resp_data, status=status.HTTP_201_CREATED)
         except GvnfmDriverException as e:
-            logger.error('Terminate vnf failed, detail message: %s' % e.message)
-            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error('Terminate vnf failed, detail message: %s' % e.args[0])
+            return Response(data={'error': e.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except:
             logger.error(traceback.format_exc())
             return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -195,8 +195,8 @@ class VnfQueryInfo(APIView):
             logger.debug("[%s]resp_data=%s", fun_name(), resp_data)
             return Response(data=resp_data, status=status.HTTP_200_OK)
         except GvnfmDriverException as e:
-            logger.error('Query vnf failed, detail message: %s' % e.message)
-            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error('Query vnf failed, detail message: %s' % e.args[0])
+            return Response(data={'error': e.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except:
             logger.error(traceback.format_exc())
             return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -238,8 +238,8 @@ class VnfOperInfo(APIView):
             }
             return Response(data=operation_data, status=status.HTTP_200_OK)
         except GvnfmDriverException as e:
-            logger.error('Query vnf failed, detail message: %s' % e.message)
-            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error('Query vnf failed, detail message: %s' % e.args[0])
+            return Response(data={'error': e.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except:
             logger.error(traceback.format_exc())
             return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -273,8 +273,8 @@ class VnfGrantInfo(APIView):
             logger.debug("[%s]resp_data=%s", fun_name(), resp)
             return Response(data=resp, status=status.HTTP_201_CREATED)
         except GvnfmDriverException as e:
-            logger.error('Grant vnf failed, detail message: %s' % e.message)
-            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error('Grant vnf failed, detail message: %s' % e.args[0])
+            return Response(data={'error': e.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except:
             logger.error(traceback.format_exc())
             return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -303,8 +303,8 @@ class VnfNotifyInfo(APIView):
                 raise GvnfmDriverException('Failed to notify vnf.')
             return Response(data=None, status=status.HTTP_200_OK)
         except GvnfmDriverException as e:
-            logger.error('Grant vnf failed, detail message: %s' % e.message)
-            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error('Grant vnf failed, detail message: %s' % e.args[0])
+            return Response(data={'error': e.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except:
             logger.error(traceback.format_exc())
             return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -343,8 +343,8 @@ class VnfOperateView(APIView):
             response["Location"] = location
             return response
         except GvnfmDriverException as e:
-            logger.error('operate vnf failed, detail message: %s' % e.message)
-            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error('operate vnf failed, detail message: %s' % e.args[0])
+            return Response(data={'error': e.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except:
             logger.error(traceback.format_exc())
             return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -393,8 +393,8 @@ class VnfHealView(APIView):
             response["Location"] = location
             return response
         except GvnfmDriverException as e:
-            logger.error('Heal vnf failed, detail message: %s' % e.message)
-            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error('Heal vnf failed, detail message: %s' % e.args[0])
+            return Response(data={'error': e.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except:
             logger.error(traceback.format_exc())
             return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -411,8 +411,8 @@ class VnfPkgsInfo(APIView):
             resp = json.JSONDecoder().decode(ret[1])
             return Response(data=resp, status=status.HTTP_200_OK)
         except GvnfmDriverException as e:
-            logger.error('Get vnfpkgs failed, detail message: %s' % e.message)
-            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error('Get vnfpkgs failed, detail message: %s' % e.args[0])
+            return Response(data={'error': e.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except:
             logger.error(traceback.format_exc())
             return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -442,8 +442,8 @@ class QuerySingleVnfLcmOpOcc(APIView):
             else:
                 raise GvnfmDriverException(vnf_lcm_op_occ_serializer.errors)
         except GvnfmDriverException as e:
-            logger.error("Query vnflcmopocc failed, detail message: %s" % e.message)
-            return Response(data={'error': e.message}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error("Query vnflcmopocc failed, detail message: %s" % e.args[0])
+            return Response(data={'error': e.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except:
             logger.error(traceback.format_exc())
             return Response(data={'error': traceback.format_exc()}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -473,10 +473,10 @@ class Subscription(APIView):
             logger.debug("Subscription end!")
             return Response(data=lccn_subscription_serializer.data, status=status.HTTP_201_CREATED)
         except GvnfmDriverException as e:
-            logger.error(e.message)
+            logger.error(e.args[0])
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as e:
-            logger.error(e.message)
+            logger.error(e.args[0])
             logger.error(traceback.format_exc())
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
