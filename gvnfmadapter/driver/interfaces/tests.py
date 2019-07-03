@@ -219,7 +219,6 @@ class InterfacesTest(TestCase):
         mock_call_req.side_effect = [r1, r2]
         response = self.client.get("/api/gvnfmdriver/v1/%s/jobs/%s?responseId=0"
                                    % (vnfm_info["vnfmId"], expected_body["jobId"]))
-        print response
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertDictEqual(expected_body, response.data)
 
