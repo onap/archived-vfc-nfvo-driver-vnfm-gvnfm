@@ -4,7 +4,7 @@ install_sf(){
 
     apk --no-cache update
     apk --no-cache add bash curl gcc wget mysql-client openssl-dev
-    apk --no-cache add python36-dev libffi-dev musl-dev py3-virtualenv
+    apk --no-cache add libffi-dev musl-dev py3-virtualenv
 
     # get binary zip from nexus - vfc-nfvo-catalog
     wget -q -O vfc-nfvo-driver-vnfm-gvnfm-gvnfmadapter.zip "https://nexus.onap.org/service/local/artifact/maven/redirect?r=snapshots&g=org.onap.vfc.nfvo.driver.vnfm.gvnfm.gvnfmadapter&a=vfc-nfvo-driver-vnfm-gvnfm-gvnfmadapter&v=${pkg_version}-SNAPSHOT&e=zip" && \
