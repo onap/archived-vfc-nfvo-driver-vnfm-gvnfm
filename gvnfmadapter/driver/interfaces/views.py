@@ -289,6 +289,14 @@ class VnfNotifyInfo(APIView):
             status.HTTP_500_INTERNAL_SERVER_ERROR: "The url is invalid"
         }
     )
+    def get(self, request, vnfmtype):
+        try:
+            logger.debug("[%s]receive request.", fun_name())
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except:
+            logger.error(traceback.format_exc())
+            return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     def post(self, request, vnfmtype):  # TODO: not compatable with VnfIdentifierCreationNotification and VnfIdentifierDeletionNotification
         try:
             logger.debug("[%s]req_data = %s", fun_name(), request.data)
