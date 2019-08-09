@@ -281,6 +281,14 @@ class VnfGrantInfo(APIView):
 
 
 class VnfNotifyInfo(APIView):
+    def get(self, request, vnfmtype):
+        try:
+            logger.debug("[%s]receive request.", fun_name())
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except:
+            logger.error(traceback.format_exc())
+            return Response(data={'error': 'unexpected exception'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     @swagger_auto_schema(
         request_body=VnfNotifyReqSerializer(),
         responses={
