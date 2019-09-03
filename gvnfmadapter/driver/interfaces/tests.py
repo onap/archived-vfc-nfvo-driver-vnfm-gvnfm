@@ -727,6 +727,57 @@ class InterfacesTest(TestCase):
         self.assertEqual(status.HTTP_500_INTERNAL_SERVER_ERROR, response.status_code)
 
     @mock.patch.object(restcall, 'call_req')
+    def test_dissubscribe_successfully(self, mock_call_req):
+        vnfm_info = {
+            "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
+            "name": "g_vnfm",
+            "type": "gvnfmdriver",
+            "vimId": "",
+            "vendor": "ZTE",
+            "version": "v1.0",
+            "description": "vnfm",
+            "certificateUrl": "",
+            "url": "http://10.74.44.11",
+            "userName": "admin",
+            "password": "admin",
+            "createTime": "2016-07-06 15:33:18"
+        }
+        ret_of_vnfminfo_from_nslcm = [0, json.JSONEncoder().encode(vnfm_info), "200"]
+        ret_from_vnfm = [0, json.JSONEncoder().encode(""), status.HTTP_204_NO_CONTENT]
+        mock_call_req.side_effect = [ret_of_vnfminfo_from_nslcm, ret_from_vnfm]
+        response = self.client.delete(
+            "/api/gvnfmdriver/v1/%s/subscriptions/11" % vnfm_info['vnfmId'],
+            content_type='application/json'
+        )
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
+
+    @mock.patch.object(restcall, 'call_req')
+    def test_dissubscribe_failed(self, mock_call_req):
+        vnfm_info = {
+            "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
+            "name": "g_vnfm",
+            "type": "gvnfmdriver",
+            "vimId": "",
+            "vendor": "ZTE",
+            "version": "v1.0",
+            "description": "vnfm",
+            "certificateUrl": "",
+            "url": "http://10.74.44.11",
+            "userName": "admin",
+            "password": "admin",
+            "createTime": "2016-07-06 15:33:18"
+        }
+
+        ret_of_vnfminfo_from_nslcm = [0, json.JSONEncoder().encode(vnfm_info), "200"]
+        ret_from_vnfm = [1, None, status.HTTP_404_NOT_FOUND]
+        mock_call_req.side_effect = [ret_of_vnfminfo_from_nslcm, ret_from_vnfm]
+        response = self.client.delete(
+            "/api/gvnfmdriver/v1/%s/subscriptions/11" % vnfm_info['vnfmId'],
+            content_type='application/json'
+        )
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
+
+    @mock.patch.object(restcall, 'call_req')
     def test_operate_vnf_404_NotFound(self, mock_call_req):
         vnfm_info = {
             "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
