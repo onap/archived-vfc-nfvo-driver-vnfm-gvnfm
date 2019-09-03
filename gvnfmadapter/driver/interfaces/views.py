@@ -489,6 +489,35 @@ class Subscription(APIView):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+class SubscriptionDetail(APIView):
+    @swagger_auto_schema(
+        responses={
+            status.HTTP_204_NO_CONTENT: "Sucess",
+            status.HTTP_404_NOT_FOUND: "Not found",
+            status.HTTP_500_INTERNAL_SERVER_ERROR: "Internal error"
+        }
+    )
+    def delete(self, request, vnfmtype, vnfmid, subscriptionid):
+        try:
+            logger.debug("Subscription--delete begin!")
+            vnfm_info = get_vnfminfo_from_nslcm(vnfmid)
+            logger.debug("[delete_subscription] vnfm_info=[%s]", vnfm_info)
+            ret = call_vnfm("api/vnflcm/v1/subscriptions/%s" % subscriptionid, "DELETE", vnfm_info)
+            logger.debug("[%s] call_req ret=%s", fun_name(), ret)
+            if int(ret[2]) not in [status.HTTP_204_NO_CONTENT, status.HTTP_404_NOT_FOUND]:
+                logger.error("Status code is %s, detail is %s.", ret[2], ret[1])
+                raise GvnfmDriverException('Failed to delete subscribeid=%s.' % subscriptionid)
+            logger.debug("Subscription--delete sucess!")
+            return Response(status=ret[2])
+        except GvnfmDriverException as e:
+            logger.error(e.args[0])
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            logger.error(e.args[0])
+            logger.error(traceback.format_exc())
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 def call_vnfm(resource, method, vnfm_info, data=""):
     ret = restcall.call_req(
         base_url=ignorcase_get(vnfm_info, "url"),

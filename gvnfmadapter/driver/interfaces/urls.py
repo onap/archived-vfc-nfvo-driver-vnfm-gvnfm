@@ -14,7 +14,7 @@
 
 from django.conf.urls import url
 from driver.interfaces.views import VnfInstInfo, VnfTermInfo, VnfQueryInfo, VnfOperInfo
-from driver.interfaces.views import Subscription
+from driver.interfaces.views import Subscription, SubscriptionDetail
 from driver.interfaces.views import VnfPkgsInfo, VnfGrantInfo, VnfNotifyInfo, QuerySingleVnfLcmOpOcc, VnfOperateView, VnfHealView
 from driver.interfaces.views import HealthCheckView
 
@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/vnfs/(?P<vnfInstanceId>[0-9a-zA-Z\-\_]+)$', VnfQueryInfo.as_view()),
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/jobs/(?P<jobid>[0-9a-zA-Z\-\_]+)$', VnfOperInfo.as_view()),
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/subscriptions$', Subscription.as_view()),
+    url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/(?P<vnfmid>[0-9a-zA-Z\-\_]+)/subscriptions/(?P<subscriptionid>[0-9a-zA-Z_-]+)$', SubscriptionDetail.as_view()),
 
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/vnfpackages$', VnfPkgsInfo.as_view()),
     url(r'^api/(?P<vnfmtype>[0-9a-zA-Z\-\_]+)/v1/resource/grant$', VnfGrantInfo.as_view()),
