@@ -864,7 +864,7 @@ class InterfacesTest(TestCase):
         self.assertEqual(status.HTTP_202_ACCEPTED, response.status_code)
         self.assertEqual("/vnf_lc_ops/NF-OPERATE-12-2a3be946-b01d-11e8-9302-08002705b121", response['Location'])
 
-# Heal API
+    # Heal API
     @mock.patch.object(restcall, 'call_req')
     def test_heal_vnf_404_NotFound(self, mock_call_req):
         vnfm_info = {
@@ -969,3 +969,131 @@ class InterfacesTest(TestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code, response.content)
         resp_data = json.loads(response.content)
         self.assertEqual({"status": "active"}, resp_data)
+
+    @mock.patch.object(restcall, 'call_req')
+    def test_add_subscriptions_success(self, mock_call_req):
+        vnfm_info = {
+            "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
+            "name": "g_vnfm",
+            "type": "gvnfmdriver",
+            "vimId": "",
+            "vendor": "vendor1",
+            "version": "v1.0",
+            "description": "vnfm",
+            "certificateUrl": "",
+            "url": "http://10.74.44.11",
+            "userName": "admin",
+            "password": "admin",
+            "createTime": "2016-07-06 15:33:18"
+        }
+        req_data = {
+            "filter": {
+                "notificationTypes": [
+                    "VnfLcmOperationOccurrenceNotification"
+                ],
+                "operationTypes": [
+                    "INSTANTIATE",
+                    "SCALE",
+                    "SCALE_TO_LEVEL",
+                    "CHANGE_FLAVOUR",
+                    "TERMINATE",
+                    "HEAL",
+                    "OPERATE",
+                    "CHANGE_EXT_CONN",
+                    "MODIFY_INFO"
+                ],
+                "operationStates": [
+                    "STARTING",
+                    "PROCESSING",
+                    "COMPLETED",
+                    "FAILED_TEMP",
+                    "FAILED",
+                    "ROLLING_BACK",
+                    "ROLLED_BACK"
+                ],
+                "vnfInstanceSubscriptionFilter": {
+                    "vnfInstanceIds": [
+                        "4be92ba3-cfe7-423e-b807-3da4a19f06cb"
+                    ]
+                }
+            },
+            "callbackUri": "http://msb-iag:80/api/gvnfmdriver/v1/vnfs/lifecyclechangesnotification",
+            "authentication": {
+                "authType": [
+                    "BASIC"
+                ],
+                "paramsBasic": {
+                    "userName": "admin",
+                    "password": "admin"
+                }
+            }
+        }
+        rsp_data = {
+            "id": "5f1a74db-7b57-47d2-b9b9-8897a23c3beb",
+            "callbackUri": "http://msb-iag:80/api/gvnfmdriver/v1/vnfs/lifecyclechangesnotification",
+            "_links": {
+                "self": {
+                    "href": "api/vnflcm/v1/subscriptions/5f1a74db-7b57-47d2-b9b9-8897a23c3beb"
+                }
+            },
+            "filter": {
+                "notificationTypes": [
+                    "VnfLcmOperationOccurrenceNotification"
+                ],
+                "operationTypes": [
+                    "INSTANTIATE",
+                    "SCALE",
+                    "SCALE_TO_LEVEL",
+                    "CHANGE_FLAVOUR",
+                    "TERMINATE",
+                    "HEAL",
+                    "OPERATE",
+                    "CHANGE_EXT_CONN",
+                    "MODIFY_INFO"
+                ],
+                "operationStates": [
+                    "STARTING",
+                    "PROCESSING",
+                    "COMPLETED",
+                    "FAILED_TEMP",
+                    "FAILED",
+                    "ROLLING_BACK",
+                    "ROLLED_BACK"
+                ],
+                "vnfInstanceSubscriptionFilter": {
+                    "vnfInstanceIds": [
+                        "4be92ba3-cfe7-423e-b807-3da4a19f06cb"
+                    ]
+                }
+            }
+        }
+        r1 = [0, json.JSONEncoder().encode(vnfm_info), "200"]
+        r2 = [0, json.JSONEncoder().encode(rsp_data), "201"]
+        mock_call_req.side_effect = [r1, r2]
+        response = self.client.post("/api/gvnfmdriver/v1/1d247dca-8810-4785-b268-c1b32297fb5d/subscriptions",
+                                    data=json.dumps(req_data), content_type="application/json")
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+
+    @mock.patch.object(restcall, 'call_req')
+    def test_delete_subscriptions_success(self, mock_call_req):
+        vnfm_info = {
+            "vnfmId": "19ecbb3a-3242-4fa3-9926-8dfb7ddc29ee",
+            "name": "g_vnfm",
+            "type": "gvnfmdriver",
+            "vimId": "",
+            "vendor": "vendor1",
+            "version": "v1.0",
+            "description": "vnfm",
+            "certificateUrl": "",
+            "url": "http://10.74.44.11",
+            "userName": "admin",
+            "password": "admin",
+            "createTime": "2016-07-06 15:33:18"
+        }
+        r1 = [0, json.JSONEncoder().encode(vnfm_info), "200"]
+        r2 = [0, json.JSONEncoder().encode(''), "204"]
+        mock_call_req.side_effect = [r1, r2]
+        response = self.client.delete(
+            "/api/gvnfmdriver/v1/1d247dca-8810-4785-b268-c1b32297fb5d/subscriptions/5f1a74db-7b57-47d2-b9b9-8897a23c3beb",
+            data=json.dumps(''), content_type="application/json")
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
