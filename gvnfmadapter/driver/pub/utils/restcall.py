@@ -81,7 +81,7 @@ def call_req(base_url, user, passwd, auth_type, resource, method, content=''):
 
 
 def req_by_msb(resource, method, content=''):
-    base_url = "http://%s:%s/" % (MSB_SERVICE_IP, MSB_SERVICE_PORT)
+    base_url = "https://%s:%s/" % (MSB_SERVICE_IP, MSB_SERVICE_PORT)
     return call_req(base_url, "", "", rest_no_auth, resource, method, content)
 
 

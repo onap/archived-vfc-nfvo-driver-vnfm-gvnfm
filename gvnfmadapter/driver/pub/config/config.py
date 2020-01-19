@@ -14,7 +14,7 @@
 
 # [MSB]
 MSB_SERVICE_IP = '127.0.0.1'
-MSB_SERVICE_PORT = '80'
+MSB_SERVICE_PORT = '443'
 
 # [MDC]
 SERVICE_NAME = "gvnfmdriver"
