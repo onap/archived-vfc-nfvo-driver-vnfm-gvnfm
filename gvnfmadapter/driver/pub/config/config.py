@@ -13,8 +13,10 @@
 # limitations under the License.
 
 # [MSB]
+MSB_SERVICE_PROTOCOL = 'http'
 MSB_SERVICE_IP = '127.0.0.1'
 MSB_SERVICE_PORT = '443'
+MSB_BASE_URL = "%s://%s:%s" % (MSB_SERVICE_PROTOCOL, MSB_SERVICE_IP, MSB_SERVICE_PORT)
 
 # [MDC]
 SERVICE_NAME = "gvnfmdriver"
