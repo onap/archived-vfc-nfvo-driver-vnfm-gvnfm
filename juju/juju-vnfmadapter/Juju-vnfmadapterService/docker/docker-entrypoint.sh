@@ -41,7 +41,7 @@ echo
 ./instance-config.sh
 
 # Start mysql
-su mysql -c /usr/bin/mysqld_safe &
+sudo su mysql -c /usr/bin/mysqld_safe &
 
 # Perform one-time config
 if [ ! -e init.log ]; then
