@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "63a27788_e9bb19b0",
+        "filename": "juju/juju-vnfmadapter/Juju-vnfmadapterService/docker/docker-env-config.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 2319
+      },
+      "writtenOn": "2020-03-05T08:57:20Z",
+      "side": 1,
+      "message": "trailing",
+      "revId": "e98c3e883bd168e49b967c34f1d281895122b502",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2d1a912_b7be89ce",
+        "filename": "juju/juju-vnfmadapter/Juju-vnfmadapterService/docker/docker-env-config.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 2319
+      },
+      "writtenOn": "2020-03-05T08:57:20Z",
+      "side": 1,
+      "message": "trailing",
+      "revId": "e98c3e883bd168e49b967c34f1d281895122b502",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1b639dc0_1eac9015",
+        "filename": "juju/juju-vnfmadapter/Juju-vnfmadapterService/docker/docker-env-config.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 2319
+      },
+      "writtenOn": "2020-03-05T08:57:20Z",
+      "side": 1,
+      "message": "no mysql server here please",
+      "revId": "e98c3e883bd168e49b967c34f1d281895122b502",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f42dc827_6ccce8fb",
+        "filename": "juju/juju-vnfmadapter/Juju-vnfmadapterService/docker/docker-env-config.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2319
+      },
+      "writtenOn": "2020-03-05T08:57:20Z",
+      "side": 1,
+      "message": "trailing",
+      "revId": "e98c3e883bd168e49b967c34f1d281895122b502",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f332864_9f98f6be",
+        "filename": "juju/juju-vnfmadapter/Juju-vnfmadapterService/docker/docker-env-config.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 2319
+      },
+      "writtenOn": "2020-03-05T08:57:20Z",
+      "side": 1,
+      "message": "trailing",
+      "revId": "e98c3e883bd168e49b967c34f1d281895122b502",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
