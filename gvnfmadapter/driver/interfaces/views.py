@@ -573,7 +573,7 @@ def get_vnfminfo_from_nslcm(vnfm_id):
     return json.JSONDecoder().decode(ret[1])
 
 
-def wait4job(vnfm_id, job_id, gracefulTerminationTimeout=1200, retry_count=60, interval_second=3):
+def wait4job(vnfm_id, job_id, gracefulTerminationTimeout=1200, retry_count=600, interval_second=3):
     logger.debug("[wait4job] vnfm_id=[%s],jobId=[%s],gracefulTerminationTimeout=[%s]",
                  vnfm_id, job_id, gracefulTerminationTimeout)
     count = 0
