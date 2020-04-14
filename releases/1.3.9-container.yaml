@@ -1,0 +1,12 @@
+distribution_type: 'container'
+container_release_tag: '1.3.9'
+project: 'vfc-nfvo-driver-vnfm-gvnfm'
+container_pull_registry: nexus3.onap.org:10003
+container_push_registry: nexus3.onap.org:10002
+log_dir: 'vfc-nfvo-driver-vnfm-gvnfm-master-docker-java-version-shell-daily/1011/'
+ref: 'b88687616ad5caf5eac89248a061ee9ad79194e5'
+containers:
+    - name: 'vfc/gvnfmdriver'
+      version: '1.3.9-STAGING-20200414T093546'
+    - name: 'vfc/jujudriver'
+      version: '1.3.9-STAGING-20200414T093911'
