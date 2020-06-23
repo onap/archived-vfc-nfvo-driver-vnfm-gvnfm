@@ -24,4 +24,8 @@ if [ $SERVICE_IP ]; then
     sed -i "s|\"ip\": \".*\"|\"ip\": \"$SERVICE_IP\"|" vfc/nfvo/driver/vnfm/gvnfm/gvnfmadapter/driver/pub/config/config.py
 fi
 
+if [ $SSL_ENABLED ]; then
+    sed -i "s|SSL_ENABLED.*|SSL_ENABLED = '$SSL_ENABLED'|"  vfc/nfvo/driver/vnfm/gvnfm/gvnfmadapter/driver/pub/config/config.py
+fi
+
 cat vfc/nfvo/driver/vnfm/gvnfm/gvnfmadapter/driver/pub/config/config.py
