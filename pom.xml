@@ -29,6 +29,9 @@
     <description>vfc nfvo drivers-vnfm-gvnfm</description>
     <modules>
         <module>gvnfmadapter</module>
+		<!-- Remove juju from Guilin Release -->
+		<!--
         <module>juju</module>
+		-->
     </modules>
 </project>
