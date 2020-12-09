@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "09745903_69ad1abd",
+        "filename": "gvnfmadapter/stop.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 2363
+      },
+      "writtenOn": "2020-12-09T08:42:45Z",
+      "side": 1,
+      "message": "Don\u0027t we use uwsgi?",
+      "revId": "5ccea839d266f7af720490fb93205fd359ca06c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
