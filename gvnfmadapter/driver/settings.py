@@ -16,10 +16,10 @@ import os
 import sys
 import platform
 from logging import config
-from onaplogging import monkey
-monkey.patch_all()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import yaml
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -58,7 +58,6 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'driver.middleware.LogContextMiddleware',
 ]
 
 ROOT_URLCONF = 'driver.urls'
@@ -135,8 +134,15 @@ if platform.system() == 'Windows' or 'test' in sys.argv:
                 'propagate': False}, }}
 else:
     LOGGING_CONFIG = None
+
+    log_path = '/var/log/onap/vfc/gvnfmdriver'
+    if not os.path.exists(log_path):
+        os.makedirs(log_path)
+
     LOGGING_FILE = os.path.join(BASE_DIR, 'driver/log.yml')
-    config.yamlConfig(filepath=LOGGING_FILE, watchDog=True)
+    with open(file=LOGGING_FILE, mode='r', encoding="utf-8")as file:
+        logging_yaml = yaml.load(stream=file, Loader=yaml.FullLoader)
+    config.dictConfig(config=logging_yaml)
 
 
 if 'test' in sys.argv:
