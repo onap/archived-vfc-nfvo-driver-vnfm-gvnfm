@@ -12,7 +12,7 @@ install_sf(){
     rm -rf vfc-nfvo-driver-vnfm-gvnfm-gvnfmadapter.zip
     wait
     pip install --upgrade setuptools pip
-    pip install --no-cache-dir --pre -r  /service/vfc/nfvo/driver/vnfm/gvnfm/gvnfmadapter/requirements.txt
+    pip install -r /service/vfc/nfvo/driver/vnfm/gvnfm/gvnfmadapter/requirements.txt
 }
 
 add_user(){
