@@ -1,0 +1,10 @@
+distribution_type: 'container'
+container_release_tag: '1.4.4'
+project: 'vfc-nfvo-driver-vnfm-gvnfm'
+container_pull_registry: nexus3.onap.org:10003
+container_push_registry: nexus3.onap.org:10002
+log_dir: 'vfc-nfvo-driver-vnfm-gvnfm-master-docker-java-version-shell-daily/1735/'
+ref: 'a6429aa252beeff0825705bd65225ee32b0c04a6'
+containers:
+    - name: 'vfc/gvnfmdriver'
+      version: '1.4.4-STAGING-20220330T093545'
